@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OxidePM — keeps your apps running</title>
+<meta name="description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<link rel="canonical" href="https://oxidepm.com/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OxidePM">
+<meta property="og:title" content="OxidePM — keeps your apps running">
+<meta property="og:description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<meta property="og:url" content="https://oxidepm.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OxidePM — keeps your apps running">
+<meta name="twitter:description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="/" aria-label="OxidePM home">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+      <span class="brand-word">oxide<span>pm</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/docs/">Docs</a>
+      <a href="/adapters/">Adapters</a>
+      <a href="/security/">Security</a>
+      <a href="https://github.com/oxidekit/oxidepm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </button>
+    <button type="button" class="btn btn-secondary menu-btn" data-menu-toggle aria-expanded="false" aria-controls="site-menu">Menu</button>
+  </nav>
+  <div id="site-menu" class="site-menu" hidden>
+    <a href="/docs/">Docs</a>
+    <a href="/adapters/">Adapters</a>
+    <a href="/security/">Security</a>
+    <a href="https://github.com/oxidekit/oxidepm">GitHub</a>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="wrap" aria-labelledby="hero-title" style="padding-top:clamp(48px,9vw,120px)">
+  <h1 id="hero-title" class="display display-hero">Keeps your apps running.</h1>
+  <p class="lede">OxidePM is a process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, written in Rust and MIT licensed.</p>
+
+  <div class="cta-row">
+    <div class="blueprint install">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span class="prompt" aria-hidden="true">$</span>
+      <code id="install-cmd">curl -fsSL https://oxidepm.com/install.sh | sh</code>
+      <button type="button" class="btn btn-secondary" data-copy="install-cmd" data-copy-message="Install command copied to clipboard" aria-label="Copy install command">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <span data-copy-label>Copy</span>
+      </button>
+    </div>
+    <a href="/docs/getting-started/install/" class="btn btn-primary btn-lg blueprint">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      Read the docs first
+    </a>
+  </div>
+  <p class="small-note">Want to read the script before you run it? <a href="/install.sh">View install.sh</a>.</p>
+
+  <dl class="platforms">
+    <div><dt>Linux</dt><dd>the main platform</dd></div>
+    <div><dd>macOS: works, without the OS sandbox</dd></div>
+    <div><dt>Windows</dt><dd>not supported</dd></div>
+  </dl>
+
+  <figure class="blueprint term" style="margin-top:56px" role="img" aria-label="Terminal output of oxidepm status: four apps, db, api, web and worker, all online. The worker has restarted twice.">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="term-bar"><span>deploy@srv-01:~</span><span>oxidepm status</span></div>
+    <pre class="term-body hero tight"><span class="t-hi">$</span> oxidepm status
+╭────┬────────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
+│ id │ name   │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
+├────┼────────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
+│  1 │ db     │ cmd  │ 1183122 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 2.5M  │ 11s    │
+│  2 │ api    │ cmd  │ 1183124 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 22.5M │ 11s    │
+│  3 │ web    │ cmd  │ 1183733 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 2.5M  │ 6s     │
+│  4 │ worker │ cmd  │ 1183316 │ 2 │ <span class="t-hi">online</span> │ 0.0% │ 2.5M  │ 10s    │
+╰────┴────────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯
+<span class="t-hi">$</span> <span class="cursor" aria-hidden="true"></span></pre>
+  </figure>
+  <p class="term-ink">The same table as JSON: <code style="font-size:13.5px">oxidepm status --json</code></p>
+</section>
+
+<section class="wrap section" aria-labelledby="ideas-title">
+  <span class="kicker">Three ideas</span>
+  <div class="rule"></div>
+  <h2 id="ideas-title" class="sr-only">Three ideas behind OxidePM</h2>
+
+  <article class="idea">
+    <div>
+      <span class="num">01</span>
+      <h3 class="h-idea">A small core that does one job</h3>
+      <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
+      <p class="muted">Notifications and Prometheus metrics have already moved out of the core into adapters. The web API, the dashboard, the language runtimes and the deploy tools are still built in today, and are planned to follow.</p>
+    </div>
+    <figure class="blueprint term">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <pre class="term-body tight"><span class="t-hi">$</span> oxidepm status
+╭────┬────────┬──────┬─────┬───┬─────────┬──────┬─────┬────────╮
+│ id │ name   │ mode │ pid │ ↺ │ status  │ cpu  │ mem │ uptime │
+├────┼────────┼──────┼─────┼───┼─────────┼──────┼─────┼────────┤
+│  1 │ mailer │ cmd  │ -   │ 3 │ <span class="t-ox">errored</span> │ 0.0% │ 0B  │ 0s     │
+╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
+<span class="t-hi">$</span> oxidepm logs mailer --lines 3
+[2026-10-31 04:11:47.153] cannot reach smtp
+[2026-10-31 04:11:47.559] cannot reach smtp
+[2026-10-31 04:11:48.362] cannot reach smtp</pre>
+    </figure>
+  </article>
+
+  <article class="idea">
+    <div>
+      <span class="num">02</span>
+      <h3 class="h-idea">Adapters for everything else</h3>
+      <p>Each adapter is a separate program. It talks to the daemon through a documented JSON-RPC protocol on its standard input and output, so you can write one in any language.</p>
+      <p class="muted">If an adapter crashes or hangs, the daemon drops it and carries on. The daemon never stops or restarts an app because an adapter failed.</p>
+      <p class="link-row"><a href="/docs/adapter-protocol/overview/">Read the adapter protocol</a></p>
+    </div>
+    <figure class="blueprint term">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <pre class="term-body wrap"><span class="t-dim"># daemon and notifier, protocol 1</span>
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+<span class="t-dim">adapter:</span> {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.1.0"}}
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"initialized","params":{}}
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-11-20T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}
+<span class="t-dim">If the adapter stops answering ping three times in a row, the daemon kills it and restarts it. The apps are not touched.</span></pre>
+    </figure>
+  </article>
+
+  <article class="idea">
+    <div>
+      <span class="num">03</span>
+      <h3 class="h-idea">Safe to hand to an AI agent</h3>
+      <p>The daemon decides who is asking from the connection a request arrives on, and a claim can only make a request stricter. An agent on the agent socket is held to limits: it can read everything, may only stop or restart apps you opened to it, and can never start, delete or flush.</p>
+      <p class="muted">Mark an app as protected and agents can't change it. Every command that changes something can be rehearsed with <code style="font-size:0.92em">--dry-run</code>, and what agents ask for is written to an audit log.</p>
+      <p class="link-row"><a href="/security/">How the limits work</a></p>
+    </div>
+    <figure class="blueprint term">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <pre class="term-body"><span class="t-ox">agent$</span> oxidepm stop web --dry-run
+<span class="t-dim">ℹ</span>︎ Dry run of &#x27;stop&#x27;: this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+
+<span class="t-ox">agent$</span> oxidepm restart db
+<span class="t-ox">✗</span> ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+<span class="t-ox">Error:</span> ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+
+<span class="t-ox">agent$</span> oxidepm delete api
+<span class="t-ox">✗</span> ai:assistant may not make the request &#x27;delete&#x27;: it is a dangerous request. Ask a person to run it
+<span class="t-ox">Error:</span> ai:assistant may not make the request &#x27;delete&#x27;: it is a dangerous request. Ask a person to run it</pre>
+    </figure>
+  </article>
+</section>
+
+<section class="wrap section" aria-labelledby="core-title">
+  <span class="kicker">The core</span>
+  <div class="rule rule-gap"></div>
+  <div class="head-row">
+    <h2 id="core-title" class="h-section" style="max-width:16ch">What it does out of the box</h2>
+    <p style="max-width:44ch">Everything on this sheet ships in the core. Nothing here needs an adapter.</p>
+  </div>
+  <div class="blueprint">
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+    <div class="sheet-head"><span>OxidePM core: features</span><span>Sheet 01</span></div>
+    <div class="feature"><div><span class="n">01</span><h3>Daemon</h3></div><p>Apps keep running after you close the terminal. <code>save</code> writes the list, <code>resurrect</code> starts it again, and <code>startup</code> writes a systemd or launchd unit for boot.</p></div>
+    <div class="feature"><div><span class="n">02</span><h3>Crash restarts</h3></div><p>A crashed app waits, then restarts with a delay that doubles up to a cap. More than 15 restarts in 10 minutes end it as <code>errored</code>, until a person starts it.</p></div>
+    <div class="feature"><div><span class="n">03</span><h3>depends_on</h3></div><p>An app waits until the apps it names are running, and fails closed if they never are (60 seconds by default). <code>stop all</code> stops dependents first.</p></div>
+    <div class="feature"><div><span class="n">04</span><h3>Process groups</h3></div><p>Each app runs in its own process group, and stopping the app stops the group. No child processes are left behind.</p></div>
+    <div class="feature"><div><span class="n">05</span><h3>Clean environment</h3></div><p>Apps don’t inherit the daemon’s environment. They get <code>PATH</code>, <code>HOME</code> and a few basics, plus what you pass with <code>--env</code> or <code>env_file</code>.</p></div>
+    <div class="feature"><div><span class="n">06</span><h3>Health checks</h3></div><p>HTTP, TCP or a script of your own.</p></div>
+    <div class="feature"><div><span class="n">07</span><h3>Limits</h3></div><p>Restart an app when it passes a memory or uptime limit.</p></div>
+    <div class="feature"><div><span class="n">08</span><h3>Cron restarts</h3></div><p>Restart an app on a cron schedule (UTC).</p></div>
+    <div class="feature"><div><span class="n">09</span><h3>Clusters</h3></div><p>Run up to 256 instances of one app. Instance <code>i</code> gets port <code>port + i</code>.</p></div>
+    <div class="feature"><div><span class="n">10</span><h3>Logs</h3></div><p>Captured per app and rotated by size (10 MB and 5 files by default). Gzip compression of rotated files is optional.</p></div>
+    <div class="feature"><div><span class="n">11</span><h3>Scripting</h3></div><p><code>--json</code> output, and <code>--dry-run</code> on every command that changes something.</p></div>
+    <div class="feature"><div><span class="n">12</span><h3>Adapter checks</h3></div><p>An adapter is checked against a SHA-256 before it is installed, shows what it asks for before it can be enabled, and on Linux runs under Landlock and seccomp.</p></div>
+    <p class="sheet-foot">Errors carry stable <code>E_…</code> codes on the daemon socket, in the audit log and in the adapter protocol.</p>
+  </div>
+</section>
+
+<section class="wrap section" aria-labelledby="limits-title">
+  <span class="kicker">Limits</span>
+  <div class="rule rule-gap"></div>
+  <div class="split">
+    <div>
+      <h2 id="limits-title" class="h-section" style="margin-bottom:16px">What it doesn't do</h2>
+      <p class="muted" style="max-width:40ch;margin:0">You should know these before you install it.</p>
+    </div>
+    <dl class="facts">
+      <div><dt>Windows</dt><dd>Not supported.</dd></div>
+      <div><dt>macOS</dt><dd>macOS: works, without the OS sandbox</dd></div>
+      <div><dt>Reload</dt><dd>There is no zero-downtime reload. A reload is a restart.</dd></div>
+      <div><dt>File watching</dt><dd>Not available yet. <code>--watch</code> is refused.</dd></div>
+      <div><dt>Sandbox</dt><dd>It limits the damage a buggy adapter can do. It does not fully contain a hostile one. That is why every adapter is hash-checked and shows what it asks for before you enable it. <a href="/security/#adapters">Details</a>.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="wrap section" aria-labelledby="adapters-title">
+  <span class="kicker">Adapters</span>
+  <div class="rule rule-gap"></div>
+  <div class="head-row">
+    <h2 id="adapters-title" class="h-section" style="max-width:14ch">Add only what you need</h2>
+    <p>Each adapter is hash-checked before it is installed. You see what it asks for, and you approve it, before it runs.</p>
+  </div>
+
+  <div class="flow" data-flow>
+    <ol class="flow-steps" aria-label="Adapter workflow">
+      <li><button type="button" class="flow-step" data-step="0" aria-pressed="true"><span class="step-no">1</span><span class="step-text"><span class="step-title">List</span><code class="step-cmd">oxidepm adapter list</code><span class="step-note">See what is installed. Searching an index needs a published one, and there is none yet.</span></span></button></li>
+      <li><button type="button" class="flow-step" data-step="1" aria-pressed="false"><span class="step-no">2</span><span class="step-text"><span class="step-title">Import</span><code class="step-cmd">oxidepm adapter import notifier.tar.gz --sha256 …</code><span class="step-note">Checks the archive against the SHA-256 you give and shows what it asks for. It stays off.</span></span></button></li>
+      <li><button type="button" class="flow-step" data-step="2" aria-pressed="false"><span class="step-no">3</span><span class="step-text"><span class="step-title">Enable and approve</span><code class="step-cmd">oxidepm adapter enable notifier</code><span class="step-note">Shows the same list again and asks. Nothing runs until you say yes.</span></span></button></li>
+    </ol>
+
+    <figure class="blueprint term flow-term">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="term-bar"><span>deploy@srv-01:~</span><span data-step-label>step 1 of 3</span></div>
+      <div data-panel="0"><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter list
+No adapters are installed. `oxidepm adapter list --available` shows what the index offers.
+<span class="t-hi">$</span> oxidepm adapter list --available
+<span class="t-ox">Error:</span> no index is configured in this build. Import by a pinned hash (`oxidepm adapter import &lt;file or url&gt; --sha256 &lt;hex&gt;`) or from the bundle of a release (`oxidepm adapter import --bundled`)</pre></div>
+      <div data-panel="1" hidden><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter import notifier.tar.gz --sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203 --allow-reserved-name
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    notifier.tar.gz (pinned by you)
+Trust     pinned by you: sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  <span class="t-ox">[BROAD]</span>  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  <span class="t-ox">[BROAD]</span>
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  <span class="t-ox">[BROAD]</span>  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  <span class="t-ox">[BROAD]</span>
+  memory    128 MiB.
+<span class="t-hi">✓</span> Installed notifier 0.1.0 (disabled, nothing runs). Enable it with: oxidepm adapter enable notifier --accept 33926d31eb91080f</pre></div>
+      <div data-panel="2" hidden><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter enable notifier
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    pinned:notifier.tar.gz installed 2026-10-31T04:06:41Z
+Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  <span class="t-ox">[BROAD]</span>  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  <span class="t-ox">[BROAD]</span>
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  <span class="t-ox">[BROAD]</span>  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  <span class="t-ox">[BROAD]</span>
+  memory    128 MiB.
+Enable notifier with this grant? [y/N] <span data-pending><button type="button" class="term-btn yes" data-allow>y  allow</button> <button type="button" class="term-btn" data-deny>N  deny</button></span><span data-yes hidden>yes
+<span class="t-hi">✓</span> Enabled notifier 0.1.0 (level read, scope all)
+  Enforced by the OS on this machine: fs_write, fs_read, spawn</span><span data-no hidden>no
+<span class="t-ox">Error:</span> Not enabled</span><span data-done hidden>
+<button type="button" class="term-link" data-reset>run it again</button></span></pre></div>
+    </figure>
+  </div>
+  <noscript><style>[data-panel][hidden]{display:block!important}</style></noscript>
+  <p class="term-ink">Example output from a local build of the adapter. The hashes are those of that build.</p>
+
+  <div class="lists">
+    <div>
+      <h3 class="h-sub">Available now</h3>
+      <ul class="chips">
+<li class="tag tag-neutral chip">notifier</li>
+<li class="tag tag-neutral chip">exporter-prometheus</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="h-sub">Coming later</h3>
+      <ul class="chips">
+<li class="tag tag-outline chip">ui-web</li>
+<li class="tag tag-outline chip">ui-tui</li>
+<li class="tag tag-outline chip">runtime-node</li>
+<li class="tag tag-outline chip">runtime-python</li>
+<li class="tag tag-outline chip">runtime-go</li>
+<li class="tag tag-outline chip">runtime-rust</li>
+<li class="tag tag-outline chip">check</li>
+<li class="tag tag-outline chip">init</li>
+<li class="tag tag-outline chip">git-start</li>
+<li class="tag tag-outline chip">deploy</li>
+<li class="tag tag-outline chip">watch</li>
+<li class="tag tag-outline chip">AI adapters</li>
+      </ul>
+    </div>
+  </div>
+  <p class="btn-row">
+    <a href="/adapters/" class="btn btn-secondary btn-sm btn-upper">Browse all adapters</a>
+    <a href="/docs/adapter-protocol/write-an-adapter/" class="btn btn-ghost btn-sm">Write your own</a>
+  </p>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/" aria-label="OxidePM home">
+        <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+        <span class="brand-word">oxide<span>pm</span></span>
+      </a>
+      <p>A small process manager for Linux servers. Open source, written in Rust.</p>
+    </div>
+    <div class="footer-col">
+      <h2>Source</h2>
+      <ul>
+        <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Docs</h2>
+      <ul>
+        <li><a href="/docs/getting-started/install/">Getting started</a></li>
+        <li><a href="/docs/configuration/config-file/">Configuration</a></li>
+        <li><a href="/docs/commands/overview/">Commands</a></li>
+        <li><a href="/docs/adapter-protocol/overview/">Adapter protocol</a></li>
+        <li><a href="/security/">Security and AI safety</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="/adapters/">Adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm#license">MIT licence</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/security/advisories/new">Report a vulnerability</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-base">
+    <span>OxidePM is released under the MIT licence.</span>
+    <span>This site has no tracking and sets no cookies.</span>
+  </div>
+</footer>
+
+<p id="copy-status" class="sr-only" role="status" aria-live="polite"></p>
+</body>
+</html>
