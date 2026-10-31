@@ -470,7 +470,7 @@ def build_docs(site):
     inner = (
         '<article class="docs-article wide"><h1>Documentation</h1>'
         '<p class="docs-lede">How to install OxidePM, configure apps, use the commands, add adapters and keep AI agents inside limits. '
-        'These pages describe the code on the development branch, which is ahead of the latest published release (0.3.2), and say where something is not built yet.</p>'
+        'These pages describe newer code than the latest published release (0.3.2), which the install script installs. That code is not published yet, so the agent socket, the audit log, dry runs, policy markers and adapters are not in any release. <a href="/docs/getting-started/install/#release-status">Release status</a>. Where something is not built at all, the page says so.</p>'
         '<div class="docs-index">%s</div></article>' % "".join(cards)
     )
     body = docs_shell(nav, "", "Documentation", inner, "")
@@ -508,6 +508,7 @@ def main():
         "count_available": str(counts["available"]),
         "count_later": str(counts["later"]),
         "count_text": "%d adapters" % counts["all"],
+        "release_note": read(SRC / "partials" / "release-note.html").strip(),
     }
 
     site = Site()

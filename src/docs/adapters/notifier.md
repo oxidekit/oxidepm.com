@@ -2,6 +2,9 @@ The notifier is a service adapter. It listens to the lifecycle events of the dae
 
 ## Install it
 
+The archive is not published yet. `--allow-reserved-name` is needed because the core reserves the name `notifier`.
+
+
 ```sh
 oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
 oxidepm adapter enable notifier
@@ -63,4 +66,4 @@ oxidepm notify remove CHANNEL
 ```term cap="notify-status" label="Terminal output of oxidepm notify status"
 ```
 
-`notify` is a caution-tier command that writes, so an AI actor cannot run it on an app it does not control, and it is audited. Without the adapter, `oxidepm notify` prints that the command is provided by the adapter `notifier` and how to import it.
+`notify` is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, `oxidepm notify` prints that the command is provided by the adapter `notifier` and how to import it.

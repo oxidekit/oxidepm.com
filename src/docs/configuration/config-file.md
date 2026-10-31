@@ -43,7 +43,7 @@ The file is sent to the daemon as one batch, so an app may be listed before the 
 
 ## Checked strictly
 
-A config file is checked when it is loaded, and nothing is started if it fails. The error names the app and the line. These are all errors:
+A config file is checked when it is loaded, and nothing is started if it fails. A file that does not parse is reported with its name and the line of the problem; the other errors name the app, the key or the file they are about. These are all errors:
 
 - an unknown key (a typo such as `restart_mode`, which is spelled `restart`),
 - a bad cron expression or log size,

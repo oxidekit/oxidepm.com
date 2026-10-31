@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Read what is running: the table, the extra columns, one app in detail and the daemon itself.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -81,7 +81,7 @@ sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm show api
 oxidepm show api --reveal</code></pre></figure>
 <p><code>show</code> prints one app in detail: its state, command, working directory, arguments and last exit code. Environment values show as <code>&lt;redacted&gt;</code> and scripts as <code>&lt;set&gt;</code>. <code>--reveal</code> prints them, and the daemon writes a line to its log each time. It is a dangerous request, so an AI actor cannot make it.</p>
-<p><code>describe &lt;target&gt;</code> shows the command that would run, without starting anything.</p></div><div class="pager"><a href="/docs/commands/start-stop-restart/" rel="prev"><small>Previous</small><span>start, stop, restart</span></a><a href="/docs/commands/logs/" rel="next"><small>Next</small><span>logs and flush</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#status">status</a></li><li><a href="#status-more">status --more</a></li><li><a href="#status-daemon">status --daemon</a></li><li><a href="#show">show</a></li></ul></nav></div>
+<p><code>describe &lt;name&gt;</code> takes the name or id of an app that is already registered, and shows the command that would run for it, without starting anything. It does not take a file or a command to be started.</p></div><div class="pager"><a href="/docs/commands/start-stop-restart/" rel="prev"><small>Previous</small><span>start, stop, restart</span></a><a href="/docs/commands/logs/" rel="next"><small>Next</small><span>logs and flush</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#status">status</a></li><li><a href="#status-more">status --more</a></li><li><a href="#status-daemon">status --daemon</a></li><li><a href="#show">show</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">
@@ -95,7 +95,6 @@ oxidepm show api --reveal</code></pre></figure>
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

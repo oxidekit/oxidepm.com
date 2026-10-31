@@ -8,6 +8,8 @@ path: /
   <h1 id="hero-title" class="display display-hero">Keeps your apps running.</h1>
   <p class="lede">OxidePM is a process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, written in Rust and MIT licensed.</p>
 
+  <div style="max-width:70ch;margin-top:28px">{{release_note}}</div>
+
   <div class="cta-row">
     <div class="blueprint install">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -23,11 +25,12 @@ path: /
       Read the docs first
     </a>
   </div>
-  <p class="small-note">Want to read the script before you run it? <a href="/install.sh">View install.sh</a>.</p>
+  <p class="small-note">Want to read the script before you run it? <a href="/install.sh">View install.sh</a>. It installs the latest published release, 0.3.2.</p>
+
 
   <dl class="platforms">
     <div><dt>Linux</dt><dd>the main platform</dd></div>
-    <div><dd>macOS: works, without the OS sandbox</dd></div>
+    <div><dt>macOS</dt><dd>process manager only, untested; no adapters or sandbox</dd></div>
     <div><dt>Windows</dt><dd>not supported</dd></div>
   </dl>
 
@@ -50,7 +53,7 @@ path: /
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">Notifications and Prometheus metrics have already moved out of the core into adapters. The web API, the dashboard, the language runtimes and the deploy tools are still built in today, and are planned to follow.</p>
+      <p class="muted">Notifications and Prometheus metrics have already moved out of the core into adapters in the unreleased code. The web API, the dashboard, the language runtimes and the deploy tools are still built in today, and are planned to follow.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -68,11 +71,11 @@ path: /
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-      <pre class="term-body wrap"><span class="t-dim"># daemon and notifier, protocol 1</span>
+      <pre class="term-body wrap"><span class="t-dim"># daemon and notifier, protocol 1 (version numbers are examples)</span>
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
 <span class="t-dim">adapter:</span> {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.1.0"}}
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"initialized","params":{}}
-<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-11-20T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-10-30T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}
 <span class="t-dim">If the adapter stops answering ping three times in a row, the daemon kills it and restarts it. The apps are not touched.</span></pre>
     </figure>
   </article>
@@ -82,7 +85,7 @@ path: /
       <span class="num">03</span>
       <h3 class="h-idea">Safe to hand to an AI agent</h3>
       <p>The daemon decides who is asking from the connection a request arrives on, and a claim can only make a request stricter. An agent on the agent socket is held to limits: it can read everything, may only stop or restart apps you opened to it, and can never start, delete or flush.</p>
-      <p class="muted">Mark an app as protected and agents can't change it. Every command that changes something can be rehearsed with <code style="font-size:0.92em">--dry-run</code>, and what agents ask for is written to an audit log.</p>
+      <p class="muted">Mark an app as protected and agents can't change it. Most commands that change something can be rehearsed with <code style="font-size:0.92em">--dry-run</code>, and what agents ask for is written to an audit log.</p>
       <p class="link-row"><a href="/security/">How the limits work</a></p>
     </div>
     <figure class="blueprint term">
@@ -105,14 +108,14 @@ path: /
     <div class="feature"><div><span class="n">01</span><h3>Daemon</h3></div><p>Apps keep running after you close the terminal. <code>save</code> writes the list, <code>resurrect</code> starts it again, and <code>startup</code> writes a systemd or launchd unit for boot.</p></div>
     <div class="feature"><div><span class="n">02</span><h3>Crash restarts</h3></div><p>A crashed app waits, then restarts with a delay that doubles up to a cap. More than 15 restarts in 10 minutes end it as <code>errored</code>, until a person starts it.</p></div>
     <div class="feature"><div><span class="n">03</span><h3>depends_on</h3></div><p>An app waits until the apps it names are running, and fails closed if they never are (60 seconds by default). <code>stop all</code> stops dependents first.</p></div>
-    <div class="feature"><div><span class="n">04</span><h3>Process groups</h3></div><p>Each app runs in its own process group, and stopping the app stops the group. No child processes are left behind.</p></div>
+    <div class="feature"><div><span class="n">04</span><h3>Process groups</h3></div><p>Each app runs in its own process group, and stopping the app signals the whole group. A child that starts its own session or detaches itself is not in it.</p></div>
     <div class="feature"><div><span class="n">05</span><h3>Clean environment</h3></div><p>Apps don’t inherit the daemon’s environment. They get <code>PATH</code>, <code>HOME</code> and a few basics, plus what you pass with <code>--env</code> or <code>env_file</code>.</p></div>
     <div class="feature"><div><span class="n">06</span><h3>Health checks</h3></div><p>HTTP, TCP or a script of your own.</p></div>
     <div class="feature"><div><span class="n">07</span><h3>Limits</h3></div><p>Restart an app when it passes a memory or uptime limit.</p></div>
     <div class="feature"><div><span class="n">08</span><h3>Cron restarts</h3></div><p>Restart an app on a cron schedule (UTC).</p></div>
     <div class="feature"><div><span class="n">09</span><h3>Clusters</h3></div><p>Run up to 256 instances of one app. Instance <code>i</code> gets port <code>port + i</code>.</p></div>
     <div class="feature"><div><span class="n">10</span><h3>Logs</h3></div><p>Captured per app and rotated by size (10 MB and 5 files by default). Gzip compression of rotated files is optional.</p></div>
-    <div class="feature"><div><span class="n">11</span><h3>Scripting</h3></div><p><code>--json</code> output, and <code>--dry-run</code> on every command that changes something.</p></div>
+    <div class="feature"><div><span class="n">11</span><h3>Scripting</h3></div><p><code>--json</code> output, and <code>--dry-run</code> on most commands that change something.</p></div>
     <div class="feature"><div><span class="n">12</span><h3>Adapter checks</h3></div><p>An adapter is checked against a SHA-256 before it is installed, shows what it asks for before it can be enabled, and on Linux runs under Landlock and seccomp.</p></div>
     <p class="sheet-foot">Errors carry stable <code>E_…</code> codes on the daemon socket, in the audit log and in the adapter protocol.</p>
   </div>
@@ -128,7 +131,7 @@ path: /
     </div>
     <dl class="facts">
       <div><dt>Windows</dt><dd>Not supported.</dd></div>
-      <div><dt>macOS</dt><dd>macOS: works, without the OS sandbox</dd></div>
+      <div><dt>macOS</dt><dd>The process manager is built for it but not tested there. Adapters, the sandbox and recovery of orphaned apps are Linux only.</dd></div>
       <div><dt>Reload</dt><dd>There is no zero-downtime reload. A reload is a restart.</dd></div>
       <div><dt>File watching</dt><dd>Not available yet. <code>--watch</code> is refused.</dd></div>
       <div><dt>Sandbox</dt><dd>It limits the damage a buggy adapter can do. It does not fully contain a hostile one. That is why every adapter is hash-checked and shows what it asks for before you enable it. <a href="/security/#adapters">Details</a>.</dd></div>
@@ -147,13 +150,13 @@ path: /
   <div class="flow" data-flow>
     <ol class="flow-steps" aria-label="Adapter workflow">
       <li><button type="button" class="flow-step" data-step="0" aria-pressed="true"><span class="step-no">1</span><span class="step-text"><span class="step-title">List</span><code class="step-cmd">oxidepm adapter list</code><span class="step-note">See what is installed. Searching an index needs a published one, and there is none yet.</span></span></button></li>
-      <li><button type="button" class="flow-step" data-step="1" aria-pressed="false"><span class="step-no">2</span><span class="step-text"><span class="step-title">Import</span><code class="step-cmd">oxidepm adapter import notifier.tar.gz --sha256 …</code><span class="step-note">Checks the archive against the SHA-256 you give and shows what it asks for. It stays off.</span></span></button></li>
+      <li><button type="button" class="flow-step" data-step="1" aria-pressed="false"><span class="step-no">2</span><span class="step-text"><span class="step-title">Import</span><code class="step-cmd">oxidepm adapter import notifier.tar.gz --sha256 … --allow-reserved-name</code><span class="step-note">Checks the archive against the SHA-256 you give and shows what it asks for. It stays off. The core reserves the name <code>notifier</code>, hence the flag.</span></span></button></li>
       <li><button type="button" class="flow-step" data-step="2" aria-pressed="false"><span class="step-no">3</span><span class="step-text"><span class="step-title">Enable and approve</span><code class="step-cmd">oxidepm adapter enable notifier</code><span class="step-note">Shows the same list again and asks. Nothing runs until you say yes.</span></span></button></li>
     </ol>
 
     <figure class="blueprint term flow-term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-      <div class="term-bar"><span>deploy@srv-01:~</span><span data-step-label>step 1 of 3</span></div>
+      <div class="term-bar"><span>deploy@srv-01:~</span><span data-step-label>1 of 3</span></div>
       <div data-panel="0"><pre class="term-body">{{cap:adapter-list}}</pre></div>
       <div data-panel="1" hidden><pre class="term-body">{{cap:adapter-import}}</pre></div>
       <div data-panel="2" hidden><pre class="term-body">{{cap:adapter-enable}}<span data-pending><button type="button" class="term-btn yes" data-allow>y  allow</button> <button type="button" class="term-btn" data-deny>N  deny</button></span><span data-yes hidden>yes
@@ -164,11 +167,11 @@ path: /
     </figure>
   </div>
   <noscript><style>[data-panel][hidden]{display:block!important}</style></noscript>
-  <p class="term-ink">Example output from a local build of the adapter. The hashes are those of that build.</p>
+  <p class="term-ink">Example output from a local build of the adapter. The hashes are those of that build, and the archive is not published yet.</p>
 
   <div class="lists">
     <div>
-      <h3 class="h-sub">Available now</h3>
+      <h3 class="h-sub">Built</h3>
       <ul class="chips">
 {{chips_available}}
       </ul>

@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Save the app list, generate a boot unit and bring the apps back.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -76,7 +76,7 @@ Environment=&quot;HOME=/home/deploy&quot;
 [Install]
 WantedBy=multi-user.target</code></pre></figure>
 <p><code>TimeoutStopSec</code> is the daemon&#x27;s shutdown budget (<code>shutdown_budget_secs</code>, 120 seconds by default) plus 40 seconds, and <code>KillMode=mixed</code> makes systemd send the stop signal to the daemon alone and leave it time to stop the apps in order. Run <code>startup</code> again after you change the budget, to get the new value.</p>
-<p>The daemon starts the apps that should be running when it starts at boot. <code>pids.json</code> in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything.</p></div><div class="pager"><a href="/docs/getting-started/first-app/" rel="prev"><small>Previous</small><span>Your first app</span></a><a href="/docs/getting-started/upgrade/" rel="next"><small>Next</small><span>Upgrade</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#save-the-list">Save the list</a></li><li><a href="#bring-the-apps-back">Bring the apps back</a></li><li><a href="#start-the-daemon-at-boot">Start the daemon at boot</a></li></ul></nav></div>
+<p>The daemon starts the apps that should be running when it starts at boot. On Linux, <code>pids.json</code> in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything. On macOS that recovery is not available, and the daemon logs a warning instead.</p></div><div class="pager"><a href="/docs/getting-started/first-app/" rel="prev"><small>Previous</small><span>Your first app</span></a><a href="/docs/getting-started/upgrade/" rel="next"><small>Next</small><span>Upgrade</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#save-the-list">Save the list</a></li><li><a href="#bring-the-apps-back">Bring the apps back</a></li><li><a href="#start-the-daemon-at-boot">Start the daemon at boot</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">
@@ -90,7 +90,6 @@ WantedBy=multi-user.target</code></pre></figure>
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

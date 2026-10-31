@@ -9,7 +9,14 @@
   function $$(sel, ctx) { return Array.prototype.slice.call((ctx || doc).querySelectorAll(sel)); }
 
   /* ---- theme ---- */
-  function themeNow() { return root.getAttribute("data-theme") === "dark" ? "dark" : "light"; }
+  function systemDark() {
+    try { return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); } catch (e) { return false; }
+  }
+  function themeNow() {
+    var t = root.getAttribute("data-theme");
+    if (t !== "dark" && t !== "light") t = systemDark() ? "dark" : "light";
+    return t;
+  }
   function syncThemeLabels() {
     var dark = themeNow() === "dark";
     var label = dark ? "Switch to light theme" : "Switch to dark theme";
@@ -55,16 +62,22 @@
     ta.style.position = "fixed";
     ta.style.opacity = "0";
     doc.body.appendChild(ta);
+    var active = doc.activeElement;
     ta.select();
-    try { doc.execCommand("copy"); } catch (e) {}
+    var ok = false;
+    try { ok = !!doc.execCommand("copy"); } catch (e) { ok = false; }
     doc.body.removeChild(ta);
+    if (active && active !== doc.body && active.focus) { try { active.focus({ preventScroll: true }); } catch (e) {} }
+    return ok;
   }
   $$("[data-copy]").forEach(function (btn, i) {
     var label = btn.querySelector("[data-copy-label]");
     var idle = label ? label.textContent : btn.textContent;
-    var done = function () {
-      if (label) label.textContent = "Copied"; else btn.textContent = "Copied";
-      if (copyStatus) copyStatus.textContent = btn.getAttribute("data-copy-message") || "Copied to clipboard";
+    var done = function (ok) {
+      var failed = ok === false;
+      var shown = failed ? "Copy failed" : "Copied";
+      if (label) label.textContent = shown; else btn.textContent = shown;
+      if (copyStatus) copyStatus.textContent = failed ? "Copy failed. Select the text and copy it." : (btn.getAttribute("data-copy-message") || "Copied to clipboard");
       clearTimeout(copyTimers[i]);
       copyTimers[i] = setTimeout(function () {
         if (label) label.textContent = idle; else btn.textContent = idle;
@@ -74,8 +87,8 @@
     btn.addEventListener("click", function () {
       var target = doc.getElementById(btn.getAttribute("data-copy"));
       var text = target ? target.textContent.replace(/\n$/, "") : "";
-      var fallback = function () { legacyCopy(text); done(); };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+      var fallback = function () { done(legacyCopy(text)); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
       else fallback();
     });
   });
@@ -96,7 +109,7 @@
     var select = function (n) {
       stepBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(+b.getAttribute("data-step") === n)); });
       panels.forEach(function (p) { p.hidden = +p.getAttribute("data-panel") !== n; });
-      if (stepLabel) stepLabel.textContent = "step " + (n + 1) + " of 3";
+      if (stepLabel) stepLabel.textContent = (n + 1) + " of 3";
       if (n !== 2) { consent = null; showConsent(); }
     };
     stepBtns.forEach(function (b) { b.addEventListener("click", function () { select(+b.getAttribute("data-step")); }); });

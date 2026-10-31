@@ -31,7 +31,7 @@ requires_enforcement | list | default: none
 |---|---|
 | The daemon | The host level and scope, the markers, the audit log, the rate limits, the size and rate limits of the protocol, what is in an event, and the scrubbing of an app's secrets from logs. All of it holds whether or not the adapter cooperates. |
 | The operating system | Which files it can read and write, which programs it can start, and its system calls. On Linux, through Landlock and seccomp. See [The sandbox](/docs/adapters/sandbox/). |
-| You | What you accepted on the consent screen. The list of hosts an adapter says it connects to is shown, but it is not enforced per host. |
+| You | What you accepted on the consent screen. The list of hosts an adapter says it connects to is shown, but it is not enforced per host. Local Unix sockets (a session bus, an ssh agent) may also stay reachable; see [The sandbox](/docs/adapters/sandbox/). |
 
 ## What an update may change
 

@@ -77,7 +77,7 @@ A `service` may list events, and provides no runtimes. A `tool` receives no even
 
 The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. The frames on these pages are the reference.
 
-The adapters repository has a small SDK crate, `oxidepm-adapter-sdk`, that does the main loop of a service in Rust: the handshake, `ping`, events, relayed verbs and `shutdown`. Both adapters in that repository use it.
+The source of the two adapters includes a small SDK crate, `oxidepm-adapter-sdk`, that does the main loop of a service in Rust: the handshake, `ping`, events, relayed verbs and `shutdown`. Both adapters use it. That source is not published yet.
 
 ## Try it
 

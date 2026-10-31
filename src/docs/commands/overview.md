@@ -11,7 +11,7 @@
 | `show <name> [--reveal]` | One app in detail. `--reveal` also prints environment values and hook scripts. |
 | `logs <name> [-f]` | Read or follow logs. |
 | `flush <selector>` | Truncate the active log files. |
-| `describe <target>` | Show the command that would run, without starting it. |
+| `describe <name>` | Show the command that would run for an app that is already registered, without starting anything. |
 | `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
 | `audit` | Read the audit log. |
 | `save [--force]`, `resurrect` | Write and restore the list of apps that should run. |

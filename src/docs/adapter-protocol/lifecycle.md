@@ -8,6 +8,8 @@ The daemon speaks first. The adapter stays silent until it receives `initialize`
 {hi:daemon:}  {"jsonrpc":"2.0","method":"initialized","params":{}}
 ```
 
+The version numbers in this example are illustrative. The daemon puts its own version in `host.version`.
+
 - The adapter must answer within 10 seconds, with the highest protocol it shares with `protocols`, and its own `name` and `version`.
 - The daemon compares `name` and `version` with what it has on record. A difference means the executable is not what was installed: the adapter is killed and marked failed (`tampered`) and does not start again.
 - A protocol that is not in the offered list, or an error `-32022` (optionally with `data.supported`), marks the adapter failed (`incompatible`).

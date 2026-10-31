@@ -43,4 +43,4 @@ WantedBy=multi-user.target
 
 `TimeoutStopSec` is the daemon's shutdown budget (`shutdown_budget_secs`, 120 seconds by default) plus 40 seconds, and `KillMode=mixed` makes systemd send the stop signal to the daemon alone and leave it time to stop the apps in order. Run `startup` again after you change the budget, to get the new value.
 
-The daemon starts the apps that should be running when it starts at boot. `pids.json` in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything.
+The daemon starts the apps that should be running when it starts at boot. On Linux, `pids.json` in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything. On macOS that recovery is not available, and the daemon logs a warning instead.

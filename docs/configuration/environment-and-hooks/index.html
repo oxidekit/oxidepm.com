@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="What environment an app gets, how secrets are shown, and event hooks.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -81,7 +81,6 @@ api: no environment variables set</pre></figure>
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

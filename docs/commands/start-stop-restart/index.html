@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Start an app or a config file, stop it, restart it, reload it and delete it.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -66,7 +66,7 @@ oxidepm delete api</code></pre></figure>
 <ul><li><code>stop</code> stops the app. It stays stopped and is not restarted automatically. With several apps (<code>all</code>, a tag), dependents are stopped before their dependencies.</li><li><code>restart</code> stops and starts the app again. It also starts an app that is at rest.</li><li><code>reload</code> is the same as <code>restart</code>.</li><li><code>delete</code> stops the app and removes it from the registry and the database.</li></ul>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm restart"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm restart web
 <span class="t-hi">✓</span> Restarted 1 process(es)</pre></figure>
-<p>A <code>start</code> of an app that is not at rest is refused with <code>E_APP_EXISTS</code> and changes nothing. Every one of these commands takes [<code>--dry-run</code>](/docs/commands/dry-run/).</p></div><div class="pager"><a href="/docs/commands/overview/" rel="prev"><small>Previous</small><span>Overview</span></a><a href="/docs/commands/status/" rel="next"><small>Next</small><span>status and show</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#start">start</a></li><li><a href="#stop-restart-reload-delete">stop, restart, reload, delete</a></li></ul></nav></div>
+<p>A <code>start</code> of an app that is not at rest is refused with <code>E_APP_EXISTS</code> and changes nothing. These commands take [<code>--dry-run</code>](/docs/commands/dry-run/), except <code>start --git</code> and <code>start --setup</code>, which refuse it.</p></div><div class="pager"><a href="/docs/commands/overview/" rel="prev"><small>Previous</small><span>Overview</span></a><a href="/docs/commands/status/" rel="next"><small>Next</small><span>status and show</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#start">start</a></li><li><a href="#stop-restart-reload-delete">stop, restart, reload, delete</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">
@@ -80,7 +80,6 @@ oxidepm delete api</code></pre></figure>
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

@@ -4,7 +4,7 @@ Every request has a tier. A person (class `human`, any label) may make every req
 |---|---|---|
 | safe | `status`, `show`, `describe`, `logs`, `ping`, `hello` | Yes, on every app, protected ones too. |
 | caution | `stop`, `restart`, `reload` | Only on an app marked `ai_control` and not `protected`. |
-| dangerous | `start` (and a config file: a spec is arbitrary code), `delete`, `flush`, `kill`, `save`, `resurrect`, `show --reveal`, `describe --reveal` | Never. |
+| dangerous | `start` (and a config file: a spec is arbitrary code), `delete`, `flush`, `kill`, `save`, `resurrect`, `show --reveal` | Never. |
 
 ## Rules for caution requests
 

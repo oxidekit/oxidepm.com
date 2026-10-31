@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="What is written to the audit log, what is not, and how to read it.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -63,7 +63,7 @@
 <h2 id="what-is-never-written">What is never written</h2>
 <p>Environment values, hook and probe scripts, the arguments themselves, log lines, the app spec and adapter configuration. The record is a fixed set of fields with no place for them, and free text is cut to a fixed length.</p>
 <h2 id="written-before-it-runs">Written before it runs</h2>
-<p>A non-human actor&#x27;s caution or dangerous request is written to disk before it runs. If the log cannot be written (the directory is a file, the disk is full, the writer is stuck), the request is refused with <code>E_AUDIT_UNAVAILABLE</code> and nothing happens. A read still goes through, and the lost line is counted. A person is never held up: a stop works while the log is broken, which is how a full-disk incident is handled. The lines that could not be written are counted. <code>oxidepm status --daemon</code> shows <code>audit: ok</code> or <code>degraded</code>, how many lines were lost, and what is wrong.</p>
+<p>A non-human actor&#x27;s caution or dangerous request is written to disk before it runs. If the log cannot be written (the directory is a file, the disk is full, the writer is stuck), the request is refused with <code>E_AUDIT_UNAVAILABLE</code> and nothing happens. A read still goes through, and the lost line is counted. A person is never held up: a stop works while the log is broken, which is how a full-disk incident is handled. The lines that could not be written are counted. <code>oxidepm status --daemon</code> shows <code>audit log: ok</code> or <code>degraded</code>, how many lines were lost, and what is wrong.</p>
 <h2 id="read-it">Read it</h2>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm audit"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm audit --tail 7
 2026-10-31T04:21:24.161Z #3      ai:assistant stop [caution] allow web (dry run)
@@ -95,7 +95,6 @@ oxidepm --json audit                   # one JSON object per line</code></pre></
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

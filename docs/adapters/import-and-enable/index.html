@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Install an adapter from an archive you pin, read what it asks for, and enable it.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -61,7 +61,7 @@ No adapters are installed. `oxidepm adapter list --available` shows what the ind
 <p>An archive is a gzip tarball with <code>manifest.json</code> and the executable the manifest names in <code>exec</code>, side by side. Import it from a file or an https URL, and pin it with its SHA-256:</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import notifier.tar.gz --sha256 &lt;hex&gt; --allow-reserved-name</code></pre></figure>
 <p>Without <code>--sha256</code> nothing is installed: the command prints the archive&#x27;s hash and asks you to run it again with <code>--sha256</code> if you trust it. On a terminal, a pinned import asks you to type the first 12 digits of the hash when it is not given.</p>
-<p><code>--allow-reserved-name</code> is needed because the core reserves some adapter names, such as <code>notifier</code>, for adapters signed by an official key. Other forms are <code>oxidepm adapter import --bundled [names] [--tag runtime]</code>, which takes adapters from the bundle that a release carries (a <code>cargo install</code> build has none), and <code>oxidepm adapter import &lt;name&gt;</code> from the signed index. <code>--enable</code> enables the adapter right after it is installed, with the same consent.</p>
+<p><code>--allow-reserved-name</code> is needed only for a name the core reserves for adapters signed by an official key: <code>notifier</code>, <code>ui-web</code>, <code>ui-tui</code>, <code>check</code>, <code>init</code>, <code>git-start</code>, <code>deploy</code> and the <code>runtime-</code> adapters for node, python, go and rust. The Prometheus exporter is not reserved, so it needs no flag. Pass the flag, as in the example, for <code>notifier</code>. Other forms are <code>oxidepm adapter import --bundled [names] [--tag runtime]</code>, which takes adapters from the bundle that a release carries (a <code>cargo install</code> build has none), and <code>oxidepm adapter import &lt;name&gt;</code> from the signed index. <code>--enable</code> enables the adapter right after it is installed, with the same consent.</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter import"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter import notifier.tar.gz --sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203 --allow-reserved-name
 Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
           Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
@@ -163,7 +163,6 @@ Again, what it needs:
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

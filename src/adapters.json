@@ -11,7 +11,7 @@
    "Write only to its own state directory",
    "Receive OXIDEPM_TELEGRAM_TOKEN from the daemon's environment"
   ],
-  "cmd": "Built and tested. No signed index is published yet: import it from an archive pinned by its SHA-256."
+  "cmd": "Built and tested, not published yet: there is no archive to download and no signed index. Once there is one, import it from an archive pinned by its SHA-256."
  },
  {
   "name": "exporter-prometheus",
@@ -21,10 +21,11 @@
   "head": "Asks for permission to",
   "perms": [
    "Read app status (read access only)",
+   "Make outbound network connections (no hosts named)",
    "Listen on 127.0.0.1:9616",
    "Read its own state directory, write nothing"
   ],
-  "cmd": "Built and tested. No signed index is published yet: import it from an archive pinned by its SHA-256."
+  "cmd": "Built and tested, not published yet: there is no archive to download and no signed index. Once there is one, import it from an archive pinned by its SHA-256."
  },
  {
   "name": "ui-web",
@@ -137,10 +138,10 @@
   "cmd": ""
  },
  {
-  "name": "watch",
+  "name": "watch-rebuild",
   "kind": "Planned: file watching",
   "status": "later",
-  "summary": "Restarts an app when its files change. File watching is not available in the core today: --watch is refused.",
+  "summary": "Restarts an app when its files change. File watching is not available in the core today: --watch is refused, and the message points here. Planned, not built.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
@@ -151,7 +152,7 @@
   "name": "AI adapters",
   "kind": "Planned: AI",
   "status": "later",
-  "summary": "Adapters that let AI agents work with OxidePM, held to the limits described on the security page. None is built yet.",
+  "summary": "A plan, with no code behind it yet: adapters that would let AI agents work with OxidePM, held to the limits described on the security page.",
   "head": "Permissions",
   "perms": [
    "Not decided yet"

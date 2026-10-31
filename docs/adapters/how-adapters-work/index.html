@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="What an adapter is, what runs where, and what happens when one fails.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -60,7 +60,7 @@
 <h2 id="when-one-fails">When one fails</h2>
 <ul><li>A crash, a hang, a flood of output or a broken protocol gets the adapter killed and restarted with a growing delay. Three protocol violations in 60 seconds count as a crash.</li><li>Events for a service that is down or slow are dropped and counted, never queued without limit.</li><li>A request to an adapter that is missing, failed or not ready fails with a named error (<code>E_ADAPTER_MISSING</code>, <code>E_ADAPTER_UNAVAILABLE</code>, <code>E_ADAPTER_TIMEOUT</code>, <code>E_ADAPTER_CRASHED</code>). There is no silent fallback.</li><li>The daemon never stops, restarts, signals or changes an app because an adapter failed.</li></ul>
 <h2 id="which-adapters-exist">Which adapters exist</h2>
-<p>Two are built and tested today: the <a href="/docs/adapters/notifier/">notifier</a> and the <a href="/docs/adapters/exporter-prometheus/">Prometheus exporter</a>. The core reserves the names of adapters that are planned to take over the web API, the dashboard, the language runtimes, project checks, deploys and file watching. See the <a href="/adapters/">list</a>.</p>
+<p>Two are built and tested: the <a href="/docs/adapters/notifier/">notifier</a> and the <a href="/docs/adapters/exporter-prometheus/">Prometheus exporter</a>. Neither is published yet. The core reserves the names of adapters that are planned to take over the web API, the dashboard, the language runtimes, project checks and deploys. File watching is planned as an adapter called <code>watch-rebuild</code>, a name that is not reserved yet. See the <a href="/adapters/">list</a>.</p>
 <h2 id="where-they-come-from">Where they come from</h2>
 <p>An adapter is imported from an archive. You can pin an archive by its SHA-256 (a file or an https URL), take one from the bundle a release carries, or take one from a signed index. The signing code is in the CLI and the daemon, but this build has no index address and no official signing key embedded, so there is no index to search yet. See <a href="/docs/adapters/import-and-enable/">Import and enable</a>.</p></div><div class="pager"><a href="/docs/commands/other-commands/" rel="prev"><small>Previous</small><span>Other commands</span></a><a href="/docs/adapters/import-and-enable/" rel="next"><small>Next</small><span>Import and enable</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-an-adapter-is">What an adapter is</a></li><li><a href="#what-an-adapter-can-add">What an adapter can add</a></li><li><a href="#when-one-fails">When one fails</a></li><li><a href="#which-adapters-exist">Which adapters exist</a></li><li><a href="#where-they-come-from">Where they come from</a></li></ul></nav></div>
 <footer class="site-footer">
@@ -76,7 +76,6 @@
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

@@ -50,4 +50,4 @@ oxidepm policy set @backend --ai-control=false
   set_policy  web  protected true -> false, ai_control true -> true
 ```
 
-Every request that changes something can be rehearsed this way. See [Dry run](/docs/commands/dry-run/).
+Most requests that change something can be rehearsed this way. See [Dry run](/docs/commands/dry-run/) for the ones that cannot.

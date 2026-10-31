@@ -1,6 +1,6 @@
 #!/bin/sh
 # OxidePM Installer
-# Usage: curl -fsSL https://oxidekit.github.io/oxidepm/install.sh | sh
+# Usage: curl -fsSL https://oxidepm.com/install.sh | sh
 
 set -e
 
@@ -34,7 +34,7 @@ detect_platform() {
             ;;
         Darwin)
             case "$ARCH" in
-                x86_64)  TARGET="x86_64-apple-darwin" ;;
+                x86_64)  error "No build is published for Intel Macs (x86_64 Darwin). Builds exist for Linux (x86_64, aarch64) and macOS on Apple Silicon (arm64)" ;;
                 arm64)   TARGET="aarch64-apple-darwin" ;;
                 *)       error "Unsupported architecture: $ARCH" ;;
             esac
@@ -147,7 +147,7 @@ main() {
     echo ""
     echo "  ╔═══════════════════════════════════╗"
     echo "  ║       OxidePM Installer           ║"
-    echo "  ║  Process Manager for Node & Rust  ║"
+    echo "  ║    Keeps your apps running        ║"
     echo "  ╚═══════════════════════════════════╝"
     echo ""
 

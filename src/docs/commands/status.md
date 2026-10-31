@@ -39,4 +39,4 @@ oxidepm show api --reveal
 
 `show` prints one app in detail: its state, command, working directory, arguments and last exit code. Environment values show as `<redacted>` and scripts as `<set>`. `--reveal` prints them, and the daemon writes a line to its log each time. It is a dangerous request, so an AI actor cannot make it.
 
-`describe <target>` shows the command that would run, without starting anything.
+`describe <name>` takes the name or id of an app that is already registered, and shows the command that would run for it, without starting anything. It does not take a file or a command to be started.

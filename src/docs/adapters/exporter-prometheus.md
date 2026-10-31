@@ -2,12 +2,15 @@ The exporter is a service adapter with read access only. On each scrape it asks 
 
 ## Install it
 
+The archive is not published yet.
+
+
 ```sh
-oxidepm adapter import exporter-prometheus.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter import exporter-prometheus.tar.gz --sha256 <hex>
 oxidepm adapter enable exporter-prometheus
 ```
 
-It listens on `127.0.0.1:9616` and serves the Prometheus text format on `/metrics`, and nothing else.
+The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host; the consent screen marks that last one `[BROAD]`. It serves the Prometheus text format on `/metrics`, and nothing else.
 
 ```yaml title="prometheus.yml"
 scrape_configs:

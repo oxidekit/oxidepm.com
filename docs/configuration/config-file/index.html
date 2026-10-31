@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Where an app&#x27;s settings live, which formats are read and how strictly.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -84,7 +84,7 @@ log_compress = true</code></pre></figure>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm start oxidepm.config.toml</code></pre></figure>
 <p>The file is sent to the daemon as one batch, so an app may be listed before the apps it depends on. Each app gets its own result: an app that cannot start does not stop the others, but the apps that depend on it are refused too.</p>
 <h2 id="checked-strictly">Checked strictly</h2>
-<p>A config file is checked when it is loaded, and nothing is started if it fails. The error names the app and the line. These are all errors:</p>
+<p>A config file is checked when it is loaded, and nothing is started if it fails. A file that does not parse is reported with its name and the line of the problem; the other errors name the app, the key or the file they are about. These are all errors:</p>
 <ul><li>an unknown key (a typo such as <code>restart_mode</code>, which is spelled <code>restart</code>),</li><li>a bad cron expression or log size,</li><li>a health check that is not exactly one of <code>http_url</code>, <code>tcp</code> or <code>script</code>,</li><li>an <code>env_file</code> that does not exist,</li><li>a <code>script</code> whose runtime cannot be inferred from its extension (set <code>mode</code>),</li><li><code>watch = true</code>, because file watching is not available yet,</li><li>a dependency on an app that is not in the file or the registry, or a dependency cycle.</li></ul>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm start with a config file that has an unknown key"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm start bad.toml
 <span class="t-ox">Error:</span> Config error: bad.toml: TOML parse error at line 5, column 1
@@ -111,7 +111,6 @@ unknown field `restart_mode`, expected one of `name`, `mode`, `runtime`, `script
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

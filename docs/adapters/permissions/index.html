@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="What a manifest can ask for, and what the daemon enforces itself.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -56,7 +56,7 @@
 <h2 id="what-the-host-level-allows">What the host level allows</h2>
 <p><code>read</code> makes safe requests: <code>status</code>, <code>show</code>, <code>describe</code>, <code>logs</code> and the daemon&#x27;s status. <code>lifecycle</code> also stops, restarts and reloads apps. <code>admin</code> also starts apps and makes the dangerous and global requests: <code>delete</code>, <code>flush</code>, <code>save</code>, <code>resurrect</code>. Always only on apps that are not protected, and, with scope <code>opted-in</code>, only on apps that list the adapter under <code>adapters</code>. <code>kill</code>, changing policy markers and revealing environment values are a person&#x27;s, whatever the grant.</p>
 <h2 id="who-enforces-what">Who enforces what</h2>
-<div class="table-wrap"><table><thead><tr><th>Layer</th><th>What it enforces</th></tr></thead><tbody><tr><td>The daemon</td><td>The host level and scope, the markers, the audit log, the rate limits, the size and rate limits of the protocol, what is in an event, and the scrubbing of an app&#x27;s secrets from logs. All of it holds whether or not the adapter cooperates.</td></tr><tr><td>The operating system</td><td>Which files it can read and write, which programs it can start, and its system calls. On Linux, through Landlock and seccomp. See <a href="/docs/adapters/sandbox/">The sandbox</a>.</td></tr><tr><td>You</td><td>What you accepted on the consent screen. The list of hosts an adapter says it connects to is shown, but it is not enforced per host.</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Layer</th><th>What it enforces</th></tr></thead><tbody><tr><td>The daemon</td><td>The host level and scope, the markers, the audit log, the rate limits, the size and rate limits of the protocol, what is in an event, and the scrubbing of an app&#x27;s secrets from logs. All of it holds whether or not the adapter cooperates.</td></tr><tr><td>The operating system</td><td>Which files it can read and write, which programs it can start, and its system calls. On Linux, through Landlock and seccomp. See <a href="/docs/adapters/sandbox/">The sandbox</a>.</td></tr><tr><td>You</td><td>What you accepted on the consent screen. The list of hosts an adapter says it connects to is shown, but it is not enforced per host. Local Unix sockets (a session bus, an ssh agent) may also stay reachable; see <a href="/docs/adapters/sandbox/">The sandbox</a>.</td></tr></tbody></table></div>
 <h2 id="what-an-update-may-change">What an update may change</h2>
 <p>An update that asks for more than the installed version, in any field, shows what grew (<code>[GROWS]</code> in the list and a <code>Grows</code> section) and needs a new acceptance. Asking for less never needs one.</p>
 <h2 id="environment-values-in-events">Environment values in events</h2>
@@ -74,7 +74,6 @@
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

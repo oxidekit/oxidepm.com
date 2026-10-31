@@ -24,7 +24,7 @@ Environment values, hook and probe scripts, the arguments themselves, log lines,
 
 ## Written before it runs
 
-A non-human actor's caution or dangerous request is written to disk before it runs. If the log cannot be written (the directory is a file, the disk is full, the writer is stuck), the request is refused with `E_AUDIT_UNAVAILABLE` and nothing happens. A read still goes through, and the lost line is counted. A person is never held up: a stop works while the log is broken, which is how a full-disk incident is handled. The lines that could not be written are counted. `oxidepm status --daemon` shows `audit: ok` or `degraded`, how many lines were lost, and what is wrong.
+A non-human actor's caution or dangerous request is written to disk before it runs. If the log cannot be written (the directory is a file, the disk is full, the writer is stuck), the request is refused with `E_AUDIT_UNAVAILABLE` and nothing happens. A read still goes through, and the lost line is counted. A person is never held up: a stop works while the log is broken, which is how a full-disk incident is handled. The lines that could not be written are counted. `oxidepm status --daemon` shows `audit log: ok` or `degraded`, how many lines were lost, and what is wrong.
 
 ## Read it
 

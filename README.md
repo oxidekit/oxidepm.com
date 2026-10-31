@@ -26,6 +26,14 @@ python3 -m http.server 8000       # then open http://127.0.0.1:8000/
 
 Edit files in `src/`, run the build, and commit the sources together with the generated output. `src/captures/` holds sample terminal output that was recorded from a real build of OxidePM; the pages include it by name.
 
+## Before it goes live
+
+The pages describe code that is newer than the latest published release (0.3.2), and the adapters are not published yet. Until a release contains them, the notice in `src/partials/release-note.html` (shown on the home, security and adapters pages), the "Release status" section of `src/docs/getting-started/install.md` and the sentence in the docs index (`scripts/build.py`) say so. Remove them when a release has the code, and link the adapters repository and archives when they exist.
+
+The text was checked against a build of the unpublished core. Re-check the pages that mention the `web` command (docs: commands, adapters list, home page) after the web server moves out of the core.
+
+`src/` and `scripts/` are in the served root because Pages serves the repository root. They contain nothing that is not already public in the repository.
+
 ## Publish
 
 In the repository settings choose Pages, source "Deploy from a branch", branch `main`, folder `/ (root)`, and set the custom domain to `oxidepm.com`.

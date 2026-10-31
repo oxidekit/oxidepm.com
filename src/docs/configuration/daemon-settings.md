@@ -24,12 +24,15 @@ Everything is in `~/.oxidepm`. The `OXIDEPM_HOME` environment variable names ano
 ├── oxidepmd.lock   # held by the running daemon: one daemon per home
 ├── daemon.toml     # optional daemon settings
 ├── state.db        # SQLite: full app specs and the two policy markers
-├── daemon.log      # fatal daemon startup errors
+├── daemon.log      # what the daemon wrote to stderr while it started (fatal startup errors)
+├── daemon.log.DATE # the daemon's log, one file a day, the last 7 days kept
 ├── saved.json      # the saved process list
 ├── pids.json       # live app processes
 ├── audit/          # audit.jsonl and audit-security.jsonl
-├── adapters/       # installed adapters, their state and adapters.db
-├── repos/          # git clones
+├── adapters.db     # SQLite: installed adapters, grants and consent (with -wal and -shm files while it is open)
+├── adapter-pids.json # live adapter processes
+├── adapters/       # installed adapters and their state (index, installed, staging, state, trash, verbs.json)
+├── repos/          # git clones, created when first used
 └── logs/           # app logs
 ```
 

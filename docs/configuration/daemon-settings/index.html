@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="The optional daemon.toml and the files in the data directory.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -61,12 +61,15 @@
 ├── oxidepmd.lock   # held by the running daemon: one daemon per home
 ├── daemon.toml     # optional daemon settings
 ├── state.db        # SQLite: full app specs and the two policy markers
-├── daemon.log      # fatal daemon startup errors
+├── daemon.log      # what the daemon wrote to stderr while it started (fatal startup errors)
+├── daemon.log.DATE # the daemon&#x27;s log, one file a day, the last 7 days kept
 ├── saved.json      # the saved process list
 ├── pids.json       # live app processes
 ├── audit/          # audit.jsonl and audit-security.jsonl
-├── adapters/       # installed adapters, their state and adapters.db
-├── repos/          # git clones
+├── adapters.db     # SQLite: installed adapters, grants and consent (with -wal and -shm files while it is open)
+├── adapter-pids.json # live adapter processes
+├── adapters/       # installed adapters and their state (index, installed, staging, state, trash, verbs.json)
+├── repos/          # git clones, created when first used
 └── logs/           # app logs</code></pre></figure>
 <h2 id="the-sockets">The sockets</h2>
 <p>The CLI and the daemon talk over <code>daemon.sock</code>, with mode 0600. The daemon drops connections from any other user. <code>OXIDEPM_SOCKET</code> names another socket for the CLI. A request is one line of JSON in an envelope that carries the protocol version (2) and a request id, and the answer is one line. A line may be up to 10 MiB, and a connection that sends nothing for 5 minutes is closed.</p>
@@ -84,7 +87,6 @@
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

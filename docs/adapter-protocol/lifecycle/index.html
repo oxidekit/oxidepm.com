@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="How an adapter starts, is checked and is stopped.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -55,6 +55,7 @@
 <figure class="blueprint term" role="img" aria-label="initialize and its reply"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">daemon:</span>  {&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;initialize&quot;,&quot;params&quot;:{&quot;protocols&quot;:[1],&quot;host&quot;:{&quot;name&quot;:&quot;oxidepmd&quot;,&quot;version&quot;:&quot;0.4.0&quot;},&quot;adapter&quot;:{&quot;name&quot;:&quot;notifier&quot;,&quot;version&quot;:&quot;0.1.0&quot;},&quot;kind&quot;:&quot;service&quot;,&quot;grant&quot;:{&quot;level&quot;:&quot;read&quot;,&quot;scope&quot;:&quot;all&quot;},&quot;paths&quot;:{&quot;state&quot;:&quot;/home/u/.oxidepm/adapters/state/notifier&quot;},&quot;limits&quot;:{&quot;max_line&quot;:262144,&quot;max_in_flight&quot;:32,&quot;event_queue&quot;:1024}}}
 <span class="t-dim">adapter:</span> {&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;result&quot;:{&quot;protocol&quot;:1,&quot;name&quot;:&quot;notifier&quot;,&quot;version&quot;:&quot;0.1.0&quot;}}
 <span class="t-hi">daemon:</span>  {&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;initialized&quot;,&quot;params&quot;:{}}</pre></figure>
+<p>The version numbers in this example are illustrative. The daemon puts its own version in <code>host.version</code>.</p>
 <ul><li>The adapter must answer within 10 seconds, with the highest protocol it shares with <code>protocols</code>, and its own <code>name</code> and <code>version</code>.</li><li>The daemon compares <code>name</code> and <code>version</code> with what it has on record. A difference means the executable is not what was installed: the adapter is killed and marked failed (<code>tampered</code>) and does not start again.</li><li>A protocol that is not in the offered list, or an error <code>-32022</code> (optionally with <code>data.supported</code>), marks the adapter failed (<code>incompatible</code>).</li><li>After a good reply, the daemon sends the notification <code>initialized</code>. A <code>service</code> then receives events. A <code>tool</code> is idle until a request arrives.</li><li>A silent or broken handshake ends the process. It counts as a crash, and the supervisor restarts it with a growing delay until it gives up.</li></ul>
 <figure class="blueprint term" role="img" aria-label="A reply that refuses the protocol"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-dim">adapter:</span> {&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;error&quot;:{&quot;code&quot;:-32022,&quot;message&quot;:&quot;unsupported protocol&quot;,&quot;data&quot;:{&quot;supported&quot;:[1],&quot;code&quot;:&quot;E_ADAPTER_PROTOCOL&quot;}}}</pre></figure>
 <h2 id="staying-alive">Staying alive</h2>
@@ -78,7 +79,6 @@
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

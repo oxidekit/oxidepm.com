@@ -22,7 +22,7 @@ An adapter never starts, stops or changes an app on its own authority. When it a
 
 ## Which adapters exist
 
-Two are built and tested today: the [notifier](/docs/adapters/notifier/) and the [Prometheus exporter](/docs/adapters/exporter-prometheus/). The core reserves the names of adapters that are planned to take over the web API, the dashboard, the language runtimes, project checks, deploys and file watching. See the [list](/adapters/).
+Two are built and tested: the [notifier](/docs/adapters/notifier/) and the [Prometheus exporter](/docs/adapters/exporter-prometheus/). Neither is published yet. The core reserves the names of adapters that are planned to take over the web API, the dashboard, the language runtimes, project checks and deploys. File watching is planned as an adapter called `watch-rebuild`, a name that is not reserved yet. See the [list](/adapters/).
 
 ## Where they come from
 

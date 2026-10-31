@@ -57,4 +57,4 @@ oxidepm delete api
 {hi:✓} Restarted 1 process(es)
 ```
 
-A `start` of an app that is not at rest is refused with `E_APP_EXISTS` and changes nothing. Every one of these commands takes [`--dry-run`](/docs/commands/dry-run/).
+A `start` of an app that is not at rest is refused with `E_APP_EXISTS` and changes nothing. These commands take [`--dry-run`](/docs/commands/dry-run/), except `start --git` and `start --setup`, which refuse it.

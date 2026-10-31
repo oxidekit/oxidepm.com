@@ -1,4 +1,4 @@
-`--dry-run` makes a command say what it would do, and change nothing. It is a global flag.
+`--dry-run` makes a command say what it would do, and change nothing. It is a global flag, and most commands that change something take it. The ones that do not are listed below.
 
 ```term cap="stop-all-dry" label="Terminal output of oxidepm stop all --dry-run"
 ```
@@ -8,7 +8,7 @@
 - **The daemon answers with a plan:** `start`, `stop`, `restart`, `reload`, `delete`, `flush`, `save`, `resurrect`, `kill` and `policy set`, and `adapter enable`, `disable` and `remove`. The daemon runs the policy exactly as for the real request, records the rehearsal in the audit log (the lines say `"dry_run": true`), and answers with the apps it would reach, the step each happens in (stop and kill go dependents first), and for a refusal the error code.
 - **The command rehearses itself:** `startup`, `update`, `backup`, `restore` and `deploy`, and `adapter import` and `adapter update`. A rehearsal never starts a daemon.
 - **Reads:** a command that only reads ignores the flag.
-- **No rehearsal:** `web`, `init`, `env set`, `check --fix`, `start --git` and `start --setup` refuse the flag with exit code 2, instead of ignoring it.
+- **No rehearsal:** `web`, `init`, `env set`, `check --fix`, `start --git` and `start --setup` refuse the flag with exit code 2, instead of ignoring it. A command that an adapter adds, such as `notify`, may have no rehearsal either: it is refused with `E_DRY_RUN_UNSUPPORTED`.
 
 ## What a plan is
 

@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="Landlock and seccomp: what they limit, where they apply and where they stop.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -63,7 +63,7 @@ sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 
 <p>If the sandbox cannot be set up the way the grant says, the adapter is not started. If the kernel has no Landlock or no seccomp, or the launcher is not installed, the consent screen says <code>no (this kernel has no Landlock)</code> or <code>no (the sandbox launcher is not installed)</code> for that part. An adapter that requires enforcement is then not enabled, unless you accept that with <code>--allow-unenforced</code>.</p>
 <h2 id="what-it-does-and-does-not-do">What it does and does not do</h2>
 <p>It limits the damage a buggy adapter can do: it keeps it out of the rest of the file system, and from starting programs it did not declare. It does not fully contain a hostile adapter. In particular:</p>
-<ul><li>Network access is not enforced per host. The manifest names the hosts, and the consent screen says <code>Not enforceable per host</code>.</li><li>It does not take back what you approved.</li><li>macOS: works, without the OS sandbox. Landlock and seccomp are Linux features.</li></ul>
+<ul><li>Network access is not enforced per host. The manifest names the hosts, and the consent screen says <code>Not enforceable per host</code>.</li><li>It does not take back what you approved.</li><li>Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. <code>adapter info</code> prints <code>AF_UNIX services reachable:</code> with the ones its self-test could connect to. On a kernel with Landlock ABI 10, which <code>status --daemon</code> shows as <code>restricts unix connect</code>, this can be closed.</li><li>It is Linux only. Adapters are started only on Linux; on macOS there are no adapters and no sandbox, because Landlock and seccomp are Linux features.</li></ul>
 <p>That is why an adapter is also checked against a hash, why you see what it asks for first, and why the daemon enforces the host level on its own. Only install adapters you trust.</p></div><div class="pager"><a href="/docs/adapters/permissions/" rel="prev"><small>Previous</small><span>Permissions</span></a><a href="/docs/adapters/notifier/" rel="next"><small>Next</small><span>The notifier</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#what-runs">What runs</a></li><li><a href="#when-it-cannot-be-set-up">When it cannot be set up</a></li><li><a href="#what-it-does-and-does-not-do">What it does and does not do</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
@@ -78,7 +78,6 @@ sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

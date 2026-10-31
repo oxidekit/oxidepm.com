@@ -18,7 +18,7 @@
 <meta name="twitter:description" content="The manifest file, the archive layout and a minimal adapter.">
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js" defer></script>
 </head>
@@ -87,7 +87,7 @@
 <p>A <code>service</code> may list events, and provides no runtimes. A <code>tool</code> receives no events.</p>
 <h2 id="what-you-write">What you write</h2>
 <p>The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for <code>initialize</code>, answers it, handles <code>ping</code>, and exits on <code>shutdown</code> or when standard input closes. A service then handles <code>event</code> notifications, and may call <code>host.request</code> within its grant. The frames on these pages are the reference.</p>
-<p>The adapters repository has a small SDK crate, <code>oxidepm-adapter-sdk</code>, that does the main loop of a service in Rust: the handshake, <code>ping</code>, events, relayed verbs and <code>shutdown</code>. Both adapters in that repository use it.</p>
+<p>The source of the two adapters includes a small SDK crate, <code>oxidepm-adapter-sdk</code>, that does the main loop of a service in Rust: the handshake, <code>ping</code>, events, relayed verbs and <code>shutdown</code>. Both adapters use it. That source is not published yet.</p>
 <h2 id="try-it">Try it</h2>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import ./my-adapter.tar.gz --sha256 &lt;hex&gt; --allow-reserved-name
 oxidepm adapter enable my-adapter
@@ -106,7 +106,6 @@ oxidepm adapter info my-adapter</code></pre></figure>
       <h2>Source</h2>
       <ul>
         <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
-        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
       </ul>

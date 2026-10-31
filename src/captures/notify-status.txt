@@ -1,6 +1,6 @@
 $ oxidepm notify status
 Notification configuration
-Config file: /home/nayiem/workspace/oxidepm-scratch/site-cap/adapters/state/notifier/config.toml
+Config file: /home/deploy/.oxidepm/adapters/state/notifier/config.toml
 Configuration: ok
 Telegram: not configured
 Discord: not configured
