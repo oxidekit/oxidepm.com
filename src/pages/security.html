@@ -1,0 +1,156 @@
+title: Security and AI safety — OxidePM
+description: How OxidePM limits AI agents and adapters: who is asking, permission tiers, protected apps, dry runs, the audit log, and where the protections stop.
+path: /security/
+nav: security
+---
+<main id="main" class="wrap page-top">
+  <h1 class="display display-page" style="max-width:14ch">Security and AI safety</h1>
+  <p style="font-size:19px;line-height:1.55;max-width:58ch;margin:24px 0 0" class="muted">OxidePM runs your services, so it matters who can tell it what to do. This page explains what an AI agent or an adapter is allowed to do, what gets recorded, and where the protections stop.</p>
+
+  <nav class="sec-nav" aria-label="On this page">
+    <ol>
+      <li><a href="#connections">01 Who is asking</a></li>
+      <li><a href="#tiers">02 Permission tiers</a></li>
+      <li><a href="#protected">03 Protected apps and dry runs</a></li>
+      <li><a href="#audit">04 Audit log</a></li>
+      <li><a href="#adapters">05 Adapters and the sandbox</a></li>
+      <li><a href="#report">06 Reporting a problem</a></li>
+    </ol>
+  </nav>
+
+  <section id="connections" class="sec-block split" aria-labelledby="h-conn">
+    <div>
+      <span class="num">01</span>
+      <h2 id="h-conn" class="h-block">The connection decides who is asking</h2>
+    </div>
+    <div class="max-60">
+      <p>You talk to the daemon from your shell over <code>daemon.sock</code>. The daemon also binds <code>agent.sock</code>, and every connection on it counts as an AI agent, whatever it claims. The daemon decides from the connection a request arrived on, not from what the client says about itself, and a claim can only make a request stricter, never looser.</p>
+      <p class="muted">An agent that claims to be a person on <code>agent.sock</code> still gets agent limits. This binds an agent that goes through the agent socket or declares itself with <code>OXIDEPM_ACTOR=ai:name</code>. It does not stop a hostile process that runs as the same user and calls <code>oxidepm</code> without declaring anything: code that runs as you is you.</p>
+      <p><a href="/docs/ai-safety/agent-connections/">Agent connections in the docs</a></p>
+    </div>
+  </section>
+
+  <section id="tiers" class="sec-block" aria-labelledby="h-tiers">
+    <div class="split" style="margin-bottom:36px">
+      <div>
+        <span class="num">02</span>
+        <h2 id="h-tiers" class="h-block">Permission tiers</h2>
+      </div>
+      <p class="max-60" style="margin:0;align-self:end">Every request belongs to one of three tiers: safe, caution or dangerous. A person may make every request. An AI actor is held to the tier.</p>
+    </div>
+    <div class="blueprint">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="sheet-head"><span>Tiers and what an AI actor may do</span><span>A person: all tiers</span></div>
+      <div class="tier">
+        <div class="tier-name"><span class="n">Tier 1</span><span class="t">Safe</span></div>
+        <div class="tier-cmds"><span class="lbl">Requests</span><code>status, show, describe, logs, ping, hello</code></div>
+        <div class="tier-who"><span class="lbl">From an AI actor</span>Allowed, on every app, protected ones too. Environment values and hook scripts stay hidden.</div>
+      </div>
+      <div class="tier">
+        <div class="tier-name"><span class="n">Tier 2</span><span class="t">Caution</span></div>
+        <div class="tier-cmds"><span class="lbl">Requests</span><code>stop, restart, reload</code></div>
+        <div class="tier-who"><span class="lbl">From an AI actor</span>Only on an app marked <code>ai_control</code> and not <code>protected</code>, and only when it names the apps (no <code>all</code>, no tags). Written to the audit log before it runs.</div>
+      </div>
+      <div class="tier">
+        <div class="tier-name"><span class="n">Tier 3</span><span class="t">Dangerous</span></div>
+        <div class="tier-cmds"><span class="lbl">Requests</span><code>start (and a config file), delete, flush, kill, save, resurrect, show --reveal, describe --reveal</code></div>
+        <div class="tier-who"><span class="lbl">From an AI actor</span>Refused. A person has to run these.</div>
+      </div>
+      <p class="sheet-foot">An AI actor also has its own rate limits: it can restart the same app once every 10 seconds and five times in ten minutes, so a looping agent can’t keep an app down.</p>
+    </div>
+    <figure class="blueprint codefig config-fig">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="bar"><span>oxidepm.config.toml</span></div>
+      <pre><code>[[apps]]
+name = "db"
+protected = true     # read-only for every non-human actor
+
+[[apps]]
+name = "web"
+ai_control = true    # AI actors may stop, restart and reload it</code></pre>
+    </figure>
+  </section>
+
+  <section id="protected" class="sec-block" aria-labelledby="h-prot">
+    <div class="split split-start">
+      <div>
+        <span class="num">03</span>
+        <h2 id="h-prot" class="h-block" style="margin-bottom:16px">Protected apps and dry runs</h2>
+        <p class="max-52">Mark an app <code>protected</code> and an AI actor can’t stop, restart or reload it, whatever <code>ai_control</code> says. It can still read status and logs. A person can still do everything. You change the markers of a running app with <code>oxidepm policy set</code>, without a restart.</p>
+        <p class="max-52 muted">Every command that changes something accepts <code>--dry-run</code>. The daemon runs the policy as for the real request and answers with a plan: the apps it would reach, in which order, and what it would refuse. It starts, stops and writes nothing.</p>
+      </div>
+      <figure class="blueprint term">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <pre class="term-body">{{cap:stop-all-dry}}
+
+{{cap:agent-all}}</pre>
+      </figure>
+    </div>
+  </section>
+
+  <section id="audit" class="sec-block" aria-labelledby="h-audit">
+    <div class="split" style="margin-bottom:28px">
+      <div>
+        <span class="num">04</span>
+        <h2 id="h-audit" class="h-block">Audit log</h2>
+      </div>
+      <div class="max-60" style="align-self:end">
+        <p>Everything an AI or an adapter asks for is recorded, and so is every caution or dangerous request by anyone. A request from an AI that changes something is written to disk before it runs, and refused if it cannot be.</p>
+        <p class="muted" style="margin:0">The log is JSON lines in <code>~/.oxidepm/audit/</code>. Environment values, hook scripts, the arguments themselves and log lines are never written. <code>oxidepm audit</code> reads it, even with the daemon down.</p>
+      </div>
+    </div>
+    <figure class="blueprint term">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div class="term-bar"><span>audit-security.jsonl</span><span>one line per decision</span></div>
+      <pre class="term-body wrap">{{cap:audit-json}}</pre>
+    </figure>
+    <p class="term-ink">There is no tamper evidence beyond the file mode: a process with your rights can rewrite these files, as it can rewrite the database.</p>
+  </section>
+
+  <section id="adapters" class="sec-block" aria-labelledby="h-adapt">
+    <div class="split" style="margin-bottom:36px">
+      <div>
+        <span class="num">05</span>
+        <h2 id="h-adapt" class="h-block">Adapters and the sandbox</h2>
+      </div>
+      <p class="max-60" style="margin:0;align-self:end">Adapters run as separate programs. Four checks stand between an adapter and your server. None of them is enough on its own.</p>
+    </div>
+    <ol class="checks">
+      <li><span class="n">01</span><h3>Hash check</h3><p>An archive is imported only if its SHA-256 matches the one you give, or the one in a signed index. The program’s hash is recorded, and an adapter whose executable has changed is not started.</p></li>
+      <li><span class="n">02</span><h3>Consent</h3><p>Enabling an adapter shows what it asks for, and asks. Nothing runs until you approve. An update that asks for more needs a new approval.</p></li>
+      <li><span class="n">03</span><h3>A grant</h3><p>What an adapter may ask the daemon to do is limited by the grant you accepted, enforced by the daemon through the same policy, audit log and rate limits as everyone else.</p></li>
+      <li><span class="n">04</span><h3>Sandbox</h3><p>On Linux, an adapter is started under Landlock (files) and seccomp, limited to what its manifest says. Where the kernel cannot enforce something, the consent screen says so.</p></li>
+    </ol>
+    <div class="blueprint two-col">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div>
+        <h3 class="h-sub">What the sandbox does</h3>
+        <ul>
+          <li>Limits which files an adapter can read and write (Landlock).</li>
+          <li>Limits which system calls it can make (seccomp).</li>
+          <li>Keeps a buggy adapter from wandering into the rest of the system.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="h-sub">What it doesn’t do</h3>
+        <ul>
+          <li>It does not fully contain a hostile adapter. Only install adapters you trust.</li>
+          <li>It is a Linux feature. macOS: works, without the OS sandbox</li>
+          <li>It can’t enforce which hosts an adapter connects to. The manifest names them, and the consent screen says “Not enforceable per host”.</li>
+          <li>It can’t take back permissions you approved on the consent screen.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="report" class="sec-block split" aria-labelledby="h-report">
+    <div>
+      <span class="num">06</span>
+      <h2 id="h-report" class="h-block">Reporting a problem</h2>
+    </div>
+    <div class="max-60">
+      <p style="margin-bottom:20px">If you find a security issue in OxidePM or an adapter, please report it privately. Don’t open a public issue.</p>
+      <a href="https://github.com/oxidekit/oxidepm/security/advisories/new" class="btn btn-primary btn-md blueprint"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Report a vulnerability</a>
+    </div>
+  </section>
+</main>
