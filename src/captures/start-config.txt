@@ -1,0 +1,6 @@
+$ oxidepm start docs.config.toml
+✓ Started db (id: 1)
+✓ Started api (id: 2, waiting for its dependencies)
+✓ Started web (id: 3, waiting for its dependencies)
+
+Started 3 apps

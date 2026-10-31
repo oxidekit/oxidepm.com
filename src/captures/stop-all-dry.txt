@@ -1,0 +1,5 @@
+$ oxidepm stop all --dry-run
+ℹ Dry run of 'stop': this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+  stop  api [step 1]  status running
+  stop  db [step 2]  status running

@@ -1,0 +1,3 @@
+agent$ oxidepm stop all
+✗ ai:assistant may not use 'all' or a tag with 'stop': name the apps
+Error: ai:assistant may not use 'all' or a tag with 'stop': name the apps

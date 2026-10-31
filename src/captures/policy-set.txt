@@ -1,0 +1,2 @@
+$ oxidepm policy set web --protected
+✓ web: protected=true ai_control=true

@@ -1,0 +1,11 @@
+agent$ oxidepm stop web --dry-run
+ℹ Dry run of 'stop': this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+
+agent$ oxidepm restart db
+✗ ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+Error: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+
+agent$ oxidepm delete api
+✗ ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it
+Error: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it

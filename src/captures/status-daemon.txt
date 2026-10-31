@@ -1,0 +1,4 @@
+$ oxidepm status --daemon
+audit log:    ok
+agent socket: bound
+sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 (launcher installed)

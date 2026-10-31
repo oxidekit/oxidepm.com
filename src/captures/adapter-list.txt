@@ -1,0 +1,4 @@
+$ oxidepm adapter list
+No adapters are installed. `oxidepm adapter list --available` shows what the index offers.
+$ oxidepm adapter list --available
+Error: no index is configured in this build. Import by a pinned hash (`oxidepm adapter import <file or url> --sha256 <hex>`) or from the bundle of a release (`oxidepm adapter import --bundled`)

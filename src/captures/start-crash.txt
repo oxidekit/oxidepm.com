@@ -1,0 +1,4 @@
+$ oxidepm start crash.toml
+✓ Started mailer (id: 1)
+
+Started 1 apps

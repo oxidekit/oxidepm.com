@@ -1,0 +1,3 @@
+$ oxidepm restart db --dry-run
+ℹ Dry run of 'restart': this is what would happen. Nothing was changed.
+  restart  db  dependency gate skipped, the app is up (running)

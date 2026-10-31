@@ -1,0 +1,29 @@
+$ oxidepm adapter info notifier
+notifier 0.1.0 (service)  Telegram, Discord, Slack and webhook notifications.
+State:    ready
+Source:   pinned:notifier.tar.gz
+Trust:    pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Installed 2026-10-31T04:06:41Z
+Grant:    level read, scope all
+Enforced: fs_write, fs_read, spawn
+Health:   0 crash(es), 0 protocol strike(s)
+
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    pinned:notifier.tar.gz
+Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      fingerprint 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+  memory    128 MiB.

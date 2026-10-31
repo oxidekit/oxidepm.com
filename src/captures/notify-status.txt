@@ -1,0 +1,10 @@
+$ oxidepm notify status
+Notification configuration
+Config file: /home/nayiem/workspace/oxidepm-scratch/site-cap/adapters/state/notifier/config.toml
+Configuration: ok
+Telegram: not configured
+Discord: not configured
+Slack: not configured
+Webhook: not configured
+Events: all
+Minimum severity: none
