@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Prometheus exporter — OxidePM docs</title>
+<meta name="description" content="Prometheus metrics from the daemon&#x27;s status, served by an adapter.">
+<link rel="canonical" href="https://oxidepm.com/docs/adapters/exporter-prometheus/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OxidePM">
+<meta property="og:title" content="The Prometheus exporter — OxidePM docs">
+<meta property="og:description" content="Prometheus metrics from the daemon&#x27;s status, served by an adapter.">
+<meta property="og:url" content="https://oxidepm.com/docs/adapters/exporter-prometheus/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Prometheus exporter — OxidePM docs">
+<meta name="twitter:description" content="Prometheus metrics from the daemon&#x27;s status, served by an adapter.">
+<link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="/" aria-label="OxidePM home">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+      <span class="brand-word">oxide<span>pm</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/adapters/">Adapters</a>
+      <a href="/security/">Security</a>
+      <a href="https://github.com/oxidekit/oxidepm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </button>
+    <button type="button" class="btn btn-secondary menu-btn" data-menu-toggle aria-expanded="false" aria-controls="site-menu">Menu</button>
+  </nav>
+  <div id="site-menu" class="site-menu" hidden>
+    <a href="/docs/" aria-current="page">Docs</a>
+    <a href="/adapters/">Adapters</a>
+    <a href="/security/">Security</a>
+    <a href="https://github.com/oxidekit/oxidepm">GitHub</a>
+  </div>
+</header>
+
+<div class="docs"><aside class="docs-side" aria-label="Documentation" data-docs-nav><label class="sr-only" for="docs-filter">Filter the docs</label><input id="docs-filter" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/" aria-current="page">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></aside><div class="docs-mobile"><button type="button" class="btn btn-secondary" data-docs-toggle aria-expanded="false" aria-controls="docs-nav"><span>Docs: Adapters / The Prometheus exporter</span><span data-docs-toggle-label>Menu</span></button><nav id="docs-nav" aria-label="Documentation" hidden data-docs-nav><label class="sr-only" for="docs-filter-m">Filter the docs</label><input id="docs-filter-m" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/" aria-current="page">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></div><noscript><nav class="docs-mobile-static" aria-label="Documentation"><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/" aria-current="page">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></noscript><main id="main" class="docs-main"><article class="docs-article"><nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/docs/">Docs</a></li><li aria-hidden="true">/</li><li><a href="/docs/adapters/how-adapters-work/">Adapters</a></li><li aria-hidden="true">/</li><li aria-current="page">The Prometheus exporter</li></ol></nav><h1>The Prometheus exporter</h1><p class="docs-lede">Prometheus metrics from the daemon&#x27;s status, served by an adapter.</p><div class="prose"><p>The exporter is a service adapter with read access only. On each scrape it asks the daemon for the status of the apps, at most once a second however many scrapers there are, and never touches them.</p>
+<h2 id="install-it">Install it</h2>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import exporter-prometheus.tar.gz --sha256 &lt;hex&gt; --allow-reserved-name
+oxidepm adapter enable exporter-prometheus</code></pre></figure>
+<p>It listens on <code>127.0.0.1:9616</code> and serves the Prometheus text format on <code>/metrics</code>, and nothing else.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>prometheus.yml</span><button type="button" class="btn btn-ghost" data-copy="code-44" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-44">scrape_configs:
+  - job_name: oxidepm
+    static_configs:
+      - targets: [&quot;127.0.0.1:9616&quot;]</code></pre></figure>
+<h2 id="what-it-exports">What it exports</h2>
+<figure class="blueprint term" role="img" aria-label="Metrics served by the exporter"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> curl -s 127.0.0.1:9616/metrics
+# HELP oxidepm_up Whether the exporter could read the process list from the daemon (1) or not (0)
+# TYPE oxidepm_up gauge
+oxidepm_up 1
+# HELP oxidepm_processes_total Total number of managed processes
+# TYPE oxidepm_processes_total gauge
+oxidepm_processes_total 4
+# HELP oxidepm_process_up Whether the process is running (1) or not (0)
+# TYPE oxidepm_process_up gauge
+oxidepm_process_up{name=&quot;db&quot;,id=&quot;1&quot;,mode=&quot;cmd&quot;} 1
+oxidepm_process_up{name=&quot;worker&quot;,id=&quot;4&quot;,mode=&quot;cmd&quot;} 0
+# HELP oxidepm_process_restarts_total Total number of process restarts
+# TYPE oxidepm_process_restarts_total counter
+oxidepm_process_restarts_total{name=&quot;worker&quot;,id=&quot;4&quot;,mode=&quot;cmd&quot;} 3</pre></figure>
+<p>That is a part of the real output. The other families are <code>oxidepm_process_uptime_seconds</code>, <code>oxidepm_process_memory_bytes</code> and <code>oxidepm_process_cpu_percent</code>, each per app with the labels <code>name</code>, <code>id</code> and <code>mode</code>. Label values are escaped.</p>
+<p>If the daemon cannot be asked (it is stopped, busy, or refused the request), the answer is HTTP 503 with only <code>oxidepm_up 0</code>, never an empty list that looks healthy.</p>
+<h2 id="configuration">Configuration</h2>
+<p>An optional <code>config.toml</code> in the adapter&#x27;s state directory, read when the adapter starts. Disable and enable it again after a change.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-45" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-45">listen = &quot;127.0.0.1:9616&quot;       # an IP address and a port; the default
+key = &quot;at least 16 characters&quot;  # required for any address that is not loopback</code></pre></figure>
+<ul><li>An address that is not loopback (<code>0.0.0.0</code> included) without a <code>key</code> is refused: the adapter listens nowhere, and <code>adapter info</code> shows why.</li><li>With a key, every request needs <code>Authorization: Bearer &lt;key&gt;</code>, and so does a loopback bind that has a key.</li><li>Without a key (loopback only), the <code>Host</code> header must be <code>localhost</code> or a loopback address with the port that is bound, so a web page whose name was re-pointed at <code>127.0.0.1</code> cannot read the metrics.</li><li>There is no TLS. Put a proxy in front of it for anything but a trusted network.</li><li>The sandbox lets the adapter bind the ports its manifest lists, which is 9616 as shipped. Another port needs a build whose manifest lists it, and a new consent at <code>enable</code>.</li></ul></div><div class="pager"><a href="/docs/adapters/notifier/" rel="prev"><small>Previous</small><span>The notifier</span></a><a href="/docs/ai-safety/agent-connections/" rel="next"><small>Next</small><span>Agent connections</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#install-it">Install it</a></li><li><a href="#what-it-exports">What it exports</a></li><li><a href="#configuration">Configuration</a></li></ul></nav></div>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/" aria-label="OxidePM home">
+        <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+        <span class="brand-word">oxide<span>pm</span></span>
+      </a>
+      <p>A small process manager for Linux servers. Open source, written in Rust.</p>
+    </div>
+    <div class="footer-col">
+      <h2>Source</h2>
+      <ul>
+        <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Docs</h2>
+      <ul>
+        <li><a href="/docs/getting-started/install/">Getting started</a></li>
+        <li><a href="/docs/configuration/config-file/">Configuration</a></li>
+        <li><a href="/docs/commands/overview/">Commands</a></li>
+        <li><a href="/docs/adapter-protocol/overview/">Adapter protocol</a></li>
+        <li><a href="/security/">Security and AI safety</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="/adapters/">Adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm#license">MIT licence</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/security/advisories/new">Report a vulnerability</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-base">
+    <span>OxidePM is released under the MIT licence.</span>
+    <span>This site has no tracking and sets no cookies.</span>
+  </div>
+</footer>
+
+<p id="copy-status" class="sr-only" role="status" aria-live="polite"></p>
+</body>
+</html>
