@@ -1,0 +1,161 @@
+[
+ {
+  "name": "notifier",
+  "kind": "Service",
+  "status": "available",
+  "summary": "Sends a message to Telegram, Discord, Slack or a signed webhook when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails a health check. Adds the notify command.",
+  "head": "Asks for permission to",
+  "perms": [
+   "Read app status and lifecycle events (read access only)",
+   "Make outbound network connections; the manifest names api.telegram.org, discord.com and hooks.slack.com",
+   "Write only to its own state directory",
+   "Receive OXIDEPM_TELEGRAM_TOKEN from the daemon's environment"
+  ],
+  "cmd": "Built and tested. No signed index is published yet: import it from an archive pinned by its SHA-256."
+ },
+ {
+  "name": "exporter-prometheus",
+  "kind": "Service",
+  "status": "available",
+  "summary": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps, and answers 503 with oxidepm_up 0 when it cannot.",
+  "head": "Asks for permission to",
+  "perms": [
+   "Read app status (read access only)",
+   "Listen on 127.0.0.1:9616",
+   "Read its own state directory, write nothing"
+  ],
+  "cmd": "Built and tested. No signed index is published yet: import it from an archive pinned by its SHA-256."
+ },
+ {
+  "name": "ui-web",
+  "kind": "Planned: web command",
+  "status": "later",
+  "summary": "The Web API and its WebSocket, which today are the oxidepm web command in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "ui-tui",
+  "kind": "Planned: monit command",
+  "status": "later",
+  "summary": "The terminal dashboard, which today is the oxidepm monit command in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "runtime-node",
+  "kind": "Planned: runtime",
+  "status": "later",
+  "summary": "Runs Node.js apps (node, npm, pnpm, yarn). Today these runtimes are built into the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "runtime-python",
+  "kind": "Planned: runtime",
+  "status": "later",
+  "summary": "Runs Python apps. Today this runtime is built into the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "runtime-go",
+  "kind": "Planned: runtime",
+  "status": "later",
+  "summary": "Runs Go apps. Today this runtime is built into the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "runtime-rust",
+  "kind": "Planned: runtime",
+  "status": "later",
+  "summary": "Runs Rust and Cargo projects. Today these runtimes are built into the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "check",
+  "kind": "Planned: check command",
+  "status": "later",
+  "summary": "Project preflight checks, which today are the oxidepm check command in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "init",
+  "kind": "Planned: init command",
+  "status": "later",
+  "summary": "Scans a project and writes a starter config file, which today is the oxidepm init command in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "git-start",
+  "kind": "Planned: start from git",
+  "status": "later",
+  "summary": "Clones a repository and starts it, which today is oxidepm start --git in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "deploy",
+  "kind": "Planned: deploy and diff",
+  "status": "later",
+  "summary": "Deploys over SSH and shows remote changes, which today are the deploy and diff commands in the core.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "watch",
+  "kind": "Planned: file watching",
+  "status": "later",
+  "summary": "Restarts an app when its files change. File watching is not available in the core today: --watch is refused.",
+  "head": "Permissions",
+  "perms": [
+   "Shown when the adapter is released"
+  ],
+  "cmd": ""
+ },
+ {
+  "name": "AI adapters",
+  "kind": "Planned: AI",
+  "status": "later",
+  "summary": "Adapters that let AI agents work with OxidePM, held to the limits described on the security page. None is built yet.",
+  "head": "Permissions",
+  "perms": [
+   "Not decided yet"
+  ],
+  "cmd": ""
+ }
+]

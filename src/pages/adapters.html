@@ -1,0 +1,81 @@
+title: Adapters — OxidePM
+description: Optional adapters for OxidePM: notifications and Prometheus metrics today, more planned. Each one is a separate program with its own permissions.
+path: /adapters/
+nav: adapters
+---
+<main id="main" class="wrap page-top" data-adapters>
+  <div class="split split-end">
+    <div>
+      <h1 class="display display-page">Adapters</h1>
+      <p style="font-size:18px;max-width:52ch;margin:20px 0 0" class="muted">The core supervises processes. Features that are not part of that job are adapters you choose to install. Each adapter is a separate program, and you approve what it asks for before it runs.</p>
+    </div>
+    <div class="cmds">
+      <div><span class="p">$</span> oxidepm adapter import &lt;archive&gt; --sha256 &lt;hex&gt;</div>
+      <div><span class="p">$</span> oxidepm adapter enable &lt;name&gt;</div>
+      <div><span class="p">$</span> oxidepm adapter list</div>
+    </div>
+  </div>
+
+  <p class="small-note" style="max-width:70ch">Two adapters are built and tested: the notifier and the Prometheus exporter. The signed index that <code>oxidepm adapter import &lt;name&gt;</code> and <code>adapter search</code> read is not published yet, so for now you import an archive and pin it with its SHA-256. <a href="/docs/adapters/import-and-enable/">How to import one</a>.</p>
+
+  <div class="toolbar">
+    <label class="search">
+      <span class="sr-only">Search adapters</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="input" type="search" placeholder="Search by name, purpose or permission" data-search>
+    </label>
+    <div class="seg" role="radiogroup" aria-label="Filter by status">
+      <label class="seg-opt"><input type="radio" name="adapter-filter" value="all" checked><span>All</span><span class="seg-count" data-count="all">{{count_all}}</span></label>
+      <label class="seg-opt"><input type="radio" name="adapter-filter" value="available"><span>Available</span><span class="seg-count" data-count="available">{{count_available}}</span></label>
+      <label class="seg-opt"><input type="radio" name="adapter-filter" value="later"><span>Coming later</span><span class="seg-count" data-count="later">{{count_later}}</span></label>
+    </div>
+    <p class="result-count" role="status" aria-live="polite" data-result>{{count_text}}</p>
+  </div>
+
+  <ul class="grid" data-grid>
+{{adapter_cards}}
+  </ul>
+  <div class="empty" data-empty hidden>
+    <p>No adapter matches “<span data-query></span>”.</p>
+    <p>If it doesn’t exist yet, you can write it. <button type="button" class="link-btn" data-clear>Clear the search</button></p>
+  </div>
+  <p class="small-note">Names, and what an adapter that is not built will ask for, are plans and can change.</p>
+
+  <section aria-labelledby="own-title" style="margin-top:clamp(72px,10vw,120px)">
+    <span class="kicker">Write your own</span>
+    <div class="rule rule-gap"></div>
+    <div class="split split-start">
+      <div>
+        <h2 id="own-title" class="h-section" style="margin-bottom:16px">Any language that can read and write JSON</h2>
+        <p class="max-52">An adapter is a program that speaks the adapter protocol over its standard input and output. The protocol is documented and versioned. A <code>manifest.json</code> declares what the adapter asks for, and the person who enables it sees that list first.</p>
+        <p class="max-52 muted" style="margin-bottom:24px">If your adapter crashes or stops answering, the daemon restarts it with a growing delay. The apps the daemon supervises are not touched.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px 20px">
+          <a href="/docs/adapter-protocol/overview/" class="btn btn-primary btn-md blueprint"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Read the adapter protocol</a>
+          <a href="/docs/adapter-protocol/write-an-adapter/" class="btn btn-secondary btn-sm">The manifest file</a>
+          <a href="https://github.com/oxidekit/oxidepm-adapters" class="btn btn-secondary btn-sm">Source of the adapters</a>
+        </div>
+      </div>
+      <figure class="blueprint term">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div class="term-bar"><span>manifest.json</span><span>exporter-prometheus, abridged</span></div>
+        <pre class="term-body">{
+  <span class="t-hi">"schema"</span>: 1,
+  <span class="t-hi">"name"</span>: "exporter-prometheus",
+  <span class="t-hi">"version"</span>: "0.1.0",
+  <span class="t-hi">"kind"</span>: "service",
+  <span class="t-hi">"summary"</span>: "Prometheus metrics for the apps OxidePM manages.",
+  <span class="t-hi">"protocol"</span>: [1],
+  <span class="t-hi">"min_daemon"</span>: "0.1.0",
+  <span class="t-hi">"exec"</span>: "oxidepm-exporter-prometheus",
+  <span class="t-hi">"permissions"</span>: {
+    <span class="t-hi">"host"</span>: {"level": "read", "scope": "all"},
+    <span class="t-hi">"network"</span>: {"mode": "outbound", "hosts": [], "listen": ["127.0.0.1:9616"]},
+    <span class="t-hi">"fs"</span>: {"read": ["$STATE"], "write": []},
+    <span class="t-hi">"spawn"</span>: {"mode": "none"},
+    <span class="t-hi">"memory_mb"</span>: 64
+  }
+}</pre>
+      </figure>
+    </div>
+  </section>
+</main>
