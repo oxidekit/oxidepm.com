@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dependencies — OxidePM docs</title>
+<meta name="description" content="Use depends_on to make an app wait for the apps it needs. A wait that fails closed.">
+<link rel="canonical" href="https://oxidepm.com/docs/configuration/dependencies/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OxidePM">
+<meta property="og:title" content="Dependencies — OxidePM docs">
+<meta property="og:description" content="Use depends_on to make an app wait for the apps it needs. A wait that fails closed.">
+<meta property="og:url" content="https://oxidepm.com/docs/configuration/dependencies/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dependencies — OxidePM docs">
+<meta name="twitter:description" content="Use depends_on to make an app wait for the apps it needs. A wait that fails closed.">
+<link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="/" aria-label="OxidePM home">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+      <span class="brand-word">oxide<span>pm</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/adapters/">Adapters</a>
+      <a href="/security/">Security</a>
+      <a href="https://github.com/oxidekit/oxidepm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </button>
+    <button type="button" class="btn btn-secondary menu-btn" data-menu-toggle aria-expanded="false" aria-controls="site-menu">Menu</button>
+  </nav>
+  <div id="site-menu" class="site-menu" hidden>
+    <a href="/docs/" aria-current="page">Docs</a>
+    <a href="/adapters/">Adapters</a>
+    <a href="/security/">Security</a>
+    <a href="https://github.com/oxidekit/oxidepm">GitHub</a>
+  </div>
+</header>
+
+<div class="docs"><aside class="docs-side" aria-label="Documentation" data-docs-nav><label class="sr-only" for="docs-filter">Filter the docs</label><input id="docs-filter" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/" aria-current="page">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></aside><div class="docs-mobile"><button type="button" class="btn btn-secondary" data-docs-toggle aria-expanded="false" aria-controls="docs-nav"><span>Docs: Configuration / Dependencies</span><span data-docs-toggle-label>Menu</span></button><nav id="docs-nav" aria-label="Documentation" hidden data-docs-nav><label class="sr-only" for="docs-filter-m">Filter the docs</label><input id="docs-filter-m" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/" aria-current="page">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></div><noscript><nav class="docs-mobile-static" aria-label="Documentation"><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/" aria-current="page">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></noscript><main id="main" class="docs-main"><article class="docs-article"><nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/docs/">Docs</a></li><li aria-hidden="true">/</li><li><a href="/docs/configuration/config-file/">Configuration</a></li><li aria-hidden="true">/</li><li aria-current="page">Dependencies</li></ol></nav><h1>Dependencies</h1><p class="docs-lede">Use <code>depends_on</code> to make an app wait for the apps it needs. A wait that fails closed.</p><div class="prose"><h2 id="declare-a-dependency">Declare a dependency</h2>
+<p>List the names of the apps this one needs. Here <code>api</code> needs the database, and <code>web</code> needs <code>api</code>.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepm.config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-15" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-15">[[apps]]
+name = &quot;db&quot;
+mode = &quot;cmd&quot;
+script = &quot;postgres&quot;
+args = [&quot;-D&quot;, &quot;/srv/pg/data&quot;]
+
+[[apps]]
+name = &quot;api&quot;
+mode = &quot;cmd&quot;
+script = &quot;./target/release/api&quot;
+depends_on = [&quot;db&quot;]
+
+[apps.health_check]
+http_url = &quot;http://127.0.0.1:8080/health&quot;
+
+[[apps]]
+name = &quot;web&quot;
+mode = &quot;npm&quot;
+script = &quot;start&quot;
+depends_on = [&quot;api&quot;]</code></pre></figure>
+<h2 id="what-happens-at-start">What happens at start</h2>
+<p>The checks run when the app is started:</p>
+<ul><li>A name that is not registered is refused at once (<code>E_DEPENDENCY_MISSING</code>), and so is a cycle (<code>E_DEPENDENCY_CYCLE</code>, and the message names it).</li><li>A single <code>start</code> of an app whose dependency is <code>stopped</code> or <code>errored</code> right now is refused with the remedy (<code>E_DEPENDENCY_FAILED</code>).</li><li>Otherwise the start is accepted and the app shows <code>waiting</code> until every dependency is <code>online</code>. The start returns at once and nothing else is blocked. A <code>stop</code> cancels the wait.</li></ul>
+<figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm start: api and web wait for their dependencies"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm start docs.config.toml
+<span class="t-hi">✓</span> Started db (id: 1)
+<span class="t-hi">✓</span> Started api (id: 2, waiting for its dependencies)
+<span class="t-hi">✓</span> Started web (id: 3, waiting for its dependencies)
+
+Started 3 apps</pre></figure>
+<p>If a dependency has a health check, it is <code>online</code> only once its first probe has passed. Until then it is <code>starting</code>, and the apps that wait for it keep waiting.</p>
+<figure class="blueprint term" role="img" aria-label="Terminal output of refused starts"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm start api-only.toml
+<span class="t-ox">✗</span> Failed to start api: dependency &#x27;db&#x27; is stopped; start it first
+
+Started: 0, Failed: 1
+<span class="t-ox">Error:</span> 1 of 1 apps failed to start (started: none; failed: api)
+
+<span class="t-hi">$</span> oxidepm start cycle.toml
+<span class="t-ox">Error:</span> Config error: depends_on cycle: a -&gt; b -&gt; a</pre></figure>
+<h2 id="the-wait-fails-closed">The wait fails closed</h2>
+<p>A dependency that ends <code>errored</code>, or is deleted, fails the dependent at once. So does <code>depends_timeout</code> (1 to 3600 seconds, 60 by default): the app ends <code>errored</code> with the reason <code>dependency &#x27;db&#x27; not running after 60s</code> (<code>E_DEPENDENCY_TIMEOUT</code>) and is never launched. It does not start anyway and fail in a confusing way.</p>
+<p><code>depends_fail_open = true</code> turns that timeout into a warning and a launch. It is discouraged.</p>
+<p>Once an app is running, a later failure of its dependency does not touch it.</p>
+<h2 id="when-the-wait-applies">When the wait applies</h2>
+<p>The wait applies to a start or restart by hand of an app that was at rest. A <code>restart</code> of an app that is up, and every automatic restart (crash, limit, cron, health), skip it: a crashed app comes back through the normal backoff even while its dependency is down.</p>
+<p>An app that waits holds no build slot. At most <code>launch_concurrency</code> apps (4 by default, a <a href="/docs/configuration/daemon-settings/">daemon setting</a>) build and spawn at once.</p>
+<h2 id="stop-order">Stop order</h2>
+<p><code>stop all</code>, and a stop by tag, stops dependents before their dependencies, layer by layer. The daemon&#x27;s shutdown does the same within its time budget. A <code>stop</code> of one app stops that app only: its dependents keep running.</p>
+<figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm stop all --dry-run"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body"><span class="t-hi">$</span> oxidepm stop all --dry-run
+<span class="t-dim">ℹ</span>︎ Dry run of &#x27;stop&#x27;: this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+  stop  api [step 1]  status running
+  stop  db [step 2]  status running</pre></figure>
+<p><code>--dry-run</code> shows the order without stopping anything. <code>restart db --dry-run</code> on a running app says the dependency gate is skipped because the app is up.</p>
+<h2 id="fields">Fields</h2>
+<dl class="fields"><div><dt><code>depends_on</code> <span class="tag tag-neutral">list of app names</span> <span class="dflt">default: none</span></dt><dd><p>Apps that must be running before this one starts. A name must be in the same file or already registered.</p></dd></div><div><dt><code>depends_timeout</code> <span class="tag tag-neutral">seconds</span> <span class="dflt">default: 60</span></dt><dd><p>How long to wait for them, from 1 to 3600, before the app ends <code>errored</code>.</p></dd></div><div><dt><code>depends_fail_open</code> <span class="tag tag-neutral">boolean</span> <span class="dflt">default: false</span></dt><dd><p>Launch anyway, with a warning, when the wait times out.</p></dd></div></dl></div><div class="pager"><a href="/docs/configuration/restarts/" rel="prev"><small>Previous</small><span>Restarts and states</span></a><a href="/docs/configuration/health-checks/" rel="next"><small>Next</small><span>Health checks</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#declare-a-dependency">Declare a dependency</a></li><li><a href="#what-happens-at-start">What happens at start</a></li><li><a href="#the-wait-fails-closed">The wait fails closed</a></li><li><a href="#when-the-wait-applies">When the wait applies</a></li><li><a href="#stop-order">Stop order</a></li><li><a href="#fields">Fields</a></li></ul></nav></div>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/" aria-label="OxidePM home">
+        <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+        <span class="brand-word">oxide<span>pm</span></span>
+      </a>
+      <p>A small process manager for Linux servers. Open source, written in Rust.</p>
+    </div>
+    <div class="footer-col">
+      <h2>Source</h2>
+      <ul>
+        <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Docs</h2>
+      <ul>
+        <li><a href="/docs/getting-started/install/">Getting started</a></li>
+        <li><a href="/docs/configuration/config-file/">Configuration</a></li>
+        <li><a href="/docs/commands/overview/">Commands</a></li>
+        <li><a href="/docs/adapter-protocol/overview/">Adapter protocol</a></li>
+        <li><a href="/security/">Security and AI safety</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="/adapters/">Adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm#license">MIT licence</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/security/advisories/new">Report a vulnerability</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-base">
+    <span>OxidePM is released under the MIT licence.</span>
+    <span>This site has no tracking and sets no cookies.</span>
+  </div>
+</footer>
+
+<p id="copy-status" class="sr-only" role="status" aria-live="polite"></p>
+</body>
+</html>
