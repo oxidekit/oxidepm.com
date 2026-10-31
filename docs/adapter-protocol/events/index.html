@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events — OxidePM docs</title>
+<meta name="description" content="The lifecycle and adapter event families, and how delivery works.">
+<link rel="canonical" href="https://oxidepm.com/docs/adapter-protocol/events/">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OxidePM">
+<meta property="og:title" content="Events — OxidePM docs">
+<meta property="og:description" content="The lifecycle and adapter event families, and how delivery works.">
+<meta property="og:url" content="https://oxidepm.com/docs/adapter-protocol/events/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Events — OxidePM docs">
+<meta name="twitter:description" content="The lifecycle and adapter event families, and how delivery works.">
+<link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement;d.className+=' js';try{var t=localStorage.getItem('oxidepm-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t)}catch(e){}})();</script>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="/" aria-label="OxidePM home">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+      <span class="brand-word">oxide<span>pm</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/adapters/">Adapters</a>
+      <a href="/security/">Security</a>
+      <a href="https://github.com/oxidekit/oxidepm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>GitHub</a>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </button>
+    <button type="button" class="btn btn-secondary menu-btn" data-menu-toggle aria-expanded="false" aria-controls="site-menu">Menu</button>
+  </nav>
+  <div id="site-menu" class="site-menu" hidden>
+    <a href="/docs/" aria-current="page">Docs</a>
+    <a href="/adapters/">Adapters</a>
+    <a href="/security/">Security</a>
+    <a href="https://github.com/oxidekit/oxidepm">GitHub</a>
+  </div>
+</header>
+
+<div class="docs"><aside class="docs-side" aria-label="Documentation" data-docs-nav><label class="sr-only" for="docs-filter">Filter the docs</label><input id="docs-filter" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/" aria-current="page">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></aside><div class="docs-mobile"><button type="button" class="btn btn-secondary" data-docs-toggle aria-expanded="false" aria-controls="docs-nav"><span>Docs: Adapter protocol / Events</span><span data-docs-toggle-label>Menu</span></button><nav id="docs-nav" aria-label="Documentation" hidden data-docs-nav><label class="sr-only" for="docs-filter-m">Filter the docs</label><input id="docs-filter-m" class="input" type="search" placeholder="Filter pages" data-docs-filter><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/" aria-current="page">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></div><noscript><nav class="docs-mobile-static" aria-label="Documentation"><div class="docs-group" data-group="Getting started"><h2>Getting started</h2><ul><li><a href="/docs/getting-started/install/">Install</a></li><li><a href="/docs/getting-started/first-app/">Your first app</a></li><li><a href="/docs/getting-started/reboot/">Survive a reboot</a></li><li><a href="/docs/getting-started/upgrade/">Upgrade</a></li></ul></div><div class="docs-group" data-group="Configuration"><h2>Configuration</h2><ul><li><a href="/docs/configuration/config-file/">The config file</a></li><li><a href="/docs/configuration/apps/">Apps</a></li><li><a href="/docs/configuration/restarts/">Restarts and states</a></li><li><a href="/docs/configuration/dependencies/">Dependencies</a></li><li><a href="/docs/configuration/health-checks/">Health checks</a></li><li><a href="/docs/configuration/limits-and-cron/">Limits and cron</a></li><li><a href="/docs/configuration/clusters/">Clusters</a></li><li><a href="/docs/configuration/log-files/">Log files</a></li><li><a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a></li><li><a href="/docs/configuration/daemon-settings/">Daemon settings</a></li></ul></div><div class="docs-group" data-group="Commands"><h2>Commands</h2><ul><li><a href="/docs/commands/overview/">Overview</a></li><li><a href="/docs/commands/start-stop-restart/">start, stop, restart</a></li><li><a href="/docs/commands/status/">status and show</a></li><li><a href="/docs/commands/logs/">logs and flush</a></li><li><a href="/docs/commands/save-and-resurrect/">save and resurrect</a></li><li><a href="/docs/commands/dry-run/">Dry run</a></li><li><a href="/docs/commands/json-output/">JSON output</a></li><li><a href="/docs/commands/error-codes/">Error codes</a></li><li><a href="/docs/commands/other-commands/">Other commands</a></li></ul></div><div class="docs-group" data-group="Adapters"><h2>Adapters</h2><ul><li><a href="/docs/adapters/how-adapters-work/">How adapters work</a></li><li><a href="/docs/adapters/import-and-enable/">Import and enable</a></li><li><a href="/docs/adapters/permissions/">Permissions</a></li><li><a href="/docs/adapters/sandbox/">The sandbox</a></li><li><a href="/docs/adapters/notifier/">The notifier</a></li><li><a href="/docs/adapters/exporter-prometheus/">The Prometheus exporter</a></li></ul></div><div class="docs-group" data-group="AI safety"><h2>AI safety</h2><ul><li><a href="/docs/ai-safety/agent-connections/">Agent connections</a></li><li><a href="/docs/ai-safety/permission-tiers/">Permission tiers</a></li><li><a href="/docs/ai-safety/protected-apps/">Protected apps</a></li><li><a href="/docs/ai-safety/audit-log/">Audit log</a></li><li><a href="/docs/ai-safety/safe-use/">Safe use with AI agents</a></li></ul></div><div class="docs-group" data-group="Adapter protocol"><h2>Adapter protocol</h2><ul><li><a href="/docs/adapter-protocol/overview/">Overview</a></li><li><a href="/docs/adapter-protocol/messages/">Messages</a></li><li><a href="/docs/adapter-protocol/lifecycle/">Handshake and lifecycle</a></li><li><a href="/docs/adapter-protocol/host-api/">The host API</a></li><li><a href="/docs/adapter-protocol/events/" aria-current="page">Events</a></li><li><a href="/docs/adapter-protocol/limits/">Limits and timeouts</a></li><li><a href="/docs/adapter-protocol/errors/">Errors</a></li><li><a href="/docs/adapter-protocol/write-an-adapter/">Write an adapter</a></li></ul></div><p class="docs-empty" data-docs-none hidden>No page matches &ldquo;<span data-docs-query></span>&rdquo;.</p></nav></noscript><main id="main" class="docs-main"><article class="docs-article"><nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/docs/">Docs</a></li><li aria-hidden="true">/</li><li><a href="/docs/adapter-protocol/overview/">Adapter protocol</a></li><li aria-hidden="true">/</li><li aria-current="page">Events</li></ol></nav><h1>Events</h1><p class="docs-lede">The lifecycle and adapter event families, and how delivery works.</p><div class="prose"><p>Events go to a running <code>service</code> that listed the family in its manifest and was granted it. There are two families.</p>
+<h2 id="lifecycle">lifecycle</h2>
+<p>Something happened to an app. <code>seq</code> is the daemon-wide sequence number of the event.</p>
+<p><code>kind</code> is one of <code>started</code>, <code>restarted</code>, <code>stopped</code>, <code>crashed</code>, <code>errored</code>, <code>unhealthy</code>, <code>recovered</code>, <code>backoff</code>, <code>crash_loop</code>, <code>cron_fired</code>, <code>memory_limit</code> and <code>uptime_limit</code>.</p>
+<p><code>app</code> is <code>{id, name, tags}</code>. <code>data</code> holds only these keys, and only those the event has: <code>cause</code>, <code>actor</code>, <code>pid</code>, <code>exit_code</code>, <code>exit_signal</code>, <code>restarts</code>, <code>memory_mb</code>, <code>limit_mb</code> and <code>reason</code>. <code>reason</code> is a sentence made by the daemon with the app&#x27;s environment values removed and cut at 1024 characters.</p>
+<p><code>options</code> is the app&#x27;s <code>adapters.&lt;adapter name&gt;</code> table for this adapter only, at most 4 KiB. No other adapter&#x27;s options are ever sent.</p>
+<p>The event never carries the app&#x27;s command, arguments, working directory, environment, hooks or log lines.</p>
+<figure class="blueprint term" role="img" aria-label="An event"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">daemon:</span> {&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;event&quot;,&quot;params&quot;:{&quot;seq&quot;:17,&quot;kind&quot;:&quot;crashed&quot;,&quot;family&quot;:&quot;lifecycle&quot;,&quot;at&quot;:&quot;2026-11-20T10:00:00Z&quot;,&quot;app&quot;:{&quot;id&quot;:3,&quot;name&quot;:&quot;web&quot;,&quot;tags&quot;:[&quot;prod&quot;]},&quot;data&quot;:{&quot;exit_code&quot;:1,&quot;restarts&quot;:2},&quot;options&quot;:{&quot;chat&quot;:&quot;ops&quot;},&quot;dropped_before&quot;:4}}</pre></figure>
+<h2 id="adapter">adapter</h2>
+<p>Something happened to an adapter: <code>started</code>, <code>exited</code>, <code>killed</code> or <code>failed</code>. It has no <code>app</code>, has its own <code>seq</code> counter, and <code>data</code> holds <code>adapter</code>, <code>version</code> and, for <code>failed</code>, <code>reason</code> (a short name). An adapter is not told about itself.</p>
+<h2 id="delivery">Delivery</h2>
+<p>Delivery is best effort and never slows the daemon. Each service has a queue of 1024 events plus 256 critical ones (<code>crashed</code>, <code>errored</code>, <code>unhealthy</code>, <code>crash_loop</code> and <code>memory_limit</code>; <code>killed</code> and <code>failed</code> for the adapter family), at most 4 MiB. When it is full, the oldest normal event is dropped, or the oldest critical one when the critical part is full.</p>
+<p>A service that is not running does not queue: its events are dropped. The drops are counted, and the next event delivered carries <code>dropped_before: n</code>. A gap in <code>seq</code> shows where. Events queued when the process ended are dropped, not sent to the next process. When the adapter is stopped on request, queued events are written, for up to a second, before <code>shutdown</code>.</p>
+<p>An event line is at most 16 KiB. If one would be longer, the daemon removes <code>options</code>, then <code>reason</code>, then the tags. If it still does not fit, it is dropped and counted.</p></div><div class="pager"><a href="/docs/adapter-protocol/host-api/" rel="prev"><small>Previous</small><span>The host API</span></a><a href="/docs/adapter-protocol/limits/" rel="next"><small>Next</small><span>Limits and timeouts</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#lifecycle">lifecycle</a></li><li><a href="#adapter">adapter</a></li><li><a href="#delivery">Delivery</a></li></ul></nav></div>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="/" aria-label="OxidePM home">
+        <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
+        <span class="brand-word">oxide<span>pm</span></span>
+      </a>
+      <p>A small process manager for Linux servers. Open source, written in Rust.</p>
+    </div>
+    <div class="footer-col">
+      <h2>Source</h2>
+      <ul>
+        <li><a href="https://github.com/oxidekit/oxidepm">oxidepm</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm-adapters">oxidepm-adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/releases">Releases</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/issues">Issues</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Docs</h2>
+      <ul>
+        <li><a href="/docs/getting-started/install/">Getting started</a></li>
+        <li><a href="/docs/configuration/config-file/">Configuration</a></li>
+        <li><a href="/docs/commands/overview/">Commands</a></li>
+        <li><a href="/docs/adapter-protocol/overview/">Adapter protocol</a></li>
+        <li><a href="/security/">Security and AI safety</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="/adapters/">Adapters</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm#license">MIT licence</a></li>
+        <li><a href="https://github.com/oxidekit/oxidepm/security/advisories/new">Report a vulnerability</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-base">
+    <span>OxidePM is released under the MIT licence.</span>
+    <span>This site has no tracking and sets no cookies.</span>
+  </div>
+</footer>
+
+<p id="copy-status" class="sr-only" role="status" aria-live="polite"></p>
+</body>
+</html>
