@@ -44,15 +44,15 @@ Neither is the right answer for everyone. This page says what each is for, where
 | Reload | Zero-downtime reload for cluster mode | `reload` is a restart |
 | Cluster | Node.js workers can share one port | Up to 256 instances, a port each |
 | Watch mode | Yes | Not available |
-| Config file | A JavaScript ecosystem file, or JSON or YAML | TOML, YAML or JSON, checked strictly |
+| Config file | A JavaScript ecosystem file, or JSON | TOML, YAML or JSON, checked strictly |
 | Restart policy | Restart on crash, with options | `on-crash`, `always` or `never`, backoff that doubles up to a cap, and a crash-loop breaker |
-| Health checks | Not a core feature | HTTP, TCP or a script, with a choice of action |
-| Start order | Start order is up to you | `depends_on`, which waits and fails closed |
+| Health checks | None built in. An app can signal readiness during a reload | HTTP, TCP or a script, with a choice of action |
+| Start order | No dependency option: start order is up to you | `depends_on`, which waits and fails closed |
 | Boot | `pm2 startup` and `pm2 save` | `oxidepm startup`, `save` and `resurrect` |
 | Dashboard | `pm2 monit` | `oxidepm top` in the core, and `oxidepm monit` from the `ui-tui` adapter |
 | Notifications and metrics | Modules and a hosted service | The notifier and Prometheus exporter adapters |
 | AI agent limits | None that are built for it | Agent socket, tiers, protected apps and an audit log |
-| Licence | Check PM2's repository | MIT or Apache-2.0 |
+| Licence | AGPL-3.0 | MIT or Apache-2.0 |
 
 ## Moving from PM2
 

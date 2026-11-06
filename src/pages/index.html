@@ -72,7 +72,7 @@ path: /
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
       <pre class="term-body wrap"><span class="t-dim"># daemon and notifier, protocol 1 (version numbers are examples)</span>
-<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"1.2.3"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
 <span class="t-dim">adapter:</span> {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.1.0"}}
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"initialized","params":{}}
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-10-30T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}

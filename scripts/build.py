@@ -369,7 +369,8 @@ def breadcrumb_ld(items):
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": i + 1, "name": name, "item": url}
+            dict({"@type": "ListItem", "position": i + 1, "name": name},
+                 **({"item": url} if i + 1 < len(items) else {}))
             for i, (name, url) in enumerate(items)
         ],
     }
@@ -384,12 +385,20 @@ def home_ld(description):
         "description": description,
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Linux",
-        "programmingLanguage": "Rust",
         "license": ["https://opensource.org/license/mit", "https://www.apache.org/licenses/LICENSE-2.0"],
-        "codeRepository": REPO,
+        "isBasedOn": {"@id": REPO + "#source"},
         "downloadUrl": REPO + "/releases",
         "image": IMAGE,
         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    }
+    source = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "@id": REPO + "#source",
+        "name": "OxidePM source code",
+        "codeRepository": REPO,
+        "programmingLanguage": "Rust",
+        "license": ["https://opensource.org/license/mit", "https://www.apache.org/licenses/LICENSE-2.0"],
     }
     site = {
         "@context": "https://schema.org",
@@ -399,7 +408,7 @@ def home_ld(description):
         "description": TAGLINE,
         "inLanguage": "en",
     }
-    return [app, site]
+    return [app, source, site]
 
 
 def article_ld(p, g, url, modified):
@@ -432,8 +441,8 @@ class Site:
         canonical = SITE + path
         robots = '<meta name="robots" content="noindex">\n' if noindex else '<meta name="robots" content="index, follow, max-image-preview:large">\n'
         alt = '<link rel="alternate" type="text/markdown" href="%s">\n' % (SITE + alternate) if alternate else ""
-        for label, value, limit in (("title", title, 70), ("description", description, 165)):
-            if len(value) > limit and not noindex:
+        for label, value, low, limit in (("title", title, 0, 70), ("description", description, 70, 165)):
+            if (len(value) > limit or len(value) < low) and not noindex:
                 print("warning: %s of %s is %d characters" % (label, path, len(value)), file=sys.stderr)
         text = fill(self.layout, {
             "title": esc(title),

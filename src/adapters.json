@@ -158,7 +158,7 @@
   "name": "watch-rebuild",
   "kind": "Planned: file watching",
   "status": "later",
-  "summary": "Restarts an app when its files change. File watching is not available: --watch is refused, and the message points here. Planned, not built.",
+  "summary": "Restarts an app when its files change. File watching is not available: --watch is refused, and the message says watch mode is moving to an adapter. Planned, not built.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
