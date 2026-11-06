@@ -29,75 +29,92 @@
  },
  {
   "name": "ui-web",
-  "kind": "Planned: web command",
-  "status": "later",
-  "summary": "The Web API and its WebSocket, which today are the oxidepm web command in the core.",
-  "head": "Permissions",
+  "kind": "Service",
+  "status": "available",
+  "summary": "Serves a REST API and a WebSocket on 127.0.0.1:9615. Every request needs an access key. By default it can show apps and restart, stop and reload the ones that list it, and it cannot create or delete apps or flush logs. Adds the web command.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Control the apps that list it (lifecycle access, opted-in apps only)",
+   "Receive lifecycle events",
+   "Listen on 127.0.0.1:9615",
+   "Read and write only its own state directory"
   ],
-  "cmd": ""
+  "cmd": "Built and tested, not published yet: there is no archive to download and no signed index. Once there is one, import it from an archive pinned by its SHA-256."
  },
  {
   "name": "ui-tui",
-  "kind": "Planned: monit command",
-  "status": "later",
-  "summary": "The terminal dashboard, which today is the oxidepm monit command in the core.",
-  "head": "Permissions",
+  "kind": "Tool",
+  "status": "available",
+  "summary": "The terminal dashboard: the apps with state, CPU and memory, the selected app in detail and its log. Stopping or restarting an app asks for y or n first. Runs only while the dashboard is open. Adds the monit command.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Stop and restart apps (lifecycle access, all apps)",
+   "No network connections",
+   "No file access of its own"
   ],
-  "cmd": ""
+  "cmd": "Built and tested, not published yet: there is no archive to download and no signed index. Once there is one, import it from an archive pinned by its SHA-256."
  },
  {
   "name": "runtime-node",
-  "kind": "Planned: runtime",
-  "status": "later",
-  "summary": "Runs Node.js apps (node, npm, pnpm, yarn). Today these runtimes are built into the core.",
-  "head": "Permissions",
+  "kind": "Runtime",
+  "status": "available",
+  "summary": "Runs Node.js apps: the node, npm, pnpm and yarn runtimes. It tells the daemon what to run and the daemon runs it.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Read app status (read access only)",
+   "No network connections",
+   "Read only its own state directory, write nothing",
+   "Start no programs of its own: it tells the daemon what to run"
   ],
-  "cmd": ""
+  "cmd": "Carried, signed, by each release under share/oxidepm/adapters. Import it with: oxidepm adapter import --bundled --tag runtime --enable --yes (the install script does this for you)."
  },
  {
   "name": "runtime-python",
-  "kind": "Planned: runtime",
-  "status": "later",
-  "summary": "Runs Python apps. Today this runtime is built into the core.",
-  "head": "Permissions",
+  "kind": "Runtime",
+  "status": "available",
+  "summary": "Runs Python apps, in the project's virtualenv when it has one. Provides the python runtime.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Read app status (read access only)",
+   "No network connections",
+   "Read only its own state directory, write nothing",
+   "Start no programs of its own: it tells the daemon what to run"
   ],
-  "cmd": ""
+  "cmd": "Carried, signed, by each release under share/oxidepm/adapters. Import it with: oxidepm adapter import --bundled --tag runtime --enable --yes (the install script does this for you)."
  },
  {
   "name": "runtime-go",
-  "kind": "Planned: runtime",
-  "status": "later",
-  "summary": "Runs Go apps. Today this runtime is built into the core.",
-  "head": "Permissions",
+  "kind": "Runtime",
+  "status": "available",
+  "summary": "Runs Go apps with go run. Provides the go runtime.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Read app status (read access only)",
+   "No network connections",
+   "Read only its own state directory, write nothing",
+   "Start no programs of its own: it tells the daemon what to run"
   ],
-  "cmd": ""
+  "cmd": "Carried, signed, by each release under share/oxidepm/adapters. Import it with: oxidepm adapter import --bundled --tag runtime --enable --yes (the install script does this for you)."
  },
  {
   "name": "runtime-rust",
-  "kind": "Planned: runtime",
-  "status": "later",
-  "summary": "Runs Rust and Cargo projects. Today these runtimes are built into the core.",
-  "head": "Permissions",
+  "kind": "Runtime",
+  "status": "available",
+  "summary": "Builds and runs Rust apps: a single file with rustc, a project with cargo. Provides the rust and cargo runtimes.",
+  "head": "Asks for permission to",
   "perms": [
-   "Shown when the adapter is released"
+   "Read app status (read access only)",
+   "No network connections",
+   "Read only its own state directory, write nothing",
+   "Start no programs of its own: it tells the daemon what to run"
   ],
-  "cmd": ""
+  "cmd": "Carried, signed, by each release under share/oxidepm/adapters. Import it with: oxidepm adapter import --bundled --tag runtime --enable --yes (the install script does this for you)."
  },
  {
   "name": "check",
   "kind": "Planned: check command",
   "status": "later",
-  "summary": "Project preflight checks, which today are the oxidepm check command in the core.",
+  "summary": "Project preflight checks (the check command and start --setup). Planned, not built. The core reserves the name.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
@@ -108,7 +125,7 @@
   "name": "init",
   "kind": "Planned: init command",
   "status": "later",
-  "summary": "Scans a project and writes a starter config file, which today is the oxidepm init command in the core.",
+  "summary": "Scans a project and writes a starter config file (the init command). Planned, not built. The core reserves the name.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
@@ -119,7 +136,7 @@
   "name": "git-start",
   "kind": "Planned: start from git",
   "status": "later",
-  "summary": "Clones a repository and starts it, which today is oxidepm start --git in the core.",
+  "summary": "Clones a repository and starts it (start --git). Planned, not built. The core reserves the name.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
@@ -130,7 +147,7 @@
   "name": "deploy",
   "kind": "Planned: deploy and diff",
   "status": "later",
-  "summary": "Deploys over SSH and shows remote changes, which today are the deploy and diff commands in the core.",
+  "summary": "Deploys over SSH and shows remote changes (the deploy and diff commands). Planned, not built. The core reserves the name.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"
@@ -141,7 +158,7 @@
   "name": "watch-rebuild",
   "kind": "Planned: file watching",
   "status": "later",
-  "summary": "Restarts an app when its files change. File watching is not available in the core today: --watch is refused, and the message points here. Planned, not built.",
+  "summary": "Restarts an app when its files change. File watching is not available: --watch is refused, and the message points here. Planned, not built.",
   "head": "Permissions",
   "perms": [
    "Shown when the adapter is released"

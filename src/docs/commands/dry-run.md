@@ -6,9 +6,9 @@
 ## Which commands
 
 - **The daemon answers with a plan:** `start`, `stop`, `restart`, `reload`, `delete`, `flush`, `save`, `resurrect`, `kill` and `policy set`, and `adapter enable`, `disable` and `remove`. The daemon runs the policy exactly as for the real request, records the rehearsal in the audit log (the lines say `"dry_run": true`), and answers with the apps it would reach, the step each happens in (stop and kill go dependents first), and for a refusal the error code.
-- **The command rehearses itself:** `startup`, `update`, `backup`, `restore` and `deploy`, and `adapter import` and `adapter update`. A rehearsal never starts a daemon.
+- **The command rehearses itself:** `startup`, `update`, `backup` and `restore`, and `adapter import` and `adapter update`. A rehearsal never starts a daemon.
 - **Reads:** a command that only reads ignores the flag.
-- **No rehearsal:** `web`, `init`, `env set`, `check --fix`, `start --git` and `start --setup` refuse the flag with exit code 2, instead of ignoring it. A command that an adapter adds, such as `notify`, may have no rehearsal either: it is refused with `E_DRY_RUN_UNSUPPORTED`.
+- **No rehearsal:** `env set`, and the commands that adapters provide, such as `web`, `init`, `check --fix`, `start --git`, `start --setup` and `notify`, refuse the flag with exit code 2, instead of ignoring it, unless the adapter declares a rehearsal. A command an adapter adds may also be refused with `E_DRY_RUN_UNSUPPORTED`.
 
 ## What a plan is
 

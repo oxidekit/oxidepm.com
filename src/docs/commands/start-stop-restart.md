@@ -12,7 +12,7 @@ oxidepm start ./server -i 4 --port 3000
 | Option | Meaning |
 |---|---|
 | `-n, --name <name>` | The app's name. |
-| `--mode <runtime>` | Force the runtime (alias `--runtime`): `cmd`, `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python`, `go`, or one an adapter provides. |
+| `--mode <runtime>` | Force the runtime (alias `--runtime`): `cmd`, which is in the core, or one an adapter provides: `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python` and `go` come from the runtime adapters. |
 | `--script <name>` | The package script, for `npm`, `pnpm` and `yarn`. |
 | `--bin <name>` | The binary, for `cargo`. |
 | `--cwd <dir>` | The working directory. |
@@ -31,8 +31,8 @@ oxidepm start ./server -i 4 --port 3000
 | `--health-check <url or script>` | An http(s) URL or a script. |
 | `--on-start`, `--on-stop`, `--on-restart`, `--on-crash` | Event hooks. |
 | `--protected`, `--ai-control` | The policy markers. |
-| `--git <url>`, `--branch`, `--clone-dir` | Clone a repository and start it. |
-| `--setup` | Install dependencies and create `.env` from a template first. |
+| `--git <url>`, `--branch`, `--clone-dir` | Clone a repository and start it. Provided by the `git-start` adapter. |
+| `--setup` | Install dependencies and create `.env` from a template first. Provided by the `check` adapter. |
 | `--no-check` | Skip preflight checks. Not recommended. |
 | `-- <args>` | Arguments passed to the program. |
 

@@ -6,7 +6,7 @@ Every key an app can have in a config file. Times are in the unit the key names:
 name | string
 : The app's name. Required. A name is also what a selector matches, so it is limited in charset and length (a cluster name to 59 characters).
 mode | string | alias: runtime
-: How to run it: `cmd`, `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python`, `go`, or a runtime an installed adapter provides. If you leave it out, a `script` gets its mode from its extension, and the file is refused if that is not possible.
+: How to run it: `cmd` (any program, the only runtime in the core), or a runtime an enabled adapter provides: `node`, `npm`, `pnpm`, `yarn` (`runtime-node`), `python` (`runtime-python`), `go` (`runtime-go`), `rust` and `cargo` (`runtime-rust`). An app whose runtime adapter is missing is refused with `E_ADAPTER_MISSING` and the command that imports it. If you leave it out, a `script` gets its mode from its extension, and the file is refused if that is not possible.
 script | string
 : What to run. For `cmd` it is the program; for `npm`, `pnpm` and `yarn` the name of the package script; for `node` and `python` the file.
 bin | string

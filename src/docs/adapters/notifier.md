@@ -66,4 +66,4 @@ oxidepm notify remove CHANNEL
 ```term cap="notify-status" label="Terminal output of oxidepm notify status"
 ```
 
-`notify` is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, `oxidepm notify` prints that the command is provided by the adapter `notifier` and how to import it.
+`notify` is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, `oxidepm notify` exits with code 2 and prints `'notify' is provided by the adapter 'notifier', which is not installed.` and the command that imports it.

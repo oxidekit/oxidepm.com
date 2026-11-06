@@ -20,9 +20,13 @@ ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect
 
 `oxidepm adapter import`, `list`, `info`, `search`, `enable`, `disable`, `update` and `remove`. See [Import and enable](/docs/adapters/import-and-enable/).
 
+## Commands that come from adapters
+
+The commands below are not in the core. Each one is provided by an adapter you import and enable, and the core only knows the name. Without the adapter, the command is refused with exit code 2 and a message such as `'web' is provided by the adapter 'ui-web', which is not installed.` followed by the `oxidepm adapter import` command to run. See [Provided by adapters](/docs/commands/overview/#provided-by-adapters).
+
 ## init and check
 
-These two are still built into the core.
+Provided by the `init` and `check` adapters, which are planned and not published yet.
 
 ```sh
 oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
@@ -35,7 +39,7 @@ oxidepm start ./my-app --setup     # the same, then start
 
 ## deploy and diff
 
-These two are still built into the core.
+Provided by the `deploy` adapter, which is planned and not published yet. `start --git <url>` is provided by the `git-start` adapter.
 
 ```sh
 oxidepm deploy user@myserver --cwd /srv/myapp --post "npm run build" --restart api
@@ -43,33 +47,46 @@ oxidepm deploy user@myserver --cwd /srv/myapp --branch main --dry-run
 oxidepm diff user@myserver --cwd /srv/myapp --count 10
 ```
 
-`deploy` pulls code on the remote host over SSH and restarts processes. It needs SSH key authentication: no password prompts. `--dry-run` prints the commands without running them. `diff` shows the remote git history since the last deploy. Both are dangerous: an AI actor should never run `deploy` without a person confirming it.
+`deploy` pulls code on the remote host over SSH and restarts processes. It needs SSH key authentication: no password prompts. `diff` shows the remote git history since the last deploy. Both are dangerous: an AI actor should never run `deploy` without a person confirming it.
 
 ## web
 
+Provided by the `ui-web` adapter. It is built and tested; its archive is not published yet.
+
 ```sh
-oxidepm web --port 9615 --api-key your-secret-key
+oxidepm adapter import ui-web --enable
+oxidepm web              # where it listens, and its access key (shown once)
+oxidepm web new-key      # replace the key
 ```
 
-The Web API and WebSocket server is still built into the core. It listens on `127.0.0.1` by default. `--bind <ip>` picks another address, and an address that is not loopback (`0.0.0.0` included) is refused with exit code 2 unless `--api-key` is set. With a key on a loopback address everything except `/api/health` needs the key; without a key every route is open to anything that can reach the port on this machine, and that includes starting a command. The key travels in cleartext, so put TLS in front of the server for anything but loopback.
+The adapter serves a REST API and a WebSocket on `127.0.0.1:9615`. Every request, loopback included, needs the access key in the `X-API-Key` header. Only `/api/health` needs none. The first start makes a random key in the adapter's `config.toml`, and a browser WebSocket sends the key as a subprotocol, never in the URL. The `Host` header must be the address it is bound to, and `Origin` must be absent or the one set in `config.toml`, so a web page you visit cannot drive the API.
+
+By default it works on the apps that list `ui-web` under `adapters`, at the `lifecycle` level: it shows every app and can restart, stop and reload the opted-in ones. It cannot create or delete apps or flush logs. There is no TLS: put a reverse proxy in front for anything but a trusted network. The daemon sees each request as the actor `adapter:ui-web`, so its policy and audit log apply.
 
 | Endpoint | Method | Key | Description |
 |---|---|---|---|
-| `/api/health` | GET | No | Health and version. |
-| `/api/processes` | GET, POST | Yes | List all, or start an app. |
-| `/api/processes/:selector` | GET, DELETE | Yes | One app, or delete it. |
+| `/api/health` | GET | No | `{"ok":true}`. |
+| `/api/processes` | GET | Yes | All apps. |
+| `/api/processes/:selector` | GET | Yes | One app. |
 | `/api/processes/:selector/stop` | POST | Yes | Stop. |
 | `/api/processes/:selector/restart` | POST | Yes | Restart. |
 | `/api/processes/:selector/logs` | GET | Yes | Logs. |
 | `/api/ping` | GET | Yes | Ask the daemon whether it is alive. |
 | `/api/save`, `/api/resurrect` | POST | Yes | Save, and start the saved apps. |
-| `/ws` | WebSocket | Yes | Real-time updates. |
+| `/ws` | WebSocket | Yes | The daemon's lifecycle events as they happen. |
 
-The key is the `X-API-Key` header. The web server has no `/metrics`: use the [Prometheus exporter](/docs/adapters/exporter-prometheus/).
+`POST /api/processes` (start an app) and `DELETE` need the adapter to hold the `admin` level, and answer 403 otherwise. The adapter has no `/metrics`: use the [Prometheus exporter](/docs/adapters/exporter-prometheus/).
 
 ## monit and top
 
-`oxidepm monit` is a terminal dashboard with a process list, a log viewer and start, stop and restart controls. `oxidepm top` is a live resource monitor. `monit` is still built into the core.
+`oxidepm monit` is the terminal dashboard of the `ui-tui` adapter: the apps with state, CPU and memory, the selected app in detail and a log viewer. It can stop and restart apps, and asks for `y` or `n` first. It is a session command: the daemon starts the adapter on your terminal for as long as the dashboard is open, and it needs a terminal for input and output. The adapter is built and tested; its archive is not published yet.
+
+```sh
+oxidepm adapter import ui-tui --enable
+oxidepm monit
+```
+
+`oxidepm top`, a live resource monitor, is still in the core.
 
 ## completions and man
 

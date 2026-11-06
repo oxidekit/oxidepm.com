@@ -2,7 +2,7 @@ This is a runbook for letting an AI assistant manage processes through OxidePM. 
 
 ## Commands by risk
 
-**Safe, read-only:** `status`, `show`, `logs`, `env list`, `describe`, `check` (without `--fix`), `ping`, `monit`, `top`, `--version`.
+**Safe, read-only:** `status`, `show`, `logs`, `env list`, `describe`, `ping`, `top`, `--version`, and `check` (without `--fix`) where the `check` adapter is installed.
 
 **Caution:**
 
@@ -47,6 +47,10 @@ Treat `all` as a higher-risk variant of every command that accepts it.
 5. Put the agent on `agent.sock` and set `OXIDEPM_ACTOR`, so the limits apply whatever it does. Mark the apps it may restart `ai_control`, and the ones it must not touch `protected`.
 6. Run `oxidepm describe <name>` after any config change.
 
-## The web server
+## Commands that adapters provide
 
-`oxidepm web` listens on `127.0.0.1` unless `--bind` says otherwise, and refuses a non-loopback address without `--api-key`. Without a key (loopback only) it needs no key at all, and `POST /api/processes` starts an arbitrary command. An AI must not start it without a key, and should not be given the key.
+`web`, `monit`, `notify`, `deploy` and the other commands that [adapters provide](/docs/commands/overview/#provided-by-adapters) are caution or dangerous requests, and they go through the same policy and audit log as every other command. A session command such as `monit`, which takes over a terminal, is refused for an AI actor unless its adapter says it may be driven by one.
+
+## The web API
+
+The `ui-web` adapter listens on `127.0.0.1` and needs an access key for every request, loopback included. By default it can only show apps and restart, stop and reload the ones that list it under `adapters`; it cannot create or delete apps or flush logs. Do not give an AI the access key, and do not raise the adapter's level to `admin` for one. The daemon sees every request as the actor `adapter:ui-web`, and the audit log names it.

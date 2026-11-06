@@ -61,7 +61,7 @@ oxidepm adapter enable notifier</code></pre></figure>
 <p>Messages contain app names, ids, error text and health-check endpoints. Consider that before routing alerts to a shared channel.</p>
 <h2 id="configure-it">Configure it</h2>
 <p>The configuration is <code>config.toml</code> in the adapter&#x27;s own state directory. <code>oxidepm notify status</code> prints the path. It is not in the home directory, and <code>oxidepm backup</code> does not include it because it holds tokens.</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-41" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-41">events = [&quot;crash&quot;, &quot;restart&quot;]   # empty or absent: every event
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-43" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-43">events = [&quot;crash&quot;, &quot;restart&quot;]   # empty or absent: every event
 min_severity = &quot;warning&quot;        # info | warning | critical
 timeout_secs = 10               # per request, 1 to 60
 
@@ -96,7 +96,7 @@ Slack: not configured
 Webhook: not configured
 Events: all
 Minimum severity: none</pre></figure>
-<p><code>notify</code> is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, <code>oxidepm notify</code> prints that the command is provided by the adapter <code>notifier</code> and how to import it.</p></div><div class="pager"><a href="/docs/adapters/sandbox/" rel="prev"><small>Previous</small><span>The sandbox</span></a><a href="/docs/adapters/exporter-prometheus/" rel="next"><small>Next</small><span>The Prometheus exporter</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#install-it">Install it</a></li><li><a href="#events">Events</a></li><li><a href="#configure-it">Configure it</a></li><li><a href="#the-notify-command">The notify command</a></li></ul></nav></div>
+<p><code>notify</code> is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, <code>oxidepm notify</code> exits with code 2 and prints <code>&#x27;notify&#x27; is provided by the adapter &#x27;notifier&#x27;, which is not installed.</code> and the command that imports it.</p></div><div class="pager"><a href="/docs/adapters/sandbox/" rel="prev"><small>Previous</small><span>The sandbox</span></a><a href="/docs/adapters/exporter-prometheus/" rel="next"><small>Next</small><span>The Prometheus exporter</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#install-it">Install it</a></li><li><a href="#events">Events</a></li><li><a href="#configure-it">Configure it</a></li><li><a href="#the-notify-command">The notify command</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">

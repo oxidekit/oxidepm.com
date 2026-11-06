@@ -113,7 +113,7 @@
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">Notifications and Prometheus metrics have already moved out of the core into adapters in the unreleased code. The web API, the dashboard, the language runtimes and the deploy tools are still built in today, and are planned to follow.</p>
+      <p class="muted">Notifications, Prometheus metrics, the web API, the terminal dashboard and the Node.js, Python, Go and Rust runtimes are adapters, not part of the core. The core runs one runtime itself, <code>cmd</code>, which runs any program. Project checks, <code>init</code>, <code>start --git</code> and <code>deploy</code> are provided by adapters too, and those adapters are planned.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -179,7 +179,7 @@
   <div class="rule rule-gap"></div>
   <div class="head-row">
     <h2 id="core-title" class="h-section" style="max-width:16ch">What it does out of the box</h2>
-    <p style="max-width:44ch">Everything on this sheet ships in the core. Nothing here needs an adapter.</p>
+    <p style="max-width:44ch">Everything on this sheet is in the core and works with no adapter. Running a Node.js, Python, Go or Rust app needs the runtime adapter that a release carries.</p>
   </div>
   <div class="blueprint">
     <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -297,17 +297,17 @@ Enable notifier with this grant? [y/N] <span data-pending><button type="button" 
       <ul class="chips">
 <li class="tag tag-neutral chip">notifier</li>
 <li class="tag tag-neutral chip">exporter-prometheus</li>
+<li class="tag tag-neutral chip">ui-web</li>
+<li class="tag tag-neutral chip">ui-tui</li>
+<li class="tag tag-neutral chip">runtime-node</li>
+<li class="tag tag-neutral chip">runtime-python</li>
+<li class="tag tag-neutral chip">runtime-go</li>
+<li class="tag tag-neutral chip">runtime-rust</li>
       </ul>
     </div>
     <div>
       <h3 class="h-sub">Coming later</h3>
       <ul class="chips">
-<li class="tag tag-outline chip">ui-web</li>
-<li class="tag tag-outline chip">ui-tui</li>
-<li class="tag tag-outline chip">runtime-node</li>
-<li class="tag tag-outline chip">runtime-python</li>
-<li class="tag tag-outline chip">runtime-go</li>
-<li class="tag tag-outline chip">runtime-rust</li>
 <li class="tag tag-outline chip">check</li>
 <li class="tag tag-outline chip">init</li>
 <li class="tag tag-outline chip">git-start</li>

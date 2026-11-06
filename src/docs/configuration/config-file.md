@@ -33,6 +33,8 @@ log_max_files = 10
 log_compress = true
 ```
 
+The `cargo`, `npm` and `node` modes in this example are provided by the `runtime-rust` and `runtime-node` adapters that a release carries. With `mode = "cmd"` the app needs no adapter. See [Runtimes](/docs/getting-started/install/#runtimes).
+
 Start everything in it with:
 
 ```sh

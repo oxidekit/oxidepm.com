@@ -1,5 +1,5 @@
 title: Adapters — OxidePM
-description: Optional adapters for OxidePM: a notifier and a Prometheus exporter are built, more are planned. Each one is a separate program with its own permissions.
+description: Adapters for OxidePM, the process manager written in Rust. Runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are separate programs with their own permissions.
 path: /adapters/
 nav: adapters
 ---
@@ -18,7 +18,7 @@ nav: adapters
 
   <div style="max-width:70ch;margin-top:28px">{{release_note}}</div>
 
-  <p class="small-note" style="max-width:70ch">Two adapters are built and tested: the notifier and the Prometheus exporter. Neither is published yet: there is no archive to download and no signed index. The index that <code>oxidepm adapter import &lt;name&gt;</code> and <code>adapter search</code> read does not exist yet either, so once an archive is published you import it and pin it with its SHA-256. <a href="/docs/adapters/import-and-enable/">How importing works</a>.</p>
+  <p class="small-note" style="max-width:70ch">Eight adapters are built and tested. The four runtime adapters (Node.js, Python, Go and Rust) come with each release, and the install script enables them. The notifier, the Prometheus exporter, the web API and the terminal dashboard have no published archive yet, and there is no signed index to search, so once an archive is published you import it and pin it with its SHA-256. The adapters for project checks, <code>init</code>, <code>start --git</code> and <code>deploy</code> are planned, and so are adapters for AI agents. <a href="/docs/adapters/import-and-enable/">How importing works</a>.</p>
 
   <div class="toolbar">
     <label class="search">

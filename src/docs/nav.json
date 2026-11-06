@@ -18,7 +18,7 @@
   {"slug": "daemon-settings", "title": "Daemon settings", "summary": "The optional daemon.toml and the files in the data directory."}
  ]},
  {"slug": "commands", "title": "Commands", "pages": [
-  {"slug": "overview", "title": "Overview", "summary": "The core commands, selectors and global flags, and which commands are moving to adapters."},
+  {"slug": "overview", "title": "Overview", "summary": "The core commands, selectors and global flags, the commands and runtimes that adapters provide, and what you see when one is missing."},
   {"slug": "start-stop-restart", "title": "start, stop, restart", "summary": "Start an app or a config file, stop it, restart it, reload it and delete it."},
   {"slug": "status", "title": "status and show", "summary": "Read what is running: the table, the extra columns, one app in detail and the daemon itself."},
   {"slug": "logs", "title": "logs and flush", "summary": "Read, follow and filter an app's logs, and truncate them."},
@@ -26,7 +26,7 @@
   {"slug": "dry-run", "title": "Dry run", "summary": "Ask what a command would do and change nothing."},
   {"slug": "json-output", "title": "JSON output", "summary": "The --json flag, and what it prints."},
   {"slug": "error-codes", "title": "Error codes", "summary": "The stable E_ codes, where you can see them, and what they mean."},
-  {"slug": "other-commands", "title": "Other commands", "summary": "Update, backup and restore, env, init, check, deploy, diff, web, monit, top, completions."}
+  {"slug": "other-commands", "title": "Other commands", "summary": "Update, backup and restore, env, top, completions, and the commands that adapters provide: web, monit, init, check, deploy and diff."}
  ]},
  {"slug": "adapters", "title": "Adapters", "pages": [
   {"slug": "how-adapters-work", "title": "How adapters work", "summary": "What an adapter is, what runs where, and what happens when one fails."},

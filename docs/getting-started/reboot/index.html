@@ -59,7 +59,7 @@
 <h2 id="start-the-daemon-at-boot">Start the daemon at boot</h2>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm startup systemd     # or: launchd</code></pre></figure>
 <p>This generates an autostart script for your init system. <code>oxidepm --dry-run startup</code> shows what would be written and writes nothing. The generated systemd unit has this shape (your user and paths will differ):</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepmd.service</span><button type="button" class="btn btn-ghost" data-copy="code-11" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-11">[Unit]
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepmd.service</span><button type="button" class="btn btn-ghost" data-copy="code-12" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-12">[Unit]
 Description=OxidePM Process Manager
 After=network.target
 
