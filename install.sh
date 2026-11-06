@@ -127,6 +127,45 @@ install() {
     chmod +x "$INSTALL_DIR/oxidepm"
     chmod +x "$INSTALL_DIR/oxidepmd"
     if [ -f "$INSTALL_DIR/oxidepm-sandbox" ]; then chmod +x "$INSTALL_DIR/oxidepm-sandbox"; fi
+
+    install_adapters
+}
+
+# The adapters a release carries (the runtimes among them) go to share/oxidepm/adapters next to
+# the programs' directory, where "oxidepm adapter import --bundled" looks for them. A release
+# without them installs as before.
+install_adapters() {
+    BUNDLE_SRC="$TEMP_DIR/share/oxidepm/adapters"
+    BUNDLE_DIR=""
+    if [ ! -f "$BUNDLE_SRC/index.json" ]; then
+        return 0
+    fi
+    BUNDLE_DIR="$(dirname "$INSTALL_DIR")/share/oxidepm/adapters"
+    info "Installing the adapters of this release to $BUNDLE_DIR"
+    if [ -w "$INSTALL_DIR" ]; then
+        rm -rf "$BUNDLE_DIR" && mkdir -p "$BUNDLE_DIR" && cp -R "$BUNDLE_SRC/." "$BUNDLE_DIR/"
+    else
+        sudo rm -rf "$BUNDLE_DIR" && sudo mkdir -p "$BUNDLE_DIR" && sudo cp -R "$BUNDLE_SRC/." "$BUNDLE_DIR/"
+    fi
+}
+
+# The runtimes (node, npm, pnpm, yarn, python, go, rust, cargo) are adapters. One command imports
+# and enables the ones the release carries; it is printed and run, and a failure does not undo
+# the install.
+import_runtimes() {
+    if [ -z "$BUNDLE_DIR" ]; then
+        # a release without an adapter bundle (0.3.2 and older) has its runtimes built in
+        return 0
+    fi
+    IMPORT="$INSTALL_DIR/oxidepm adapter import --bundled --tag runtime --enable --yes"
+    info "Importing the runtimes: $IMPORT"
+    if "$INSTALL_DIR/oxidepm" adapter import --bundled --tag runtime --enable --yes; then
+        success "The runtimes are installed"
+    else
+        warn "The runtimes were not imported. Run this when the reason above is dealt with:"
+        warn "  $IMPORT"
+        warn "On a machine that cannot enforce the adapters' sandbox the command stops and says so; add --allow-unenforced if you accept that."
+    fi
 }
 
 # Verify installation
@@ -155,6 +194,7 @@ main() {
     get_latest_version
     install
     verify
+    import_runtimes
 }
 
 main
