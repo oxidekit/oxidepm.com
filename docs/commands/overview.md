@@ -1,0 +1,109 @@
+# Overview
+
+The core commands, selectors and global flags, the commands and runtimes that adapters provide, and what you see when one is missing.
+
+Source: https://oxidepm.com/docs/commands/overview/
+
+## Core commands
+
+| Command | What it does |
+|---|---|
+| `start <target>` | Start a process, or every app of a config file (sent as one batch). |
+| `stop <selector>` | Stop apps. |
+| `restart <selector>` | Hard restart apps. Also starts an app that is at rest. |
+| `reload <selector>` | The same as `restart`. There is no zero-downtime reload. |
+| `delete <selector>` | Stop apps and remove them from the registry. |
+| `status [--more\|--daemon]` | The status table. `--more` adds port, working directory and policy markers. `--daemon` shows the daemon itself. |
+| `show <name> [--reveal]` | One app in detail. `--reveal` also prints environment values and hook scripts. |
+| `logs <name> [-f]` | Read or follow logs. |
+| `flush <selector>` | Truncate the active log files. |
+| `describe <name>` | Show the command that would run for an app that is already registered, without starting anything. |
+| `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
+| `audit` | Read the audit log. |
+| `save [--force]`, `resurrect` | Write and restore the list of apps that should run. |
+| `startup [systemd\|launchd]` | Generate an autostart script. |
+| `ping` | Check that the daemon is alive. |
+| `kill` | Stop the daemon and every app. |
+| `env list` | The keys of an app's environment. |
+| `update [--version X] [--force]` | Update to a release. |
+| `backup`, `restore <file>` | Export and restore the config and process list. |
+| `adapter` | Find, import, enable and manage adapters. |
+| `completions <shell>`, `man` | Shell completions and the man page. |
+
+## Provided by adapters
+
+These commands are not in the core. An adapter provides each one, and until you import and enable it, the command is not there. The core knows only the names.
+
+| Command | Adapter | What it is |
+|---|---|---|
+| `notify status\|test\|events\|severity\|telegram\|remove` | [notifier](https://oxidepm.com/docs/adapters/notifier/) | Notifications to Telegram, Discord, Slack and webhooks. |
+| `web [status\|new-key]` | `ui-web` | The web API and its WebSocket. See [web](https://oxidepm.com/docs/commands/other-commands/#web). |
+| `monit` | `ui-tui` | The terminal dashboard, a session command that runs on your terminal. See [monit](https://oxidepm.com/docs/commands/other-commands/#monit-and-top). |
+| `check`, `init`, `start --setup` | `check`, `init` | Project checks and a starter config file. Planned adapters. |
+| `start --git` | `git-start` | Clone a repository and start it. A planned adapter. |
+| `deploy`, `diff` | `deploy` | Deploy over SSH and show the remote changes. A planned adapter. |
+
+The Prometheus `/metrics` endpoint comes from the [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/) adapter.
+
+When an adapter is not installed, the command is refused with exit code 2 and the message names the adapter:
+
+*Terminal output of oxidepm notify when the notifier is not installed*
+
+```text
+$ oxidepm notify status
+error: unrecognized subcommand 'notify'
+
+Usage: oxidepm [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+
+'notify' is provided by the adapter 'notifier', which is not installed.
+Install it with: oxidepm adapter import notifier   (see: oxidepm adapter list --available)
+```
+
+If the adapter is installed but switched off, the message says so and points to `oxidepm adapter enable <name>`. [How adapters work](https://oxidepm.com/docs/adapters/how-adapters-work/).
+
+## Runtimes
+
+The core runs one runtime itself: `cmd`, which runs any program with its arguments. The language runtimes are adapters, and a release carries them:
+
+| Runtime names | Adapter |
+|---|---|
+| `node`, `npm`, `pnpm`, `yarn` | `runtime-node` |
+| `python` | `runtime-python` |
+| `go` | `runtime-go` |
+| `rust`, `cargo` | `runtime-rust` |
+
+The install script, the packages and the release archives put the signed adapters next to the programs and import them with `oxidepm adapter import --bundled --tag runtime --enable --yes`. A build from source has none until you import them from a release. Starting an app whose runtime is missing fails and creates nothing:
+
+*Terminal output of oxidepm start when the runtime adapter is not enabled*
+
+```text
+$ oxidepm start /srv/app/app.js
+✗ runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
+Error: runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
+```
+
+The command in the message is the one for a missing adapter. If the adapter is installed but off, it says `Run: oxidepm adapter enable runtime-node` instead. The error code is `E_ADAPTER_MISSING`.
+
+Still in the core: `top`, a live resource monitor.
+
+## Selectors
+
+A selector is an app name, an id, `all`, or `@tag` for a group. A cluster (`web`) and its instances (`web-0`, `web-1`) are selected as one when a tag or `all` matches both. An AI actor may not use `all` or a tag with `stop`, `restart` or `reload`.
+
+## Global flags
+
+| Flag | Meaning |
+|---|---|
+| `--json` | Print machine-readable output instead of tables. |
+| `--dry-run` | Say what the command would do and change nothing. |
+| `-v` | More logging (`-vv`, `-vvv`). |
+
+## Environment variables
+
+| Variable | Meaning |
+|---|---|
+| `OXIDEPM_HOME` | Use this data directory instead of `~/.oxidepm`. |
+| `OXIDEPM_SOCKET` | The socket the CLI talks to. |
+| `OXIDEPM_ACTOR` | The actor the CLI claims to be, such as `ai:assistant`. A claim can only make a request stricter. |

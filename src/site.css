@@ -252,7 +252,7 @@ button { font: inherit; color: inherit; }
 .rule { height: 1px; background: var(--color-divider); }
 .rule-gap { margin-bottom: 28px; }
 .display { text-transform: uppercase; margin: 0 0 0 -0.05em; }
-.display-hero { font-size: clamp(46px, 8.4vw, 112px); line-height: 0.98; letter-spacing: 0.005em; max-width: 14ch; }
+.display-hero { font-size: clamp(38px, 6.4vw, 84px); line-height: 1; letter-spacing: 0.005em; max-width: 26ch; }
 .display-page { font-size: clamp(44px, 7vw, 88px); line-height: 0.98; }
 .display-404 { font-size: clamp(46px, 8vw, 104px); line-height: 0.98; }
 .h-section { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.02; text-transform: uppercase; margin: 0; }

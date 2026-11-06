@@ -1,0 +1,2846 @@
+# OxidePM
+
+> OxidePM is an open-source process manager written in Rust, for Linux. It starts apps, restarts them when they crash, keeps their logs and brings them back after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are adapters. Licensed MIT or Apache-2.0.
+
+OxidePM runs on Linux; macOS is built but untested and Windows is not supported. Source: https://github.com/oxidekit/oxidepm. The pages describe newer code than the latest published release (0.3.2). That code is not published yet, so some of what they describe is not in any release.
+
+This file holds every documentation page of oxidepm.com in Markdown. Each page also has its own `.md` address next to its HTML address.
+
+---
+
+# Install
+
+Install OxidePM with the install script, a package, a prebuilt archive or from source.
+
+Source: https://oxidepm.com/docs/getting-started/install/
+
+## Release status
+
+The latest published release is 0.3.2, and the install script below installs it. The other pages of this documentation describe newer code that is not published yet: it is not in a release and not on a public branch. That code adds the agent socket, the audit log, the policy markers (`protected` and `ai_control`), `--dry-run` and the adapters. Release 0.3.2 has none of them: `oxidepm --dry-run status` is refused there, and notifications, the web server, the dashboard and the language runtimes are still built into the core instead of coming from adapters.
+
+There is nothing to build from source yet to try what these pages describe: the repository's default branch builds the 0.3 line, not that code. This section goes away when a release contains it.
+
+## Requirements
+
+- Linux (the main platform). The process manager is also built for macOS on Apple Silicon, but it is not tested there, and adapters, the sandbox and the recovery of apps after the daemon is killed are Linux only. Windows is not supported.
+- Rust 1.75 or newer, only to build from source.
+- The programs your apps need, and only those: Node.js for Node, npm, pnpm and yarn apps, Python 3 for Python apps, Go 1.21 or newer for Go apps, and `rustc` or `cargo` for Rust apps. OxidePM runs them; it does not install them.
+- From the next release on, the language runtimes are adapters that the release carries, and the install script enables them. See [Runtimes](#runtimes).
+
+## The install script
+
+*Install*
+
+```sh
+curl -fsSL https://oxidepm.com/install.sh | sh
+```
+
+The script is [install.sh](https://oxidepm.com/install.sh); read it before you run it. It installs the latest published release, which is 0.3.2 today. This is everything it does:
+
+1. Works out your platform from `uname`: Linux on x86_64 or aarch64, macOS on arm64 (Apple Silicon). Anything else stops with an error. For an Intel Mac the error says that no build is published.
+2. Asks the GitHub releases API of the OxidePM repository for the tag of the latest release.
+3. Downloads `oxidepm-<target>.tar.gz` and `checksums.txt` from that release on `github.com`.
+4. Checks that the archive's SHA-256 is the one `checksums.txt` lists for that exact file name. This shows the file arrived whole and is the one the release lists. It is not a signature check, and there is no release signing key yet.
+5. Unpacks the archive in a temporary directory and moves `oxidepm`, `oxidepmd` and, if the archive has it, `oxidepm-sandbox` into `/usr/local/bin`, using `sudo` when that directory is not writable. Set `INSTALL_DIR` to install somewhere else.
+6. Runs `oxidepm --version`.
+
+Apart from the redirects GitHub answers with to its download host, it makes no other request and installs nothing else.
+
+A release that carries adapters (the next one does) has two more steps. The script copies the signed adapter bundle in the archive to `share/oxidepm/adapters`, next to the directory the programs went to, and then runs `oxidepm adapter import --bundled --tag runtime --enable --yes`, which imports and enables the runtime adapters from that bundle without fetching anything. If that import fails, the install stays, and the script prints the command to run again.
+
+## Other ways
+
+The [Releases page](https://github.com/oxidekit/oxidepm/releases) has the archives and Debian packages:
+
+| Platform | Architecture | Archive |
+|---|---|---|
+| Linux | x86_64 | `oxidepm-x86_64-unknown-linux-gnu.tar.gz` |
+| Linux | ARM64 | `oxidepm-aarch64-unknown-linux-gnu.tar.gz` |
+| macOS | Apple Silicon | `oxidepm-aarch64-apple-darwin.tar.gz` |
+
+There is no archive for Intel Macs. The repository README also mentions a Homebrew tap and an Arch Linux package description; they have not been checked for this site, so follow the README for them.
+
+## Runtimes
+
+The core runs one runtime by itself, `cmd`, which runs any program. The `node`, `npm`, `pnpm`, `yarn`, `python`, `go`, `rust` and `cargo` runtimes are provided by the adapters `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`. A release carries them, signed, under `share/oxidepm/adapters`. The install script, the Debian and RPM packages, the Arch package and the Docker image put them there, and one command imports and enables all four with no network:
+
+```sh
+oxidepm adapter import --bundled --tag runtime --enable --yes
+```
+
+On a machine where the sandbox of adapters cannot be enforced (macOS at the moment) the command stops and says so; add `--allow-unenforced` if you accept that. Until a runtime is imported, `oxidepm start app.js` fails with the adapter's name and the command that imports it, and creates nothing. See [Provided by adapters](https://oxidepm.com/docs/commands/overview/#runtimes).
+
+## From source
+
+*Build*
+
+```sh
+git clone https://github.com/oxidekit/oxidepm
+cd oxidepm
+cargo build --workspace --release
+```
+
+This builds the published 0.3 line, which does not have the features this documentation describes as not yet released. The binaries are in `target/release`. Put `oxidepm` and `oxidepmd` in one directory on your `PATH`: the CLI starts the daemon from the directory it is in. A build that includes the adapter sandbox also has `oxidepm-sandbox`, which the CLI looks for next to itself. A build from source has no runtimes: the adapters of a release come with the release archive, not with the source. Copy the archive's `share/oxidepm/adapters` next to your `bin` directory and run the import command under [Runtimes](#runtimes).
+
+## Check it
+
+```sh
+oxidepm --version
+oxidepm status
+```
+
+Before anything is started, `status` answers that the daemon is not running. The daemon starts the first time you `start` an app.
+
+---
+
+# Your first app
+
+Start an app, look at it, read its logs and stop it.
+
+Source: https://oxidepm.com/docs/getting-started/first-app/
+
+## Start an app
+
+`oxidepm start` takes a file, a directory or a config file. It starts the daemon if it is not running, and the daemon keeps your app running after you close the terminal.
+
+```sh
+oxidepm start app.py            # a script: the runtime comes from its extension
+oxidepm start ./my-project      # a directory: the runtime comes from the files in it
+oxidepm start oxidepm.config.toml
+```
+
+The runtime of a script comes from its extension (`.js` is node, `.py` is python, `.go` is go, `.rs` is rust) and of a directory from the file that marks it (`package.json`, `Cargo.toml`, `go.mod`, `requirements.txt`). Use `--mode` to force one: `cmd`, `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python` or `go`. `cmd` runs any program and is the only runtime in the core. The others come from the runtime adapters that a release carries: if the adapter is missing or off, `start` fails and names the adapter and the command to import it. See [Runtimes](https://oxidepm.com/docs/getting-started/install/#runtimes).
+
+A config file starts every app in it, as one batch. This one is the example used on these pages. It is the file the sample output below came from, with small stand-in programs for the real ones:
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "db"
+mode = "cmd"
+script = "sleep"
+args = ["100000"]
+protected = true
+
+[[apps]]
+name = "api"
+mode = "cmd"
+script = "python3"
+args = ["-m", "http.server", "18080", "--bind", "127.0.0.1"]
+depends_on = ["db"]
+ai_control = true
+
+[apps.health_check]
+http_url = "http://127.0.0.1:18080/"
+
+[[apps]]
+name = "web"
+mode = "cmd"
+script = "sleep"
+args = ["100000"]
+depends_on = ["api"]
+ai_control = true
+```
+
+*Terminal output of oxidepm start with a config file*
+
+```text
+$ oxidepm start docs.config.toml
+✓ Started db (id: 1)
+✓ Started api (id: 2, waiting for its dependencies)
+✓ Started web (id: 3, waiting for its dependencies)
+
+Started 3 apps
+```
+
+An app that waits for its dependencies shows as `waiting`, and the start returns at once. `api` has a health check, so it stays `starting` until its first probe passes.
+
+## Look at it
+
+*Terminal output of oxidepm status while apps are starting*
+
+```text
+$ oxidepm status
+╭────┬──────┬──────┬─────────┬───┬──────────┬──────┬─────┬────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status   │ cpu  │ mem │ uptime │
+├────┼──────┼──────┼─────────┼───┼──────────┼──────┼─────┼────────┤
+│  1 │ db   │ cmd  │ 1484325 │ 0 │ online   │ 0.0% │ 0B  │ 1s     │
+│  2 │ api  │ cmd  │ 1484326 │ 0 │ starting │ 0.0% │ 0B  │ 1s     │
+│  3 │ web  │ cmd  │ -       │ 0 │ waiting  │ 0.0% │ 0B  │ 0s     │
+╰────┴──────┴──────┴─────────┴───┴──────────┴──────┴─────┴────────╯
+```
+
+The columns are `id`, `name`, `mode` (the runtime), `pid`, `↺` (restarts), `status`, `cpu`, `mem` and `uptime`. `online` is the status the table shows for an app that is running; `--json` calls it `running`. [All statuses](https://oxidepm.com/docs/configuration/restarts/).
+
+`oxidepm status --more` adds the port, the working directory and the policy markers. `oxidepm show <name>` prints one app in detail. `oxidepm status --json` prints the table as JSON.
+
+## Read its logs
+
+```sh
+oxidepm logs api            # the last 15 lines
+oxidepm logs api -f         # follow
+oxidepm logs api --lines 100 --grep "error"
+```
+
+`--out` shows only stdout and `--err` only stderr. [More on logs](https://oxidepm.com/docs/commands/logs/).
+
+## Stop it
+
+```sh
+oxidepm stop api
+oxidepm restart api
+oxidepm delete api          # stop and remove it from the registry
+oxidepm kill                # stop the daemon and every app
+```
+
+A selector is a name, an id, `all`, or `@tag`. A stopped app stays stopped and is not restarted by the daemon. `reload` is the same as `restart`: there is no zero-downtime reload.
+
+---
+
+# Survive a reboot
+
+Save the app list, generate a boot unit and bring the apps back.
+
+Source: https://oxidepm.com/docs/getting-started/reboot/
+
+## Save the list
+
+```sh
+oxidepm save
+```
+
+`save` writes `saved.json` in the data directory (`~/.oxidepm`, or the directory `OXIDEPM_HOME` names) from the apps that should be running. It refuses to replace a file that lists apps with an empty list, unless you pass `--force`. The file is written atomically with mode 0600.
+
+## Bring the apps back
+
+```sh
+oxidepm resurrect
+```
+
+`resurrect` starts every app that should be running and is not up, and adds apps from `saved.json` that were deleted since. An app you stopped stays stopped. Apps are started in dependency order, and at most four build and spawn at once (the `launch_concurrency` setting), so a reboot does not run twenty builds together.
+
+## Start the daemon at boot
+
+```sh
+oxidepm startup systemd     # or: launchd
+```
+
+This generates an autostart script for your init system. `oxidepm --dry-run startup` shows what would be written and writes nothing. The generated systemd unit has this shape (your user and paths will differ):
+
+*oxidepmd.service*
+
+```ini
+[Unit]
+Description=OxidePM Process Manager
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+ExecStart="/usr/local/bin/oxidepmd"
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=160
+KillMode=mixed
+Environment="HOME=/home/deploy"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+`TimeoutStopSec` is the daemon's shutdown budget (`shutdown_budget_secs`, 120 seconds by default) plus 40 seconds, and `KillMode=mixed` makes systemd send the stop signal to the daemon alone and leave it time to stop the apps in order. Run `startup` again after you change the budget, to get the new value.
+
+The daemon starts the apps that should be running when it starts at boot. On Linux, `pids.json` in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything. On macOS that recovery is not available, and the daemon logs a warning instead.
+
+---
+
+# Upgrade
+
+Update to a newer release with `oxidepm update`, and what it checks.
+
+Source: https://oxidepm.com/docs/getting-started/upgrade/
+
+## Update
+
+```sh
+oxidepm update                      # the latest release
+oxidepm update --version 0.3.2      # a specific one
+```
+
+`update` downloads the release archive for your platform and installs it. It is careful about it:
+
+- The archive must match the SHA-256 in the release's `checksums.txt`. That is an integrity check. There is no release signing key yet, so authenticity is not checked.
+- The asset is the one named exactly `oxidepm-<target>.tar.gz`, and it is unpacked safely.
+- A running daemon is stopped, the files are replaced atomically with the old ones kept as `.pre-update`, and the new `oxidepm --version` is run. If that fails, everything is put back.
+- An older version needs `--force`.
+
+`oxidepm --dry-run update` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
+
+## Keep the CLI and daemon together
+
+The CLI and the daemon must come from the same release. A config file is sent to the daemon as one `StartBatch` request, so `oxidepm start <config file>` needs a daemon of the same release.
+
+## State from older releases
+
+The daemon's database is `state.db`, schema version 2. An old `oxidepm.db` is not migrated. A `saved.json` written by an older release is refused: run `oxidepm save` again. To go back to a release from before the policy markers, move `state.db` aside or put back `state.db.pre-v2`, the copy the daemon made before it migrated the file. Changes made since are lost.
+
+---
+
+# The config file
+
+Where an app's settings live, which formats are read and how strictly.
+
+Source: https://oxidepm.com/docs/configuration/config-file/
+
+## Writing one
+
+A config file lists apps. It is a TOML file by default; YAML and JSON are read too, chosen by the file extension (`.toml`, `.yaml`, `.yml`, `.json`). The documented names are `oxidepm.config.toml` and `ecosystem.config.toml`, but any file name with a known extension works.
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "api"
+mode = "cargo"
+cwd = "./api"
+env = { RUST_LOG = "info" }
+tags = ["backend"]
+
+[[apps]]
+name = "web"
+mode = "npm"
+script = "start"
+cwd = "./web"
+env_file = ".env"
+instances = 2
+port = 3000
+
+[[apps]]
+name = "worker"
+mode = "node"
+script = "worker.js"
+max_restarts = 5
+restart_delay = 2000
+depends_on = ["api"]              # wait for the api to be running first
+restart_cron = "0 4 * * *"        # restart daily at 4am UTC
+
+log_max_size = "50mb"
+log_max_files = 10
+log_compress = true
+```
+
+The `cargo`, `npm` and `node` modes in this example are provided by the `runtime-rust` and `runtime-node` adapters that a release carries. With `mode = "cmd"` the app needs no adapter. See [Runtimes](https://oxidepm.com/docs/getting-started/install/#runtimes).
+
+Start everything in it with:
+
+```sh
+oxidepm start oxidepm.config.toml
+```
+
+The file is sent to the daemon as one batch, so an app may be listed before the apps it depends on. Each app gets its own result: an app that cannot start does not stop the others, but the apps that depend on it are refused too.
+
+## Checked strictly
+
+A config file is checked when it is loaded, and nothing is started if it fails. A file that does not parse is reported with its name and the line of the problem; the other errors name the app, the key or the file they are about. These are all errors:
+
+- an unknown key (a typo such as `restart_mode`, which is spelled `restart`),
+- a bad cron expression or log size,
+- a health check that is not exactly one of `http_url`, `tcp` or `script`,
+- an `env_file` that does not exist,
+- a `script` whose runtime cannot be inferred from its extension (set `mode`),
+- `watch = true`, because file watching is not available yet,
+- a dependency on an app that is not in the file or the registry, or a dependency cycle.
+
+*Terminal output of oxidepm start with a config file that has an unknown key*
+
+```text
+$ oxidepm start bad.toml
+Error: Config error: bad.toml: TOML parse error at line 5, column 1
+  |
+5 | restart_mode = "always"
+  | ^^^^^^^^^^^^
+unknown field `restart_mode`, expected one of `name`, `mode`, `runtime`, `script`, `bin`, `cwd`, `args`, `env`, `env_file`, `watch`, `ignore`, `restart_delay`, `max_restarts`, `max_restart_delay`, `stable_uptime`, `crash_window`, `kill_timeout`, `no_autorestart`, `instances`, `port`, `port_range`, `health_check`, `max_memory_mb`, `hooks`, `tags`, `max_uptime_secs`, `restart`, `binary`, `depends_on`, `depends_timeout`, `depends_fail_open`, `restart_cron`, `log_max_size`, `log_max_files`, `log_compress`, `adapters`, `protected`, `ai_control`
+```
+
+## The daemon keeps its own copy
+
+A config file is read only by `oxidepm start <file>`. The daemon keeps the spec an app was started with: `restart` and `reload` reuse it, and `start` of an app that is already up is refused with `E_APP_EXISTS`. To apply a changed file, stop the app and start the file again. An app that is at rest takes the new spec.
+
+A config file has no key for the startup delay or for `env_inherit`. Those are `--delay` and `--env-inherit` of a single `start`.
+
+## Reserved tables
+
+The top-level tables `adapters` and `policy` are reserved and must be empty, and so is a per-app `adapters` table (`[apps.adapters]`). A file that fills one is refused.
+
+The keys of an app are on the next page.
+
+---
+
+# Apps
+
+Every key an app can have in a config file.
+
+Source: https://oxidepm.com/docs/configuration/apps/
+
+Every key an app can have in a config file. Times are in the unit the key names: `_ms` and the restart and kill delays are milliseconds, `_secs`, `stable_uptime` and `crash_window` are seconds.
+
+## What to run
+
+- `name` (string): The app's name. Required. A name is also what a selector matches, so it is limited in charset and length (a cluster name to 59 characters).
+- `mode` (string, alias: runtime): How to run it: `cmd` (any program, the only runtime in the core), or a runtime an enabled adapter provides: `node`, `npm`, `pnpm`, `yarn` (`runtime-node`), `python` (`runtime-python`), `go` (`runtime-go`), `rust` and `cargo` (`runtime-rust`). An app whose runtime adapter is missing is refused with `E_ADAPTER_MISSING` and the command that imports it. If you leave it out, a `script` gets its mode from its extension, and the file is refused if that is not possible.
+- `script` (string): What to run. For `cmd` it is the program; for `npm`, `pnpm` and `yarn` the name of the package script; for `node` and `python` the file.
+- `bin` (string): The binary name, for `cargo`.
+- `binary` (string): The path to a binary, as an alternative to `script` or `bin`.
+- `args` (list of strings, default: none): Arguments passed to the program.
+- `cwd` (string): The working directory.
+
+## Environment and tags
+
+- `env` (table, default: empty): Environment variables for the app, for example `env = { RUST_LOG = "info" }`.
+- `env_file` (string): A file of `KEY=VALUE` lines. A missing file is an error.
+- `tags` (list of strings, default: none): Group apps, and select them with `@tag`.
+
+## Restarts
+
+- `restart` (string, default: "on-crash"): `on-crash`, `always` or `never`. See [Restarts and states](/docs/configuration/restarts/).
+- `no_autorestart` (boolean, default: false): Turn automatic restarts off.
+- `restart_delay` (number, default: 500): Milliseconds before the first restart. It doubles for every crash in a row.
+- `max_restart_delay` (number, default: 60000): The cap on that delay, in milliseconds.
+- `max_restarts` (number, default: 15): More than this many restarts inside `crash_window` end the app `errored`.
+- `crash_window` (number, default: 600): Seconds. See `max_restarts`.
+- `stable_uptime` (number, default: 60): A run this long, in seconds, starts the delay over.
+- `kill_timeout` (number, default: 3000): Milliseconds the app has to exit after the stop signal.
+
+## Dependencies, limits and schedules
+
+- `depends_on` (list of app names, default: none): Apps that must be running before this one starts. See [Dependencies](/docs/configuration/dependencies/).
+- `depends_timeout` (seconds, default: 60): How long to wait for them, from 1 to 3600.
+- `depends_fail_open` (boolean, default: false): Launch anyway, with a warning, when the wait times out. Discouraged.
+- `max_memory_mb` (number): Restart the app when it is over this resident size. See [Limits and cron](/docs/configuration/limits-and-cron/).
+- `max_uptime_secs` (number): Restart the app after this many seconds of uptime.
+- `restart_cron` (string): A cron expression for scheduled restarts. Five fields, UTC; Sunday is 0 or 7.
+
+## Clusters
+
+- `instances` (number, default: 1): How many instances, up to 256. See [Clusters](/docs/configuration/clusters/).
+- `port` (number): The base port. Instance `i` gets `port + i`.
+- `port_range` (table): `{ start = 3000, end = 3010 }`. The range must hold every instance. `port` and `port_range` together are refused.
+
+## Checks, hooks and logs
+
+- `health_check` (table): Exactly one of `http_url`, `tcp` or `script`, plus optional settings. See [Health checks](/docs/configuration/health-checks/).
+- `hooks` (table): `on_start`, `on_stop`, `on_restart`, `on_crash`, `on_error`. See [Environment and hooks](/docs/configuration/environment-and-hooks/).
+- `log_max_size` (string, default: "10mb"): Rotate a log file at this size, for example `"50mb"`.
+- `log_max_files` (number, default: 5): How many rotated files to keep.
+- `log_compress` (boolean, default: false): Compress rotated files with gzip.
+
+## Safety markers
+
+- `protected` (boolean, default: false): Read-only for AI actors and other non-human callers. See [Protected apps](/docs/ai-safety/protected-apps/).
+- `ai_control` (boolean, default: false): AI actors may stop, restart and reload the app. They can never start or delete it.
+
+## Accepted, with no effect
+
+- `watch` (boolean, default: false): `true` is an error: file watching is not available yet. `false` is accepted.
+- `ignore` (list of strings): Ignore patterns for watching. They have no effect while watching is refused.
+- `adapters` (table): Reserved. It must be empty.
+
+---
+
+# Restarts and states
+
+Restart policy, backoff, the crash-loop breaker and the states an app moves through.
+
+Source: https://oxidepm.com/docs/configuration/restarts/
+
+## States
+
+`oxidepm status` shows one of these for each app. In `--json` output `online` is called `running`.
+
+| Status | Meaning |
+|---|---|
+| `waiting` | A start was accepted and waits for `depends_on` or a startup delay. |
+| `building` | Building from source. |
+| `starting` | Spawned, and with a health check, until the first probe has passed. |
+| `online` | Running. |
+| `unhealthy` | Alive, but the health check failed `retries` times in a row. |
+| `backoff` | Crashed. An automatic restart is scheduled. |
+| `stopping` | Shutting down. |
+| `stopped` | Stopped by a person. It stays stopped. |
+| `errored` | A crash loop, a launch that failed, an exit that is not restarted, or a failed dependency. |
+
+A `stop` acts on every state except `stopped` and `errored`: it also cancels a pending start, a build and a pending restart. A `start` of an app that is not at rest (anything but `stopped` and `errored`, `backoff` and `waiting` included) is refused with `E_APP_EXISTS` and changes nothing.
+
+## The restart policy
+
+A crashed app waits in `backoff` and is restarted automatically unless `--no-autorestart` or the config key `restart` says otherwise. `restart` is one of:
+
+- `on-crash` (the default): a non-zero exit or a death by a signal is restarted. An exit with code 0 is not, and leaves the app `errored`.
+- `always`: any exit is restarted.
+- `never`: nothing is restarted.
+
+A restart caused by a memory or uptime limit, by a health check with `action = "restart"`, or by a launch that failed during a restart ignores both settings. A manual `stop` is never restarted automatically.
+
+## Backoff and the crash-loop breaker
+
+The delay before the first restart is `restart_delay` (500 ms by default) and doubles for every crash in a row, up to `max_restart_delay` (60 000 ms). A run of `stable_uptime` seconds (60 by default) starts the delay over.
+
+More than `max_restarts` restarts (15 by default) inside any `crash_window` seconds (600 by default) are a crash loop. The app ends `errored` and stays `errored` until a person starts it. `start` and `restart` by hand give the app a fresh budget.
+
+A launch that fails during an automatic restart (the program is gone, a log file cannot be opened) is one more attempt with a longer delay, not the end.
+
+*Terminal output: an app in a crash loop, then its logs*
+
+```text
+$ oxidepm status
+╭────┬────────┬──────┬─────┬───┬─────────┬──────┬─────┬────────╮
+│ id │ name   │ mode │ pid │ ↺ │ status  │ cpu  │ mem │ uptime │
+├────┼────────┼──────┼─────┼───┼─────────┼──────┼─────┼────────┤
+│  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
+╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
+$ oxidepm logs mailer --lines 3
+[2026-10-31 04:11:47.153] cannot reach smtp
+[2026-10-31 04:11:47.559] cannot reach smtp
+[2026-10-31 04:11:48.362] cannot reach smtp
+```
+
+Here the app was started with `max_restarts = 3` and `restart_delay = 200`. The `↺` column counts restarts. Read the logs before you restart an errored app: the cause is usually there.
+
+## Reload is a restart
+
+`oxidepm reload` is the same as `restart`: the process is stopped and started again. There is no zero-downtime reload.
+
+---
+
+# Dependencies
+
+Use `depends_on` to make an app wait for the apps it needs. A wait that fails closed.
+
+Source: https://oxidepm.com/docs/configuration/dependencies/
+
+## Declare a dependency
+
+List the names of the apps this one needs. Here `api` needs the database, and `web` needs `api`.
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "db"
+mode = "cmd"
+script = "postgres"
+args = ["-D", "/srv/pg/data"]
+
+[[apps]]
+name = "api"
+mode = "cmd"
+script = "./target/release/api"
+depends_on = ["db"]
+
+[apps.health_check]
+http_url = "http://127.0.0.1:8080/health"
+
+[[apps]]
+name = "web"
+mode = "npm"
+script = "start"
+depends_on = ["api"]
+```
+
+## What happens at start
+
+The checks run when the app is started:
+
+- A name that is not registered is refused at once (`E_DEPENDENCY_MISSING`), and so is a cycle (`E_DEPENDENCY_CYCLE`, and the message names it).
+- A single `start` of an app whose dependency is `stopped` or `errored` right now is refused with the remedy (`E_DEPENDENCY_FAILED`).
+- Otherwise the start is accepted and the app shows `waiting` until every dependency is `online`. The start returns at once and nothing else is blocked. A `stop` cancels the wait.
+
+*Terminal output of oxidepm start: api and web wait for their dependencies*
+
+```text
+$ oxidepm start docs.config.toml
+✓ Started db (id: 1)
+✓ Started api (id: 2, waiting for its dependencies)
+✓ Started web (id: 3, waiting for its dependencies)
+
+Started 3 apps
+```
+
+If a dependency has a health check, it is `online` only once its first probe has passed. Until then it is `starting`, and the apps that wait for it keep waiting.
+
+*Terminal output of refused starts*
+
+```text
+$ oxidepm start api-only.toml
+✗ Failed to start api: dependency 'db' is stopped; start it first
+
+Started: 0, Failed: 1
+Error: 1 of 1 apps failed to start (started: none; failed: api)
+
+$ oxidepm start cycle.toml
+Error: Config error: depends_on cycle: a -> b -> a
+```
+
+## The wait fails closed
+
+A dependency that ends `errored`, or is deleted, fails the dependent at once. So does `depends_timeout` (1 to 3600 seconds, 60 by default): the app ends `errored` with the reason `dependency 'db' not running after 60s` (`E_DEPENDENCY_TIMEOUT`) and is never launched. It does not start anyway and fail in a confusing way.
+
+`depends_fail_open = true` turns that timeout into a warning and a launch. It is discouraged.
+
+Once an app is running, a later failure of its dependency does not touch it.
+
+## When the wait applies
+
+The wait applies to a start or restart by hand of an app that was at rest. A `restart` of an app that is up, and every automatic restart (crash, limit, cron, health), skip it: a crashed app comes back through the normal backoff even while its dependency is down.
+
+An app that waits holds no build slot. At most `launch_concurrency` apps (4 by default, a [daemon setting](https://oxidepm.com/docs/configuration/daemon-settings/)) build and spawn at once.
+
+## Stop order
+
+`stop all`, and a stop by tag, stops dependents before their dependencies, layer by layer. The daemon's shutdown does the same within its time budget. A `stop` of one app stops that app only: its dependents keep running.
+
+*Terminal output of oxidepm stop all --dry-run*
+
+```text
+$ oxidepm stop all --dry-run
+ℹ Dry run of 'stop': this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+  stop  api [step 1]  status running
+  stop  db [step 2]  status running
+```
+
+`--dry-run` shows the order without stopping anything. `restart db --dry-run` on a running app says the dependency gate is skipped because the app is up.
+
+## Fields
+
+- `depends_on` (list of app names, default: none): Apps that must be running before this one starts. A name must be in the same file or already registered.
+- `depends_timeout` (seconds, default: 60): How long to wait for them, from 1 to 3600, before the app ends `errored`.
+- `depends_fail_open` (boolean, default: false): Launch anyway, with a warning, when the wait times out.
+
+---
+
+# Health checks
+
+HTTP, TCP and script checks, and what the daemon does when one fails.
+
+Source: https://oxidepm.com/docs/configuration/health-checks/
+
+## Add a check
+
+```sh
+oxidepm start ./server --health-check http://localhost:3000/health   # HTTP
+oxidepm start ./server --health-check ./check-health.sh              # a script
+```
+
+In a config file a check is a table with exactly one of `http_url`, `tcp` or `script`:
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "api"
+mode = "cmd"
+script = "./target/release/api"
+
+[apps.health_check]
+http_url = "http://127.0.0.1:8080/health"
+expected_status = [200, 204]
+interval_secs = 30
+retries = 3
+action = "restart"
+```
+
+## How a check runs
+
+An app with a check is `starting` until its first probe has passed. The first probe runs `start_period_secs` after the launch, then one runs every `interval_secs`. A probe times out after `timeout_secs`.
+
+- An HTTP check passes on status 200 unless `expected_status` lists others. It does not follow redirects: a 301 is a failure unless it is listed.
+- A `tcp` check (`"host:port"`) passes when the connection is accepted.
+- A `script` check runs in the app's directory, as `sh -c`, with the same limited environment as a hook.
+
+After `retries` failures in a row the app is `unhealthy`, the `on_error` hook fires once for that streak, and the `health_check` notification is sent if the notifier adapter is enabled. It goes back to `online` when a probe passes again.
+
+The child is left alone unless the check sets `action = "restart"`, which replaces it with an automatic restart.
+
+## Fields
+
+- `http_url` (string): The URL to request. Exactly one of `http_url`, `tcp` and `script` is required.
+- `tcp` (string): `"host:port"`.
+- `script` (string): A script or command.
+- `expected_status` (list of numbers, default: [200]): The HTTP status codes that count as healthy.
+- `interval_secs` (number, default: 30): Seconds between probes.
+- `timeout_secs` (number, default: 5): Seconds before a probe fails. 5, or the interval if that is shorter.
+- `retries` (number, default: 3): Failures in a row before the app is `unhealthy`.
+- `start_period_secs` (number, default: 5): Seconds after the launch before the first probe.
+- `action` (string, default: "notify"): `notify` leaves the child alone. `restart` replaces it.
+
+---
+
+# Limits and cron
+
+Restart an app over a memory or uptime limit, or on a cron schedule.
+
+Source: https://oxidepm.com/docs/configuration/limits-and-cron/
+
+## Memory and uptime limits
+
+```sh
+oxidepm start ./app --max-memory 512 --max-uptime 24h
+```
+
+In a config file the keys are `max_memory_mb` and `max_uptime_secs`. An app over a limit is replaced: the daemon stops its process group, waits the restart delay and starts it again with the same plan.
+
+- A limit restart ignores the `restart` setting and `no_autorestart`.
+- A run of 5 seconds or more never counts towards `max_restarts`, so a periodic restart (`--max-uptime 24h`) cannot end in a crash loop. A limit that fires within 5 seconds of every start is counted like a crash, and the breaker ends it.
+- A `stop` or `restart` by hand always wins over a limit restart that is still on its way.
+- Memory is sampled every 2 seconds from the resident size of the app's first process, the one the daemon started. With `npm start` that is `npm`, not the `node` child under it, so give a wrapped app the limit of the wrapper, or start the program directly.
+- Uptime counts from the launch.
+
+`--max-uptime` takes a duration such as `30m`, `1h`, `24h`, `1d` or `1h30m`; a plain number is seconds.
+
+## Cron restarts
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "worker"
+mode = "cmd"
+script = "./worker"
+restart_cron = "0 4 * * *"    # every day at 04:00 UTC
+```
+
+The expression has the usual five fields, in UTC, and Sunday is 0 or 7. A bad expression is an error when the file is loaded. A scheduled restart ignores the `restart` setting, like a limit restart, and is recorded as the daemon's own work (`system:cron`) in the audit log.
+
+---
+
+# Clusters
+
+Run several instances of one app, with a port for each.
+
+Source: https://oxidepm.com/docs/configuration/clusters/
+
+```sh
+oxidepm start ./server -i 4 --port 3000
+```
+
+or in a config file:
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "web"
+mode = "node"
+script = "server.js"
+instances = 4
+port = 3000
+```
+
+## The shape of a cluster
+
+A cluster is a parent (`web`, with no process) and one app per instance (`web-0`, `web-1`, and so on). There are at most 256 instances. Instance `i` gets port `port + i`, or the start of `port_range` plus `i`. The range must hold every instance, and `port` and `port_range` together are refused.
+
+## Starting and stopping
+
+- The cluster is created all at once. A name that is already taken (`web-1` included) refuses the start with `E_APP_EXISTS` and writes nothing. If an instance cannot launch on the first start, the whole cluster is deleted again and the instance's error is returned.
+- Starting a cluster that exists starts only the instances that are at rest: after `stop web-1`, `start web` brings back `web-1` and leaves the others running.
+- The number of instances cannot change (`E_INVALID_SPEC`). Delete and recreate. That includes starting an existing single app with more than one instance, or an existing cluster with one.
+- `delete web` removes the parent and all instance rows in one transaction, before any instance is stopped.
+- A tag or `all` that matches a cluster and its instances acts on the cluster once. `web-1` by name acts on that instance only.
+
+## Policy
+
+The markers `protected` and `ai_control` of a cluster apply to every instance. An instance created later takes the markers of its cluster. An instance can be set on its own, but it counts as protected when its cluster is, and as open to AI control only when both are.
+
+---
+
+# Log files
+
+Where an app's output goes, and how the files rotate.
+
+Source: https://oxidepm.com/docs/configuration/log-files/
+
+## Where the logs are
+
+The daemon captures each app's output in its data directory (`~/.oxidepm/logs`, or under `OXIDEPM_HOME`):
+
+```text
+logs/
+├── api-out.log      # stdout
+├── api-err.log      # stderr
+└── api-hooks.log    # output of the app's event hooks
+```
+
+Every line is timestamped when the daemon writes it. Read them with `oxidepm logs <name>`, [described here](https://oxidepm.com/docs/commands/logs/).
+
+## Rotation
+
+Logs rotate by size, per app. The defaults are 10 MB per file, 5 files, and no compression. Change them in the config file:
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "api"
+mode = "cmd"
+script = "./api"
+log_max_size = "50mb"
+log_max_files = 10
+log_compress = true
+```
+
+`log_max_size` accepts values such as `"10mb"`, `"500kb"` or a number of bytes, and a bad value is an error when the file is loaded. `log_compress` compresses rotated files with gzip.
+
+## Truncating
+
+`oxidepm flush <selector>` truncates the active log files of an app. Rotated files stay. A file that cannot be emptied is reported for that app. The contents are lost, so read the logs before you flush them: a crashed app's logs are the evidence of why it crashed.
+
+---
+
+# Environment and hooks
+
+What environment an app gets, how secrets are shown, and event hooks.
+
+Source: https://oxidepm.com/docs/configuration/environment-and-hooks/
+
+## The environment an app gets
+
+An app does not get the daemon's environment. It gets:
+
+1. `PATH`, `HOME`, `USER`, `LOGNAME`, `SHELL`, `LANG`, `LC_*`, `TZ` and `TMPDIR`,
+2. then `--env` (`env` in a config file) and `--env-file` (`env_file`),
+3. and `OPM_APP_ID` and `OPM_APP_NAME` from the daemon (`OPM_INSTANCE_ID` for a cluster instance).
+
+`--env-inherit` gives the app the daemon's whole environment instead. That is the environment of the daemon, not of the shell that ran `oxidepm start`. Build steps (`cargo build`, `rustc`) always get the daemon's environment.
+
+## Secrets are not shown
+
+`status`, `show`, `describe` and `env list` do not show environment values. The daemon replaces every value with `<redacted>`, and keeps the keys visible. Hook and health-check scripts show as `<set>`. `oxidepm show <name> --reveal` is the one way to see them, and the daemon writes a line to its log each time it is asked. It is a dangerous request, so an AI actor cannot make it.
+
+Command arguments, URLs, logs, other command output and config files are not scrubbed. Keep tokens out of them: use `env_file` or environment variables.
+
+`oxidepm env set` and `env unset` are refused. The daemon has no request that changes the environment of a saved app. Pass `--env KEY=VALUE` when starting the app, or set `env` in the config file and start the file again.
+
+*Terminal output of oxidepm env list*
+
+```text
+$ oxidepm env list api
+api: no environment variables set
+```
+
+## Event hooks
+
+```sh
+oxidepm start ./app \
+  --on-start   "./notify.sh started" \
+  --on-stop    "./notify.sh stopped" \
+  --on-crash   "./notify.sh crashed" \
+  --on-restart "./notify.sh restarted"
+```
+
+In a config file the table is `hooks`, with the same four keys and a fifth, `on_error`, which runs when the app ends `errored` or turns `unhealthy`.
+
+A hook runs as `sh -c` in its own process group and is killed with everything it started after 30 seconds. Its output is appended to `logs/<name>-hooks.log`. It gets `PATH`, `HOME` and a few other basics from the daemon, the app's own `env`, and these variables, where they apply: `OPM_APP_ID`, `OPM_APP_NAME`, `OPM_EVENT`, `OPM_PID`, `OPM_EXIT_CODE`, `OPM_REASON` and `OPM_RESTARTS`. The daemon's other variables are not passed on, not even with `--env-inherit`.
+
+---
+
+# Daemon settings
+
+The optional daemon.toml and the files in the data directory.
+
+Source: https://oxidepm.com/docs/configuration/daemon-settings/
+
+## daemon.toml
+
+`daemon.toml` in the data directory holds the daemon's own settings. The file is optional. An unknown key, or a value out of range, keeps the daemon from starting, and the error names it.
+
+- `shutdown_budget_secs` (number, default: 120): Seconds the daemon spends stopping its apps on shutdown, from 10 to 900. The apps are stopped in dependency layers and the budget is shared between the layers. `oxidepm startup` uses it for `TimeoutStopSec`.
+- `launch_concurrency` (number, default: 4): How many apps may build and spawn at once, from 1 to 64.
+- `agent_socket` (boolean, default: true): Bind `agent.sock`, the socket whose every connection is an AI agent. See [Agent connections](/docs/ai-safety/agent-connections/).
+- `reuse_plan` (boolean, default: true): An app whose runtime an adapter provides keeps the launch plan the adapter made, and a resurrect at boot or an automatic launch may start from it when the app, the adapter and its executable are unchanged: at once if the plan had no build steps, otherwise only when the adapter cannot be asked, and then with a warning. `false` always asks the adapter. A start or restart by a person never uses a stored plan.
+
+## The data directory
+
+Everything is in `~/.oxidepm`. The `OXIDEPM_HOME` environment variable names another directory.
+
+```text
+~/.oxidepm/
+├── daemon.sock     # the CLI's socket (mode 0600)
+├── agent.sock      # the socket for AI agents; every connection is class ai
+├── oxidepmd.lock   # held by the running daemon: one daemon per home
+├── daemon.toml     # optional daemon settings
+├── state.db        # SQLite: full app specs and the two policy markers
+├── daemon.log      # what the daemon wrote to stderr while it started (fatal startup errors)
+├── daemon.log.DATE # the daemon's log, one file a day, the last 7 days kept
+├── saved.json      # the saved process list
+├── pids.json       # live app processes
+├── audit/          # audit.jsonl and audit-security.jsonl
+├── adapters.db     # SQLite: installed adapters, grants and consent (with -wal and -shm files while it is open)
+├── adapter-pids.json # live adapter processes
+├── adapters/       # installed adapters and their state (index, installed, staging, state, trash, verbs.json)
+├── repos/          # git clones, created when first used
+└── logs/           # app logs
+```
+
+## The sockets
+
+The CLI and the daemon talk over `daemon.sock`, with mode 0600. The daemon drops connections from any other user. `OXIDEPM_SOCKET` names another socket for the CLI. A request is one line of JSON in an envelope that carries the protocol version (2) and a request id, and the answer is one line. A line may be up to 10 MiB, and a connection that sends nothing for 5 minutes is closed.
+
+`agent.sock` is tighter: lines of at most 1 MiB, at most 32 connections at once, and a connection that is idle for 60 seconds is closed.
+
+---
+
+# Overview
+
+The core commands, selectors and global flags, the commands and runtimes that adapters provide, and what you see when one is missing.
+
+Source: https://oxidepm.com/docs/commands/overview/
+
+## Core commands
+
+| Command | What it does |
+|---|---|
+| `start <target>` | Start a process, or every app of a config file (sent as one batch). |
+| `stop <selector>` | Stop apps. |
+| `restart <selector>` | Hard restart apps. Also starts an app that is at rest. |
+| `reload <selector>` | The same as `restart`. There is no zero-downtime reload. |
+| `delete <selector>` | Stop apps and remove them from the registry. |
+| `status [--more\|--daemon]` | The status table. `--more` adds port, working directory and policy markers. `--daemon` shows the daemon itself. |
+| `show <name> [--reveal]` | One app in detail. `--reveal` also prints environment values and hook scripts. |
+| `logs <name> [-f]` | Read or follow logs. |
+| `flush <selector>` | Truncate the active log files. |
+| `describe <name>` | Show the command that would run for an app that is already registered, without starting anything. |
+| `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
+| `audit` | Read the audit log. |
+| `save [--force]`, `resurrect` | Write and restore the list of apps that should run. |
+| `startup [systemd\|launchd]` | Generate an autostart script. |
+| `ping` | Check that the daemon is alive. |
+| `kill` | Stop the daemon and every app. |
+| `env list` | The keys of an app's environment. |
+| `update [--version X] [--force]` | Update to a release. |
+| `backup`, `restore <file>` | Export and restore the config and process list. |
+| `adapter` | Find, import, enable and manage adapters. |
+| `completions <shell>`, `man` | Shell completions and the man page. |
+
+## Provided by adapters
+
+These commands are not in the core. An adapter provides each one, and until you import and enable it, the command is not there. The core knows only the names.
+
+| Command | Adapter | What it is |
+|---|---|---|
+| `notify status\|test\|events\|severity\|telegram\|remove` | [notifier](https://oxidepm.com/docs/adapters/notifier/) | Notifications to Telegram, Discord, Slack and webhooks. |
+| `web [status\|new-key]` | `ui-web` | The web API and its WebSocket. See [web](https://oxidepm.com/docs/commands/other-commands/#web). |
+| `monit` | `ui-tui` | The terminal dashboard, a session command that runs on your terminal. See [monit](https://oxidepm.com/docs/commands/other-commands/#monit-and-top). |
+| `check`, `init`, `start --setup` | `check`, `init` | Project checks and a starter config file. Planned adapters. |
+| `start --git` | `git-start` | Clone a repository and start it. A planned adapter. |
+| `deploy`, `diff` | `deploy` | Deploy over SSH and show the remote changes. A planned adapter. |
+
+The Prometheus `/metrics` endpoint comes from the [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/) adapter.
+
+When an adapter is not installed, the command is refused with exit code 2 and the message names the adapter:
+
+*Terminal output of oxidepm notify when the notifier is not installed*
+
+```text
+$ oxidepm notify status
+error: unrecognized subcommand 'notify'
+
+Usage: oxidepm [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+
+'notify' is provided by the adapter 'notifier', which is not installed.
+Install it with: oxidepm adapter import notifier   (see: oxidepm adapter list --available)
+```
+
+If the adapter is installed but switched off, the message says so and points to `oxidepm adapter enable <name>`. [How adapters work](https://oxidepm.com/docs/adapters/how-adapters-work/).
+
+## Runtimes
+
+The core runs one runtime itself: `cmd`, which runs any program with its arguments. The language runtimes are adapters, and a release carries them:
+
+| Runtime names | Adapter |
+|---|---|
+| `node`, `npm`, `pnpm`, `yarn` | `runtime-node` |
+| `python` | `runtime-python` |
+| `go` | `runtime-go` |
+| `rust`, `cargo` | `runtime-rust` |
+
+The install script, the packages and the release archives put the signed adapters next to the programs and import them with `oxidepm adapter import --bundled --tag runtime --enable --yes`. A build from source has none until you import them from a release. Starting an app whose runtime is missing fails and creates nothing:
+
+*Terminal output of oxidepm start when the runtime adapter is not enabled*
+
+```text
+$ oxidepm start /srv/app/app.js
+✗ runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
+Error: runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
+```
+
+The command in the message is the one for a missing adapter. If the adapter is installed but off, it says `Run: oxidepm adapter enable runtime-node` instead. The error code is `E_ADAPTER_MISSING`.
+
+Still in the core: `top`, a live resource monitor.
+
+## Selectors
+
+A selector is an app name, an id, `all`, or `@tag` for a group. A cluster (`web`) and its instances (`web-0`, `web-1`) are selected as one when a tag or `all` matches both. An AI actor may not use `all` or a tag with `stop`, `restart` or `reload`.
+
+## Global flags
+
+| Flag | Meaning |
+|---|---|
+| `--json` | Print machine-readable output instead of tables. |
+| `--dry-run` | Say what the command would do and change nothing. |
+| `-v` | More logging (`-vv`, `-vvv`). |
+
+## Environment variables
+
+| Variable | Meaning |
+|---|---|
+| `OXIDEPM_HOME` | Use this data directory instead of `~/.oxidepm`. |
+| `OXIDEPM_SOCKET` | The socket the CLI talks to. |
+| `OXIDEPM_ACTOR` | The actor the CLI claims to be, such as `ai:assistant`. A claim can only make a request stricter. |
+
+---
+
+# start, stop, restart
+
+Start an app or a config file, stop it, restart it, reload it and delete it.
+
+Source: https://oxidepm.com/docs/commands/start-stop-restart/
+
+## start
+
+```sh
+oxidepm start app.js
+oxidepm start ./my-project --max-memory 512
+oxidepm start oxidepm.config.toml
+oxidepm start ./server -i 4 --port 3000
+```
+
+`start` takes a file, a directory, or a config file. The daemon is started if it is not running. A config file starts every app in it, and each app gets its own result.
+
+| Option | Meaning |
+|---|---|
+| `-n, --name <name>` | The app's name. |
+| `--mode <runtime>` | Force the runtime (alias `--runtime`): `cmd`, which is in the core, or one an adapter provides: `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python` and `go` come from the runtime adapters. |
+| `--script <name>` | The package script, for `npm`, `pnpm` and `yarn`. |
+| `--bin <name>` | The binary, for `cargo`. |
+| `--cwd <dir>` | The working directory. |
+| `--env KEY=VALUE` | An environment variable. Repeatable. |
+| `--env-file <file>` | An environment file. |
+| `--env-inherit` | Give the app the daemon's whole environment. |
+| `--tag <tag>` | A tag for grouping. Repeatable. |
+| `-i, --instances <n>` | Cluster mode, from 1 to 256. |
+| `--port <n>` | The base port. Instance `i` gets `port + i`. |
+| `--delay <ms>` | Wait before starting the process. |
+| `--restart-delay <ms>` | Delay before the first restart. |
+| `--max-restarts <n>` | Restarts before the app ends `errored`. |
+| `--kill-timeout <ms>` | Time to exit after the stop signal. |
+| `--no-autorestart` | Turn automatic restarts off. |
+| `--max-memory <MB>`, `--max-uptime <duration>` | Limits. See [Limits and cron](https://oxidepm.com/docs/configuration/limits-and-cron/). |
+| `--health-check <url or script>` | An http(s) URL or a script. |
+| `--on-start`, `--on-stop`, `--on-restart`, `--on-crash` | Event hooks. |
+| `--protected`, `--ai-control` | The policy markers. |
+| `--git <url>`, `--branch`, `--clone-dir` | Clone a repository and start it. Provided by the `git-start` adapter. |
+| `--setup` | Install dependencies and create `.env` from a template first. Provided by the `check` adapter. |
+| `--no-check` | Skip preflight checks. Not recommended. |
+| `-- <args>` | Arguments passed to the program. |
+
+`--watch` is refused with an error: file watching is not available yet.
+
+## stop, restart, reload, delete
+
+```sh
+oxidepm stop api
+oxidepm restart api
+oxidepm reload api
+oxidepm delete api
+```
+
+- `stop` stops the app. It stays stopped and is not restarted automatically. With several apps (`all`, a tag), dependents are stopped before their dependencies.
+- `restart` stops and starts the app again. It also starts an app that is at rest.
+- `reload` is the same as `restart`.
+- `delete` stops the app and removes it from the registry and the database.
+
+*Terminal output of oxidepm restart*
+
+```text
+$ oxidepm restart web
+✓ Restarted 1 process(es)
+```
+
+A `start` of an app that is not at rest is refused with `E_APP_EXISTS` and changes nothing. These commands take [`--dry-run`](https://oxidepm.com/docs/commands/dry-run/), except `start --git` and `start --setup`, which refuse it.
+
+---
+
+# status and show
+
+Read what is running: the table, the extra columns, one app in detail and the daemon itself.
+
+Source: https://oxidepm.com/docs/commands/status/
+
+## status
+
+*Terminal output of oxidepm status*
+
+```text
+$ oxidepm status
+╭────┬──────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
+├────┼──────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
+│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ 0.0% │ 2.5M  │ 5s     │
+│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ 0.0% │ 22.2M │ 5s     │
+│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
+╰────┴──────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯
+```
+
+The columns are:
+
+| Column | Meaning |
+|---|---|
+| `id` | The app's id. |
+| `name` | The name. |
+| `mode` | The runtime. |
+| `pid` | The process id, or `-` when it is not running. |
+| `↺` | Restarts. |
+| `status` | One of the [states](https://oxidepm.com/docs/configuration/restarts/). The table calls a running app `online`. |
+| `cpu`, `mem` | Sampled from the app's first process. |
+| `uptime` | Time since the launch. |
+
+## status --more
+
+*Terminal output of oxidepm status --more*
+
+```text
+$ oxidepm status --more
+╭────┬──────┬──────┬─────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
+├────┼──────┼──────┼─────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
+│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
+│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
+│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
+╰────┴──────┴──────┴─────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯
+```
+
+`--more` swaps `cpu` and `mem` for `port` and `cwd` and adds `policy`, which is `-`, `protected`, `ai-control`, or both. The working directory is shortened from the left.
+
+## status --daemon
+
+*Terminal output of oxidepm status --daemon*
+
+```text
+$ oxidepm status --daemon
+audit log:    ok
+agent socket: bound
+sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 (launcher installed)
+```
+
+`--daemon` shows how the daemon itself is: whether the audit log is `ok` or `degraded`, whether the agent socket is bound, what the [sandbox](https://oxidepm.com/docs/adapters/sandbox/) can enforce on this machine, the state of each enabled adapter, and warnings, for example about an app whose runtime adapter is not enabled.
+
+## show
+
+```sh
+oxidepm show api
+oxidepm show api --reveal
+```
+
+`show` prints one app in detail: its state, command, working directory, arguments and last exit code. Environment values show as `<redacted>` and scripts as `<set>`. `--reveal` prints them, and the daemon writes a line to its log each time. It is a dangerous request, so an AI actor cannot make it.
+
+`describe <name>` takes the name or id of an app that is already registered, and shows the command that would run for it, without starting anything. It does not take a file or a command to be started.
+
+---
+
+# logs and flush
+
+Read, follow and filter an app's logs, and truncate them.
+
+Source: https://oxidepm.com/docs/commands/logs/
+
+## logs
+
+```sh
+oxidepm logs api                      # the last 15 lines
+oxidepm logs api -f                   # follow
+oxidepm logs api --lines 100
+oxidepm logs api --err                # only stderr
+oxidepm logs api --grep "timeout|refused"
+```
+
+| Option | Meaning |
+|---|---|
+| `-f, --follow` | Follow the output. |
+| `--lines <n>` | How many lines to show. 15 by default. |
+| `--out`, `--err` | Only stdout, or only stderr. |
+| `--grep <regex>` | Only lines that match the pattern. |
+
+*Terminal output of oxidepm status and oxidepm logs for an errored app*
+
+```text
+$ oxidepm status
+╭────┬────────┬──────┬─────┬───┬─────────┬──────┬─────┬────────╮
+│ id │ name   │ mode │ pid │ ↺ │ status  │ cpu  │ mem │ uptime │
+├────┼────────┼──────┼─────┼───┼─────────┼──────┼─────┼────────┤
+│  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
+╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
+$ oxidepm logs mailer --lines 3
+[2026-10-31 04:11:47.153] cannot reach smtp
+[2026-10-31 04:11:47.559] cannot reach smtp
+[2026-10-31 04:11:48.362] cannot reach smtp
+```
+
+## flush
+
+```sh
+oxidepm flush api
+```
+
+`flush` truncates the active log files of an app. Rotated files stay. The log contents are lost, so read them first. Log rotation is automatic ([Log files](https://oxidepm.com/docs/configuration/log-files/)), so flushing to save space is rarely needed. `flush` is a dangerous request: an AI actor cannot make it.
+
+---
+
+# save and resurrect
+
+Write the list of apps that should run, and start them again.
+
+Source: https://oxidepm.com/docs/commands/save-and-resurrect/
+
+## save
+
+```sh
+oxidepm save
+oxidepm save --force
+```
+
+`save` writes `saved.json` from the apps that should be running. It is refused when that would replace a file that lists apps with an empty list (`E_SAVE_WOULD_EMPTY`), unless you pass `--force`. The file is written atomically, with mode 0600, and carries a version number. A file from an older release is refused: run `save` again.
+
+The markers `protected` and `ai_control` are saved too, so `delete all` followed by `resurrect` brings an app back with the markers it had.
+
+## resurrect
+
+```sh
+oxidepm resurrect
+```
+
+`resurrect` starts the apps that should be running and are not up. An app you stopped stays stopped. It also adds apps from `saved.json` that were deleted since. Apps start the way a config file starts them: in dependency order, with their own result each.
+
+## At boot
+
+[Survive a reboot](https://oxidepm.com/docs/getting-started/reboot/) shows how to start the daemon at boot with `oxidepm startup`.
+
+Both commands are dangerous requests: an AI actor cannot make them. Both take [`--dry-run`](https://oxidepm.com/docs/commands/dry-run/).
+
+---
+
+# Dry run
+
+Ask what a command would do and change nothing.
+
+Source: https://oxidepm.com/docs/commands/dry-run/
+
+`--dry-run` makes a command say what it would do, and change nothing. It is a global flag, and most commands that change something take it. The ones that do not are listed below.
+
+*Terminal output of oxidepm stop all --dry-run*
+
+```text
+$ oxidepm stop all --dry-run
+ℹ Dry run of 'stop': this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+  stop  api [step 1]  status running
+  stop  db [step 2]  status running
+```
+
+## Which commands
+
+- **The daemon answers with a plan:** `start`, `stop`, `restart`, `reload`, `delete`, `flush`, `save`, `resurrect`, `kill` and `policy set`, and `adapter enable`, `disable` and `remove`. The daemon runs the policy exactly as for the real request, records the rehearsal in the audit log (the lines say `"dry_run": true`), and answers with the apps it would reach, the step each happens in (stop and kill go dependents first), and for a refusal the error code.
+- **The command rehearses itself:** `startup`, `update`, `backup` and `restore`, and `adapter import` and `adapter update`. A rehearsal never starts a daemon.
+- **Reads:** a command that only reads ignores the flag.
+- **No rehearsal:** `env set`, and the commands that adapters provide, such as `web`, `init`, `check --fix`, `start --git`, `start --setup` and `notify`, refuse the flag with exit code 2, instead of ignoring it, unless the adapter declares a rehearsal. A command an adapter adds may also be refused with `E_DRY_RUN_UNSUPPORTED`.
+
+## What a plan is
+
+A plan is built from what the daemon already knows and the files. It starts, stops, writes and calls nothing, and a rehearsed restart does not use up an AI actor's restart allowance. With `--json` the output is the plan.
+
+A request that the policy refuses is answered with the refusal as the plan (`E_POLICY_DENIED`, `E_PROTECTED`, `E_RATE_LIMITED`). A request that is invalid for a reason the daemon can see without side effects (a bad spec, a missing dependency, an unusable saved file) is answered with the real error.
+
+`update --dry-run` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory.
+
+## For agents
+
+An AI actor can use a rehearsal to see what a stop or restart would reach before it asks for it. A rehearsal gives it nothing a `status` does not, and a `start`, `delete`, `save` and the other dangerous requests are refused for it as plans, like the real ones.
+
+---
+
+# JSON output
+
+The --json flag, and what it prints.
+
+Source: https://oxidepm.com/docs/commands/json-output/
+
+Most commands take `--json` and print JSON instead of a table.
+
+*Terminal output of oxidepm --json status*
+
+```text
+$ oxidepm --json status
+[
+  {
+    "id": 1,
+    "name": "mailer",
+    "mode": "cmd",
+    "pid": null,
+    "restarts": 3,
+    "status": "errored",
+    "cpu_percent": 0.0,
+    "memory_bytes": 0,
+    "uptime_secs": 0
+  }
+]
+```
+
+A running app has `"status": "running"`: the table calls it `online`. `tags` is present when the app has any.
+
+## Other output
+
+- `oxidepm --json show <name>` prints the same fields plus the command, working directory, arguments, `last_exit_code`, `healthy` and the two policy markers.
+- `oxidepm --json <command> --dry-run` prints the plan: `op`, a `decision`, an `items` list with one entry per app (`id`, `name`, `action`, `detail`, `order`) and `warnings`.
+- `oxidepm --json audit` prints one audit record per line.
+
+An error is printed as text, with a non-zero exit code, in `--json` mode too. The stable `E_` code of an error is on the daemon's socket, in the audit log and in the adapter protocol; see [Error codes](https://oxidepm.com/docs/commands/error-codes/).
+
+---
+
+# Error codes
+
+The stable E_ codes, where you can see them, and what they mean.
+
+Source: https://oxidepm.com/docs/commands/error-codes/
+
+Errors carry a stable name that starts with `E_`. The CLI prints the message, and exits with a non-zero code. The name is what a program should match on. You can see it in the daemon's JSON responses on the socket, in the `deny` part of the [audit log](https://oxidepm.com/docs/ai-safety/audit-log/), and in the [adapter protocol](https://oxidepm.com/docs/adapter-protocol/errors/).
+
+A crash loop is not an error code. An app in a crash loop is in the `errored` state. The reason is in the logs and in the daemon's status data.
+
+## Requests and apps
+
+| Code | Meaning |
+|---|---|
+| `E_BAD_REQUEST` | Malformed JSON or an unknown request type. |
+| `E_PROTOCOL_VERSION` | The request's protocol is outside the supported range. |
+| `E_REQUEST_TOO_LARGE` | A request line over the size limit. |
+| `E_INVALID_SPEC` | A spec failed validation. The message names the field. |
+| `E_INVALID_NAME` | An app name with a bad charset or length, or a reserved one. |
+| `E_INVALID_SELECTOR` | A selector that cannot be parsed or is not allowed for the operation. |
+| `E_UNSUPPORTED` | A feature that is not available: removed, or not built yet. |
+| `E_APP_NOT_FOUND` | A selector matched nothing. |
+| `E_APP_EXISTS` | The name is taken, or the app is already active. |
+| `E_BUILD_FAILED` | The build step failed. |
+| `E_SPAWN_FAILED` | The program did not resolve or could not be spawned. |
+| `E_CANCELLED` | A pending start was cancelled by a stop or delete. |
+| `E_SHUTTING_DOWN` | The daemon is shutting down. |
+| `E_BUSY` | An app's mailbox stayed full. |
+| `E_TIMEOUT` | A bounded wait expired. |
+
+## Dependencies
+
+| Code | Meaning |
+|---|---|
+| `E_DEPENDENCY_MISSING` | A dependency is not registered. |
+| `E_DEPENDENCY_CYCLE` | The dependencies form a cycle. The message names it. |
+| `E_DEPENDENCY_FAILED` | A dependency is `stopped` or `errored`, or failed while the app waited. |
+| `E_DEPENDENCY_TIMEOUT` | The wait for dependencies passed `depends_timeout`. |
+
+## Storage
+
+| Code | Meaning |
+|---|---|
+| `E_DB` | A database error. |
+| `E_IO` | A file error. |
+| `E_STATE_INCOMPATIBLE` | Stored state was written by an incompatible OxidePM. |
+| `E_SAVE_WOULD_EMPTY` | `save` would replace a non-empty file with an empty one. |
+| `E_INTERNAL` | A bug, or an internal task died. The daemon log has the details. |
+
+## Policy
+
+| Code | Meaning |
+|---|---|
+| `E_POLICY_DENIED` | The policy refused the request for this actor. The message names the tier, the actor and the apps. |
+| `E_PROTECTED` | The app is protected and the actor is not a person. |
+| `E_RATE_LIMITED` | A non-human actor asked too often. |
+| `E_AUDIT_UNAVAILABLE` | A non-human actor's caution or dangerous request was refused because the audit log could not record it first. |
+| `E_DRY_RUN_UNSUPPORTED` | A verb or command has no dry run. |
+
+## Adapters
+
+| Code | Meaning |
+|---|---|
+| `E_ADAPTER_MISSING` | The named adapter or runtime is not imported or not enabled. |
+| `E_ADAPTER_UNAVAILABLE` | Enabled but not running, failed, still starting, or its circuit breaker is open. |
+| `E_ADAPTER_TIMEOUT` | A call to an adapter timed out. |
+| `E_ADAPTER_CRASHED` | The adapter exited during a call. |
+| `E_ADAPTER_PROTOCOL` | The adapter broke the protocol, or speaks another version. |
+| `E_ADAPTER_BUSY` | The adapter's in-flight limit was reached. |
+| `E_ADAPTER_INVALID` | A manifest, plan or name is invalid, or a command collides with a built-in one. |
+| `E_ADAPTER_TAMPERED` | The executable's SHA-256 no longer matches the one recorded at import. |
+| `E_CHECKSUM_MISMATCH` | A downloaded file does not match the checksum published for it. |
+| `E_SIGNATURE_INVALID` | A signature is wrong. |
+| `E_INDEX_STALE` | The index is expired or older than the last one seen. |
+
+---
+
+# Other commands
+
+Update, backup and restore, env, top, completions, and the commands that adapters provide: web, monit, init, check, deploy and diff.
+
+Source: https://oxidepm.com/docs/commands/other-commands/
+
+## update
+
+`oxidepm update [--version X] [--force]` updates to a release. See [Upgrade](https://oxidepm.com/docs/getting-started/upgrade/).
+
+## backup and restore
+
+```sh
+oxidepm backup --output my-server-backup.tar.gz
+scp my-server-backup.tar.gz user@newserver:~
+ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect"
+```
+
+`backup` exports the config and the process list to a tarball. `restore` restores it, and the daemon must not be running. `-y` overwrites existing files without asking. A backup does not include the notifier's configuration, because it holds tokens.
+
+## env
+
+`oxidepm env list <name>` lists the keys of an app's environment. `env set` and `env unset` are refused. See [Environment and hooks](https://oxidepm.com/docs/configuration/environment-and-hooks/).
+
+## adapter
+
+`oxidepm adapter import`, `list`, `info`, `search`, `enable`, `disable`, `update` and `remove`. See [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/).
+
+## Commands that come from adapters
+
+The commands below are not in the core. Each one is provided by an adapter you import and enable, and the core only knows the name. Without the adapter, the command is refused with exit code 2 and a message such as `'web' is provided by the adapter 'ui-web', which is not installed.` followed by the `oxidepm adapter import` command to run. See [Provided by adapters](https://oxidepm.com/docs/commands/overview/#provided-by-adapters).
+
+## init and check
+
+Provided by the `init` and `check` adapters, which are planned and not published yet.
+
+```sh
+oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
+oxidepm check ./my-app             # is the project ready to run?
+oxidepm check ./my-app --fix       # install dependencies, create .env
+oxidepm start ./my-app --setup     # the same, then start
+```
+
+`init` detects Node.js (npm, pnpm, yarn), Cargo, Python and Go projects. `check` looks for `node_modules/` and a lockfile for Node.js, `Cargo.lock` for Cargo, and a `.env` file for all of them (`--fix` copies it from `.env.example`).
+
+## deploy and diff
+
+Provided by the `deploy` adapter, which is planned and not published yet. `start --git <url>` is provided by the `git-start` adapter.
+
+```sh
+oxidepm deploy user@myserver --cwd /srv/myapp --post "npm run build" --restart api
+oxidepm deploy user@myserver --cwd /srv/myapp --branch main --dry-run
+oxidepm diff user@myserver --cwd /srv/myapp --count 10
+```
+
+`deploy` pulls code on the remote host over SSH and restarts processes. It needs SSH key authentication: no password prompts. `diff` shows the remote git history since the last deploy. Both are dangerous: an AI actor should never run `deploy` without a person confirming it.
+
+## web
+
+Provided by the `ui-web` adapter. It is built and tested; its archive is not published yet.
+
+```sh
+oxidepm adapter import ui-web --enable
+oxidepm web              # where it listens, and its access key (shown once)
+oxidepm web new-key      # replace the key
+```
+
+The adapter serves a REST API and a WebSocket on `127.0.0.1:9615`. Every request, loopback included, needs the access key in the `X-API-Key` header. Only `/api/health` needs none. The first start makes a random key in the adapter's `config.toml`, and a browser WebSocket sends the key as a subprotocol, never in the URL. The `Host` header must be the address it is bound to, and `Origin` must be absent or the one set in `config.toml`, so a web page you visit cannot drive the API.
+
+By default it works on the apps that list `ui-web` under `adapters`, at the `lifecycle` level: it shows every app and can restart, stop and reload the opted-in ones. It cannot create or delete apps or flush logs. There is no TLS: put a reverse proxy in front for anything but a trusted network. The daemon sees each request as the actor `adapter:ui-web`, so its policy and audit log apply.
+
+| Endpoint | Method | Key | Description |
+|---|---|---|---|
+| `/api/health` | GET | No | `{"ok":true}`. |
+| `/api/processes` | GET | Yes | All apps. |
+| `/api/processes/:selector` | GET | Yes | One app. |
+| `/api/processes/:selector/stop` | POST | Yes | Stop. |
+| `/api/processes/:selector/restart` | POST | Yes | Restart. |
+| `/api/processes/:selector/logs` | GET | Yes | Logs. |
+| `/api/ping` | GET | Yes | Ask the daemon whether it is alive. |
+| `/api/save`, `/api/resurrect` | POST | Yes | Save, and start the saved apps. |
+| `/ws` | WebSocket | Yes | The daemon's lifecycle events as they happen. |
+
+`POST /api/processes` (start an app) and `DELETE` need the adapter to hold the `admin` level, and answer 403 otherwise. The adapter has no `/metrics`: use the [Prometheus exporter](https://oxidepm.com/docs/adapters/exporter-prometheus/).
+
+## monit and top
+
+`oxidepm monit` is the terminal dashboard of the `ui-tui` adapter: the apps with state, CPU and memory, the selected app in detail and a log viewer. It can stop and restart apps, and asks for `y` or `n` first. It is a session command: the daemon starts the adapter on your terminal for as long as the dashboard is open, and it needs a terminal for input and output. The adapter is built and tested; its archive is not published yet.
+
+```sh
+oxidepm adapter import ui-tui --enable
+oxidepm monit
+```
+
+`oxidepm top`, a live resource monitor, is still in the core.
+
+## completions and man
+
+```sh
+oxidepm completions bash > /etc/bash_completion.d/oxidepm
+oxidepm completions zsh > ~/.zfunc/_oxidepm
+oxidepm completions fish > ~/.config/fish/completions/oxidepm.fish
+oxidepm man
+```
+
+---
+
+# How adapters work
+
+What an adapter is, what runs where, and what happens when one fails.
+
+Source: https://oxidepm.com/docs/adapters/how-adapters-work/
+
+## What an adapter is
+
+An adapter is a separate executable that `oxidepmd` starts and supervises. It talks to the daemon over its standard input and output, one JSON-RPC message per line. The protocol is documented, so an adapter can be written in any language. The daemon itself does not fetch anything: importing is done by the CLI.
+
+There are two kinds, named by the `kind` field of the manifest:
+
+- **service**: resident. It starts when you enable it, receives events about the apps, and the supervisor restarts it if it dies. The notifier, the Prometheus exporter and the web API (`ui-web`) are services.
+- **tool**: started on demand to answer a request, kept warm for 30 seconds, then asked to exit. The runtime adapters, the terminal dashboard (`ui-tui`) and commands that run once are tools.
+
+## What an adapter can add
+
+An adapter can listen to lifecycle events, ask the daemon to do things within a grant, add a command to the CLI (the notifier adds `oxidepm notify`, `ui-web` adds `oxidepm web`, `ui-tui` adds `oxidepm monit`), and provide a runtime for apps (`runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`). The core itself runs only the `cmd` runtime. Whatever it provides is named in its manifest, and is shown before you enable it.
+
+An adapter never starts, stops or changes an app on its own authority. When it asks the daemon, the request goes through the same policy, audit log and rate limits as a person's or an agent's, as the adapter and under the grant you accepted. A request an adapter makes is written to the audit log with its name.
+
+## When one fails
+
+- A crash, a hang, a flood of output or a broken protocol gets the adapter killed and restarted with a growing delay. Three protocol violations in 60 seconds count as a crash.
+- Events for a service that is down or slow are dropped and counted, never queued without limit.
+- A request to an adapter that is missing, failed or not ready fails with a named error (`E_ADAPTER_MISSING`, `E_ADAPTER_UNAVAILABLE`, `E_ADAPTER_TIMEOUT`, `E_ADAPTER_CRASHED`). There is no silent fallback.
+- The daemon never stops, restarts, signals or changes an app because an adapter failed.
+
+## Which adapters exist
+
+Built and tested: the [notifier](https://oxidepm.com/docs/adapters/notifier/), the [Prometheus exporter](https://oxidepm.com/docs/adapters/exporter-prometheus/), `ui-web` (the web API and WebSocket), `ui-tui` (the terminal dashboard) and the four runtime adapters, `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`. The runtime adapters are carried, signed, by each release. The other built adapters have no published archive yet.
+
+Planned and not built: adapters for project checks and `init` (`check`, `init`), `start --git` (`git-start`), `deploy` and `diff` (`deploy`), file watching (`watch-rebuild`) and, later, adapters for AI agents. The core reserves the names of the official adapters, so only a signed adapter can use one. See the [list](https://oxidepm.com/adapters/).
+
+## Where they come from
+
+An adapter is imported from an archive. You can pin an archive by its SHA-256 (a file or an https URL), take one from the bundle a release carries (`oxidepm adapter import --bundled`), or take one from a signed index. The signing code is in the CLI and the daemon, but there is no index address configured in a build yet, so there is no index to search. See [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/).
+
+---
+
+# Import and enable
+
+Install an adapter from an archive you pin, read what it asks for, and enable it.
+
+Source: https://oxidepm.com/docs/adapters/import-and-enable/
+
+Installing an adapter is two steps that you do separately: `import` fetches and checks it and installs it switched off, and `enable` asks you to accept what it needs and starts it.
+
+## List
+
+*Terminal output of oxidepm adapter list and list --available*
+
+```text
+$ oxidepm adapter list
+No adapters are installed. `oxidepm adapter list --available` shows what the index offers.
+$ oxidepm adapter list --available
+Error: no index is configured in this build. Import by a pinned hash (`oxidepm adapter import <file or url> --sha256 <hex>`) or from the bundle of a release (`oxidepm adapter import --bundled`)
+```
+
+`list` shows the installed adapters. `list --available` and `search` read the signed index, and this build has none configured, so they say so and point at the other ways.
+
+## Import
+
+An archive is a gzip tarball with `manifest.json` and the executable the manifest names in `exec`, side by side. Import it from a file or an https URL, and pin it with its SHA-256:
+
+```sh
+oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
+```
+
+Without `--sha256` nothing is installed: the command prints the archive's hash and asks you to run it again with `--sha256` if you trust it. On a terminal, a pinned import asks you to type the first 12 digits of the hash when it is not given.
+
+`--allow-reserved-name` is needed only for a name the core reserves for adapters signed by an official key: `notifier`, `ui-web`, `ui-tui`, `check`, `init`, `git-start`, `deploy` and the `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust` adapters. The Prometheus exporter is not reserved, so it needs no flag. Pass the flag, as in the example, for `notifier`. Other forms are `oxidepm adapter import --bundled [names] [--tag runtime]`, which takes adapters from the bundle that a release carries (a build from source has none). The bundle holds the runtime adapters, and `oxidepm adapter import --bundled --tag runtime --enable --yes` imports and enables them with no network, which is what the install script runs, and `oxidepm adapter import <name>` from the signed index. `--enable` enables the adapter right after it is installed, with the same consent.
+
+*Terminal output of oxidepm adapter import*
+
+```text
+$ oxidepm adapter import notifier.tar.gz --sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203 --allow-reserved-name
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    notifier.tar.gz (pinned by you)
+Trust     pinned by you: sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+  memory    128 MiB.
+✓ Installed notifier 0.1.0 (disabled, nothing runs). Enable it with: oxidepm adapter enable notifier --accept 33926d31eb91080f
+```
+
+Read this before you go on. `Needs` is what the adapter asks for, and `Again, what it needs` repeats it at the end so nothing in the description can push it out of sight. `[BROAD]` marks power that deserves a second look. `Enforced on this machine` says what the operating system can hold the adapter to here. `Trust` says where the archive came from: a pinned archive says `pinned by you` and `No signature`. Nothing runs yet.
+
+## Enable
+
+```sh
+oxidepm adapter enable notifier
+```
+
+`enable` shows the same list again, asks, and starts the adapter. On a terminal you answer the question. In a script, pass `--accept <fingerprint>` with the fingerprint that `import` and `info` print, which ties your consent to exactly that release. `--yes` accepts without asking, only for an adapter that needs nothing broad.
+
+*Terminal output of oxidepm adapter enable: the consent screen*
+
+```text
+$ oxidepm adapter enable notifier
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    pinned:notifier.tar.gz installed 2026-10-31T04:06:41Z
+Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+  memory    128 MiB.
+Enable notifier with this grant? [y/N] 
+```
+
+If you answer no, nothing is changed:
+
+*Terminal output when the answer is no*
+
+```text
+Enable notifier with this grant? [y/N] no
+Error: Not enabled
+```
+
+If you answer yes:
+
+*Terminal output when the answer is yes*
+
+```text
+Enable notifier with this grant? [y/N] yes
+✓ Enabled notifier 0.1.0 (level read, scope all)
+  Enforced by the OS on this machine: fs_write, fs_read, spawn
+```
+
+You can enable with less than the adapter asks for: `--level read|lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. If the OS cannot enforce something the adapter requires to be enforced, `enable` refuses unless you pass `--allow-unenforced`.
+
+## Look at it, and manage it
+
+*Terminal output of oxidepm adapter info*
+
+```text
+$ oxidepm adapter info notifier
+notifier 0.1.0 (service)  Telegram, Discord, Slack and webhook notifications.
+State:    ready
+Source:   pinned:notifier.tar.gz
+Trust:    pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Installed 2026-10-31T04:06:41Z
+Grant:    level read, scope all
+Enforced: fs_write, fs_read, spawn
+Health:   0 crash(es), 0 protocol strike(s)
+
+Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
+          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
+Source    pinned:notifier.tar.gz
+Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
+Needs     host      read only (status). Events: lifecycle.
+          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+          programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+          memory    128 MiB.
+Adds      commands: notify (caution, writes)
+Next      fingerprint 33926d31eb91080f
+Again, what it needs:
+  host      read only (status). Events: lifecycle.
+  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
+  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
+  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
+  memory    128 MiB.
+```
+
+| Command | Meaning |
+|---|---|
+| `adapter list` | The installed adapters, with state and trust. |
+| `adapter info <name>` | Everything about one: state, source, grant, what is enforced, crashes and protocol strikes, and the last lines it wrote to stderr. |
+| `adapter disable <name>` | Stop it and take its rights away. |
+| `adapter remove <name> [--purge]` | Remove its files. Its state directory is kept unless you pass `--purge`, because it may hold tokens and keys. |
+| `adapter update <name>` or `--all` | Update to a newer release. An update that asks for more than the installed one needs `--accept` with the new fingerprint. `--rollback` goes back to the previous version without the network. |
+
+`import`, `update`, `enable`, `disable` and `remove` take [`--dry-run`](https://oxidepm.com/docs/commands/dry-run/). Enabling, disabling and removing are dangerous requests, so an AI actor cannot make them.
+
+## If the program changes
+
+The SHA-256 of the executable is recorded at import. If it no longer matches when the daemon starts the adapter, the adapter is not started and is marked failed (`E_ADAPTER_TAMPERED`).
+
+---
+
+# Permissions
+
+What a manifest can ask for, and what the daemon enforces itself.
+
+Source: https://oxidepm.com/docs/adapters/permissions/
+
+An adapter declares what it needs in the `permissions` object of its manifest. Some of it the daemon enforces itself, some the operating system enforces, and some is only what you consent to.
+
+## The fields
+
+- `host` (object): `level` is `read`, `lifecycle` or `admin`. `scope` is `all` or `opted-in`. Optionally `max_in_flight`, up to 128.
+- `events` (list, default: none): The event families a service receives: `lifecycle` and `adapter`. A tool receives no events.
+- `env_pass` (list, default: none): Names of environment variables the adapter receives from the daemon's environment. Nothing else is passed.
+- `network` (object): `mode` is `none` or `outbound`. `hosts` lists the hosts it says it uses, and `listen` the addresses it listens on.
+- `fs` (object): `read` and `write` are lists of paths. `$STATE` is the adapter's own state directory. `any` means any path.
+- `spawn` (object): `mode` is `none`, `named` (with `names`) or `any`.
+- `memory_mb` (number, default: 128): A memory ceiling, at most 512.
+- `requires_enforcement` (list, default: none): Things the OS must enforce, or the adapter is not enabled: `network`, `fs_write`, `fs_read`, `spawn`.
+
+## What the host level allows
+
+`read` makes safe requests: `status`, `show`, `describe`, `logs` and the daemon's status. `lifecycle` also stops, restarts and reloads apps. `admin` also starts apps and makes the dangerous and global requests: `delete`, `flush`, `save`, `resurrect`. Always only on apps that are not protected, and, with scope `opted-in`, only on apps that list the adapter under `adapters`. `kill`, changing policy markers and revealing environment values are a person's, whatever the grant.
+
+## Who enforces what
+
+| Layer | What it enforces |
+|---|---|
+| The daemon | The host level and scope, the markers, the audit log, the rate limits, the size and rate limits of the protocol, what is in an event, and the scrubbing of an app's secrets from logs. All of it holds whether or not the adapter cooperates. |
+| The operating system | Which files it can read and write, which programs it can start, and its system calls. On Linux, through Landlock and seccomp. See [The sandbox](https://oxidepm.com/docs/adapters/sandbox/). |
+| You | What you accepted on the consent screen. The list of hosts an adapter says it connects to is shown, but it is not enforced per host. Local Unix sockets (a session bus, an ssh agent) may also stay reachable; see [The sandbox](https://oxidepm.com/docs/adapters/sandbox/). |
+
+## What an update may change
+
+An update that asks for more than the installed version, in any field, shows what grew (`[GROWS]` in the list and a `Grows` section) and needs a new acceptance. Asking for less never needs one.
+
+## Environment values in events
+
+An event never carries an app's command, arguments, working directory, environment, hooks or log lines. `logs` that an adapter reads through the host API are scrubbed of the app's environment values (those of 6 or more characters, by exact match) and bounded at 10 000 lines and 1 MiB.
+
+---
+
+# The sandbox
+
+Landlock and seccomp: what they limit, where they apply and where they stop.
+
+Source: https://oxidepm.com/docs/adapters/sandbox/
+
+## What runs
+
+An adapter is started through a small launcher, `oxidepm-sandbox`, that sits next to `oxidepmd`. The launcher limits itself and then runs the adapter. It uses two Linux mechanisms:
+
+- **Landlock** limits the files the adapter can read and write, and the programs it can start, to what its manifest lists.
+- **seccomp** limits the system calls it can make, which is how network use is limited.
+
+`oxidepm status --daemon` shows what this machine can do.
+
+*Terminal output of oxidepm status --daemon*
+
+```text
+$ oxidepm status --daemon
+audit log:    ok
+agent socket: bound
+sandbox:      landlock abi 10 (restricts unix connect), seccomp, ptrace_scope 1 (launcher installed)
+```
+
+Here Landlock is at ABI 10 (which also restricts connecting to Unix sockets), seccomp is available, `ptrace_scope` is 1 and the launcher is installed. The import and enable screens say, line by line, what is enforced on this machine.
+
+## When it cannot be set up
+
+If the sandbox cannot be set up the way the grant says, the adapter is not started. If the kernel has no Landlock or no seccomp, or the launcher is not installed, the consent screen says `no (this kernel has no Landlock)` or `no (the sandbox launcher is not installed)` for that part. An adapter that requires enforcement is then not enabled, unless you accept that with `--allow-unenforced`.
+
+## What it does and does not do
+
+It limits the damage a buggy adapter can do: it keeps it out of the rest of the file system, and from starting programs it did not declare. It does not fully contain a hostile adapter. In particular:
+
+- Network access is not enforced per host. The manifest names the hosts, and the consent screen says `Not enforceable per host`.
+- It does not take back what you approved.
+- Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. `adapter info` prints `AF_UNIX services reachable:` with the ones its self-test could connect to. On a kernel with Landlock ABI 10, which `status --daemon` shows as `restricts unix connect`, this can be closed.
+- It is Linux only. Adapters are started only on Linux; on macOS there are no adapters and no sandbox, because Landlock and seccomp are Linux features.
+
+That is why an adapter is also checked against a hash, why you see what it asks for first, and why the daemon enforces the host level on its own. Only install adapters you trust.
+
+---
+
+# The notifier
+
+Telegram, Discord, Slack and webhook notifications.
+
+Source: https://oxidepm.com/docs/adapters/notifier/
+
+The notifier is a service adapter. It listens to the lifecycle events of the daemon and sends them to Telegram, Discord, Slack and a signed HTTP webhook. It has read access only and never touches your apps. It also adds the `oxidepm notify` command.
+
+## Install it
+
+The archive is not published yet. `--allow-reserved-name` is needed because the core reserves the name `notifier`.
+
+
+```sh
+oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter enable notifier
+```
+
+See [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/). The manifest asks for read access to status and lifecycle events, outbound network (it names `api.telegram.org`, `discord.com` and `hooks.slack.com`), write access only to its own state directory, and the environment variable `OXIDEPM_TELEGRAM_TOKEN`.
+
+## Events
+
+| Event | Severity | When |
+|---|---|---|
+| `start` | info | An app was started. |
+| `stop` | info | An app was stopped. |
+| `restart` | warning | An app was restarted: after a crash, by a limit, by cron or by hand. |
+| `memory_limit` | warning | An app went over its memory limit and is being restarted. |
+| `crash` | critical | An app crashed or ended `errored`. The message has the exit code, the signal or the error text. |
+| `crash_loop` | critical | An app crashes again and again and is no longer restarted. |
+| `health_check` | critical | A health check failed. |
+
+Messages contain app names, ids, error text and health-check endpoints. Consider that before routing alerts to a shared channel.
+
+## Configure it
+
+The configuration is `config.toml` in the adapter's own state directory. `oxidepm notify status` prints the path. It is not in the home directory, and `oxidepm backup` does not include it because it holds tokens.
+
+*config.toml*
+
+```toml
+events = ["crash", "restart"]   # empty or absent: every event
+min_severity = "warning"        # info | warning | critical
+timeout_secs = 10               # per request, 1 to 60
+
+[telegram]
+bot_token_env = "OXIDEPM_TELEGRAM_TOKEN"   # read from the daemon's environment; or bot_token = "..."
+chat_id = "-100123456789"
+
+[discord]
+webhook_url = "https://discord.com/api/webhooks/..."
+
+[slack]
+webhook_url = "https://hooks.slack.com/services/..."
+
+[webhook]
+url = "https://example.org/alerts"
+secret = "..."   # signs every request
+```
+
+A webhook request carries `X-OxidePM-Timestamp` and `X-OxidePM-Signature: v1=<HMAC-SHA256 of "<timestamp>.<body>" with the secret>`. A file that does not parse is an error that `notify status` shows. It is never replaced, and nothing is sent until it is fixed. The file is read again when it changes.
+
+## The notify command
+
+```sh
+oxidepm notify telegram --chat YOUR_CHAT_ID    # the token comes from OXIDEPM_TELEGRAM_TOKEN or bot_token, never the command line
+oxidepm notify events --set crash,restart,health_check
+oxidepm notify severity warning
+oxidepm notify test       # sends to every channel whatever the filters say; exits non-zero if one fails
+oxidepm notify status
+oxidepm notify remove CHANNEL
+```
+
+*Terminal output of oxidepm notify status*
+
+```text
+$ oxidepm notify status
+Notification configuration
+Config file: /home/deploy/.oxidepm/adapters/state/notifier/config.toml
+Configuration: ok
+Telegram: not configured
+Discord: not configured
+Slack: not configured
+Webhook: not configured
+Events: all
+Minimum severity: none
+```
+
+`notify` is a caution-tier command, so an AI actor cannot run it at all, and it is audited. Without the adapter, `oxidepm notify` exits with code 2 and prints `'notify' is provided by the adapter 'notifier', which is not installed.` and the command that imports it.
+
+---
+
+# The Prometheus exporter
+
+Prometheus metrics from the daemon's status, served by an adapter.
+
+Source: https://oxidepm.com/docs/adapters/exporter-prometheus/
+
+The exporter is a service adapter with read access only. On each scrape it asks the daemon for the status of the apps, at most once a second however many scrapers there are, and never touches them.
+
+## Install it
+
+The archive is not published yet.
+
+
+```sh
+oxidepm adapter import exporter-prometheus.tar.gz --sha256 <hex>
+oxidepm adapter enable exporter-prometheus
+```
+
+The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host; the consent screen marks that last one `[BROAD]`. It serves the Prometheus text format on `/metrics`, and nothing else.
+
+*prometheus.yml*
+
+```yaml
+scrape_configs:
+  - job_name: oxidepm
+    static_configs:
+      - targets: ["127.0.0.1:9616"]
+```
+
+## What it exports
+
+*Metrics served by the exporter*
+
+```text
+$ curl -s 127.0.0.1:9616/metrics
+# HELP oxidepm_up Whether the exporter could read the process list from the daemon (1) or not (0)
+# TYPE oxidepm_up gauge
+oxidepm_up 1
+# HELP oxidepm_processes_total Total number of managed processes
+# TYPE oxidepm_processes_total gauge
+oxidepm_processes_total 4
+# HELP oxidepm_process_up Whether the process is running (1) or not (0)
+# TYPE oxidepm_process_up gauge
+oxidepm_process_up{name="db",id="1",mode="cmd"} 1
+oxidepm_process_up{name="worker",id="4",mode="cmd"} 0
+# HELP oxidepm_process_restarts_total Total number of process restarts
+# TYPE oxidepm_process_restarts_total counter
+oxidepm_process_restarts_total{name="worker",id="4",mode="cmd"} 3
+```
+
+That is a part of the real output. The other families are `oxidepm_process_uptime_seconds`, `oxidepm_process_memory_bytes` and `oxidepm_process_cpu_percent`, each per app with the labels `name`, `id` and `mode`. Label values are escaped.
+
+If the daemon cannot be asked (it is stopped, busy, or refused the request), the answer is HTTP 503 with only `oxidepm_up 0`, never an empty list that looks healthy.
+
+## Configuration
+
+An optional `config.toml` in the adapter's state directory, read when the adapter starts. Disable and enable it again after a change.
+
+*config.toml*
+
+```toml
+listen = "127.0.0.1:9616"       # an IP address and a port; the default
+key = "at least 16 characters"  # required for any address that is not loopback
+```
+
+- An address that is not loopback (`0.0.0.0` included) without a `key` is refused: the adapter listens nowhere, and `adapter info` shows why.
+- With a key, every request needs `Authorization: Bearer <key>`, and so does a loopback bind that has a key.
+- Without a key (loopback only), the `Host` header must be `localhost` or a loopback address with the port that is bound, so a web page whose name was re-pointed at `127.0.0.1` cannot read the metrics.
+- There is no TLS. Put a proxy in front of it for anything but a trusted network.
+- The sandbox lets the adapter bind the ports its manifest lists, which is 9616 as shipped. Another port needs a build whose manifest lists it, and a new consent at `enable`.
+
+---
+
+# Agent connections
+
+How the daemon decides who is asking, and the agent socket.
+
+Source: https://oxidepm.com/docs/ai-safety/agent-connections/
+
+## Who is asking
+
+The daemon decides who is asking from the connection a request arrives on. What a client writes about itself is only a claim, and a claim can make a request stricter, never looser.
+
+| Where the request comes in | Class | Label |
+|---|---|---|
+| `daemon.sock`, no claim | human | `cli` |
+| `daemon.sock`, claim `human:<label>` | human | the label |
+| `daemon.sock`, claim `ai:<label>` | ai | the label |
+| `daemon.sock`, any other claim (`adapter:*` and `system:*` may never be claimed by a client, and a label must be 1 to 32 characters of `A-Z a-z 0-9 . _ -`) | ai | `invalid-claim` |
+| `agent.sock`, whatever the claim | ai | the label of an `ai:<label>` claim, otherwise `agent` |
+
+The CLI sends `OXIDEPM_ACTOR` as its claim:
+
+```sh
+OXIDEPM_ACTOR=ai:assistant oxidepm status
+```
+
+Set it for every agent you run. `OXIDEPM_SOCKET` names the socket the CLI talks to. Pointing an agent at `agent.sock` gives it class `ai` whatever it claims, so it does not depend on the agent being honest about itself:
+
+```sh
+OXIDEPM_SOCKET=~/.oxidepm/agent.sock oxidepm status
+```
+
+## The agent socket
+
+`agent.sock` is created in the data directory with mode 0600. `agent_socket = false` in `daemon.toml` turns it off. It is tighter than the main socket:
+
+- lines of at most 1 MiB,
+- at most 32 connections at once (the 33rd is closed),
+- a connection that is idle for 60 seconds is closed,
+- a write the client does not read is abandoned after 10 seconds.
+
+If it cannot be bound (a path that is too long, a file in the way), the daemon starts without it and says so in its log.
+
+## What the daemon records
+
+The daemon writes every request to its log with the actor, the class and the socket. Reads are at debug level. The lifecycle events of an app are credited to the actor of the request that caused them, or to `system:crash`, `system:limit`, `system:cron`, `system:health` and `system:resurrect` when the daemon acted on its own.
+
+## What this gives and what it does not
+
+- It binds an AI that goes through the agent socket or that declares itself. It makes a confused or over-eager agent safe.
+- It does not stop a hostile or careless process that runs as the same user and calls `oxidepm` without declaring anything. That process reaches the main socket and is a person as far as the kernel can tell. Code that runs as you is you.
+- A class decides what a request may do ([Permission tiers](https://oxidepm.com/docs/ai-safety/permission-tiers/)). A refused request is answered `E_POLICY_DENIED` or `E_PROTECTED`, the message names the actor, the request and the apps, and nothing changes.
+
+To contain an agent that runs in a container, run it as the same user inside the container (for example rootless Podman with `--userns=keep-id`), bind-mount only `agent.sock` into it and set `OXIDEPM_SOCKET` to the mounted path. The container then cannot reach `daemon.sock`.
+
+## An adapter that starts the CLI
+
+A process in an adapter's process tree that opens the daemon's main socket itself, for example the CLI started by the adapter, is handled as that adapter under its grant, whatever it claims. The daemon looks at the peer once, when the connection is accepted. A peer that cannot be looked at then is treated as an AI, not as a person.
+
+---
+
+# Permission tiers
+
+Safe, caution and dangerous requests, and what an AI actor may ask for.
+
+Source: https://oxidepm.com/docs/ai-safety/permission-tiers/
+
+Every request has a tier. A person (class `human`, any label) may make every request. An `ai` actor, whether it declared itself or came in on `agent.sock`, is held to the tier.
+
+| Tier | Requests | An `ai` actor |
+|---|---|---|
+| safe | `status`, `show`, `describe`, `logs`, `ping`, `hello` | Yes, on every app, protected ones too. |
+| caution | `stop`, `restart`, `reload` | Only on an app marked `ai_control` and not `protected`. |
+| dangerous | `start` (and a config file: a spec is arbitrary code), `delete`, `flush`, `kill`, `save`, `resurrect`, `show --reveal` | Never. |
+
+## Rules for caution requests
+
+- An `ai` actor must name its apps: a name or an id, at most 10. `all` and `@tag` are refused for `stop`, `restart` and `reload`.
+- The check is all or nothing. If one app of the request (an instance of a cluster counts) is not open to the actor, nothing runs, and the error names the apps that are not.
+- The apps that passed the check are the ones acted on. An app that gains a tag or is created while the request is being checked is not touched.
+- `restart` also starts an app that is at rest. That is how an AI brings back what it may control.
+
+*Terminal output of an agent's requests*
+
+```text
+agent$ oxidepm stop web --dry-run
+ℹ Dry run of 'stop': this is what would happen. Nothing was changed.
+  stop  web [step 0]  status running
+
+agent$ oxidepm restart db
+✗ ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+Error: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person
+
+agent$ oxidepm delete api
+✗ ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it
+Error: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it
+```
+
+The CLI prints the message. The code (`E_PROTECTED`, `E_POLICY_DENIED`) is in the [audit log](https://oxidepm.com/docs/ai-safety/audit-log/).
+
+## Rate limits
+
+An `ai` actor can restart or reload the same app once every 10 seconds and five times in ten minutes (`E_RATE_LIMITED`), so a looping agent cannot keep an app down. More generally, a non-human actor is limited to 50 requests a second (a burst of 100), and requests that change something, or are refused for being dangerous, to 5 a minute (a burst of 10). An `ai` actor's allowance is shared by every `ai` actor on the same socket, so changing the label in the claim does not buy a new one.
+
+## What the markers do not limit
+
+The markers limit requests, not the daemon's own work. A crash restart, a `restart_cron` restart, a limit restart and the boot resurrect treat a protected app like any other.
+
+## Adapters
+
+An adapter is held to its [grant](https://oxidepm.com/docs/adapters/permissions/) on top of this: `read`, `lifecycle` or `admin`. `kill`, changing the markers and revealing environment values are a person's, whatever the grant.
+
+---
+
+# Protected apps
+
+The protected and ai_control markers, and how to change them.
+
+Source: https://oxidepm.com/docs/ai-safety/protected-apps/
+
+Two markers belong to an app. Both are off by default.
+
+- `ai_control` (boolean, default: false): AI actors may stop, restart and reload the app. Set with `oxidepm start --ai-control`, or `ai_control = true` in the config file.
+- `protected` (boolean, default: false): The app is read-only for every non-human actor, whatever `ai_control` says. Set with `--protected`, or `protected = true`.
+
+A protected app can still be read: `status`, `show`, `describe` and `logs` work for an AI actor. A person is never limited by the markers.
+
+*oxidepm.config.toml*
+
+```toml
+[[apps]]
+name = "db"
+mode = "cmd"
+script = "postgres"
+protected = true
+
+[[apps]]
+name = "web"
+mode = "npm"
+script = "start"
+ai_control = true
+```
+
+## Change them while the app runs
+
+*Terminal output of oxidepm policy set*
+
+```text
+$ oxidepm policy set web --protected
+✓ web: protected=true ai_control=true
+```
+
+```sh
+oxidepm policy set web --protected
+oxidepm policy set web --protected=false --ai-control
+oxidepm policy set @backend --ai-control=false
+```
+
+`policy set` changes the markers of running apps without a restart. At least one of the two flags is required. It is a dangerous request: only a person can make it. An AI cannot protect, unprotect or open an app. `oxidepm status --more` shows the markers in the `policy` column.
+
+- For a cluster, the cluster and every instance change in one transaction. An instance created later takes the markers of its cluster.
+- The markers are kept in the database (`state.db`) and in `saved.json`, so they survive a restart of the daemon, and `delete all` followed by `resurrect` brings an app back with the markers it had.
+- A `start` of an app that exists keeps its stored markers, whatever the spec or config file says, so running `oxidepm start <file>` again cannot clear `protected`.
+
+## Dry runs
+
+`oxidepm --dry-run policy set web --protected=false` shows the change and makes none:
+
+*Terminal output of oxidepm policy set with --dry-run*
+
+```text
+$ oxidepm policy set web --protected=false --dry-run
+ℹ Dry run of 'set_policy': this is what would happen. Nothing was changed.
+  set_policy  web  protected true -> false, ai_control true -> true
+```
+
+Most requests that change something can be rehearsed this way. See [Dry run](https://oxidepm.com/docs/commands/dry-run/) for the ones that cannot.
+
+---
+
+# Audit log
+
+What is written to the audit log, what is not, and how to read it.
+
+Source: https://oxidepm.com/docs/ai-safety/audit-log/
+
+Everything an AI or an adapter asks for is recorded, and so is every caution or dangerous request by anyone.
+
+## The files
+
+The log is two JSON-lines files in `~/.oxidepm/audit/` (the directory is mode 0700, the files 0600, created when the first line is written):
+
+- `audit.jsonl`: every recorded request.
+- `audit-security.jsonl`: the denials, the dangerous requests, and what a non-human actor changed. A chatty but permitted actor cannot rotate this file's evidence away.
+
+Each request leaves a `decision` line (who asked, the operation and its tier, the selector and the apps it reached, `allow` or `deny` with the reason) and, if it ran, a `result` line (`ok`, the error code, how many apps changed or failed, the milliseconds). The two share a `req` number the daemon assigns. The id the client chose is kept as `client_req`. A start also records the program, the number of arguments and a digest of them. `seq` counts up across rotation, so a gap shows a lost line.
+
+*Lines of audit-security.jsonl*
+
+```text
+{"v":1,"seq":5,"ts":"2026-10-31T04:21:24.168Z","phase":"decision","req":"r3","client_req":"188ea6-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609382,"uid":1001},"op":"restart","tier":"caution","selector":"db","decision":"deny","deny":{"code":"E_PROTECTED","why":"ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person"},"dry_run":false}
+{"v":1,"seq":6,"ts":"2026-10-31T04:21:24.173Z","phase":"decision","req":"r4","client_req":"188ec7-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609415,"uid":1001},"op":"delete","tier":"dangerous","selector":"api","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it"},"dry_run":false}
+{"v":1,"seq":7,"ts":"2026-10-31T04:21:24.177Z","phase":"decision","req":"r5","client_req":"188ee9-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609449,"uid":1001},"op":"stop","tier":"caution","selector":"all","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not use 'all' or a tag with 'stop': name the apps"},"dry_run":false}
+```
+
+## What is recorded
+
+- Every request of a non-human actor. Repeated `ping`, `hello` and `status` are one line per actor and operation per minute, with a count. `show`, `describe` and `logs` are one line each, with the app, because they are how arguments and logs are read.
+- A person's caution and dangerous requests.
+- Every denial, whoever asked.
+
+## What is never written
+
+Environment values, hook and probe scripts, the arguments themselves, log lines, the app spec and adapter configuration. The record is a fixed set of fields with no place for them, and free text is cut to a fixed length.
+
+## Written before it runs
+
+A non-human actor's caution or dangerous request is written to disk before it runs. If the log cannot be written (the directory is a file, the disk is full, the writer is stuck), the request is refused with `E_AUDIT_UNAVAILABLE` and nothing happens. A read still goes through, and the lost line is counted. A person is never held up: a stop works while the log is broken, which is how a full-disk incident is handled. The lines that could not be written are counted. `oxidepm status --daemon` shows `audit log: ok` or `degraded`, how many lines were lost, and what is wrong.
+
+## Read it
+
+*Terminal output of oxidepm audit*
+
+```text
+$ oxidepm audit --tail 7
+2026-10-31T04:21:24.161Z #3      ai:assistant stop [caution] allow web (dry run)
+2026-10-31T04:21:24.162Z #4      result r2 ok changed=0 failed=0 0ms
+2026-10-31T04:21:24.168Z #5      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
+2026-10-31T04:21:24.173Z #6      ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
+2026-10-31T04:21:24.177Z #7      ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
+2026-10-31T04:21:24.183Z #8      human:cli set_policy [dangerous] allow web
+2026-10-31T04:21:24.183Z #9      result r6 ok changed=1 failed=0 0ms
+```
+
+```sh
+oxidepm audit --tail 50
+oxidepm audit --actor ai:assistant        # or just `ai`, or just `assistant`
+oxidepm audit --op restart
+oxidepm audit --since 30m              # or an RFC 3339 time
+oxidepm audit --security               # the second file
+oxidepm --json audit                   # one JSON object per line
+```
+
+`oxidepm audit` reads the files directly, so it works with the daemon down. A request that matches keeps its result line. Every string an actor could have written (labels, reasons, notes) is printed with control characters replaced, so a label cannot move the cursor or paint over the lines around it.
+
+## Rotation and limits
+
+The files rotate at 10 MiB (5 MiB for the security file) and keep ten each. There is no tamper evidence beyond the file mode: a process with your rights can rewrite the files, as it can rewrite the database.
+
+---
+
+# Safe use with AI agents
+
+A runbook: which commands are safe to let an agent run, and the mistakes agents make.
+
+Source: https://oxidepm.com/docs/ai-safety/safe-use/
+
+This is a runbook for letting an AI assistant manage processes through OxidePM. The rule of thumb: **let the AI read freely, and require a person to confirm anything that stops, restarts, deletes or truncates.**
+
+## Commands by risk
+
+**Safe, read-only:** `status`, `show`, `logs`, `env list`, `describe`, `ping`, `top`, `--version`, and `check` (without `--fix`) where the `check` adapter is installed.
+
+**Caution:**
+
+| Command | Notes |
+|---|---|
+| `start <target>` | Starts a process, or every app of a config file. Check the config first. An app that is already up is refused. |
+| `stop`, `restart`, `reload` | Brief downtime. A stopped app stays stopped. |
+| `save` | Refuses to replace a non-empty file with an empty list unless `--force`. |
+| `startup` | Generates an autostart script. |
+| `resurrect` | Starts everything the registry says should run. Verify the saved state first. |
+| `check --fix` | Installs dependencies and creates `.env` from a template. |
+| `deploy` | High: pulls code and restarts processes on a remote host. |
+| `update` | Replaces the installed binaries and stops a running daemon. |
+
+**Dangerous:** `kill` (stops the daemon and every app), `delete`, `flush` (the log contents are lost), `restore`, `policy set`, and `show --reveal` (its output ends up in the conversation).
+
+Treat `all` as a higher-risk variant of every command that accepts it.
+
+## Mistakes agents make
+
+| Mistake | What happens |
+|---|---|
+| A wrong `mode` | The process is run with the wrong runtime. |
+| Guessed field names | The file is refused and the unknown key is named, so nothing starts. `restart` is the key for the restart mode, not `restart_mode`. |
+| `restart = "always"` for a process that exits normally | It is restarted over and over, with a growing delay, until more than `max_restarts` exits fall inside `crash_window`. |
+| A very high `max_restarts` | A crash loop can run for a long time. |
+| Editing the config while the app runs | The running process keeps the spec it was started with. Stop it, then start the file again. |
+| `env set` or `env unset` | Both are refused. Use `--env` or the config file. |
+| `--watch` or `watch = true` | Refused. File watching is not available. |
+| `pkill` or `kill -9` instead of `oxidepm stop` | OxidePM's state no longer matches the real processes. |
+| `flush` to clean up | It destroys the diagnostic history. Rotation is already automatic. |
+| Restarting an `errored` app without reading its logs | You find the cause first, then restart. |
+| `all` when one app was meant | Unrelated services are stopped or deleted. |
+| A loop of its own (`while true`, cron, a watcher) | Let OxidePM restart apps. |
+
+## Rules
+
+1. Review a config an AI wrote before it is started. Confirm `mode`, `script` or `bin`, `cwd`, `env`, ports and the restart policy.
+2. Confirm before a destructive command: `kill`, `delete`, `flush`, or anything with `all`.
+3. Read the logs before you restart. `oxidepm logs <name>` first.
+4. Keep secrets out of prompts and configs. `status`, `show`, `describe` and `env list` do not show environment values, but command arguments, URLs, logs and config files are not scrubbed.
+5. Put the agent on `agent.sock` and set `OXIDEPM_ACTOR`, so the limits apply whatever it does. Mark the apps it may restart `ai_control`, and the ones it must not touch `protected`.
+6. Run `oxidepm describe <name>` after any config change.
+
+## Commands that adapters provide
+
+`web`, `monit`, `notify`, `deploy` and the other commands that [adapters provide](https://oxidepm.com/docs/commands/overview/#provided-by-adapters) are caution or dangerous requests, and they go through the same policy and audit log as every other command. A session command such as `monit`, which takes over a terminal, is refused for an AI actor unless its adapter says it may be driven by one.
+
+## The web API
+
+The `ui-web` adapter listens on `127.0.0.1` and needs an access key for every request, loopback included. By default it can only show apps and restart, stop and reload the ones that list it under `adapters`; it cannot create or delete apps or flush logs. Do not give an AI the access key, and do not raise the adapter's level to `admin` for one. The daemon sees every request as the actor `adapter:ui-web`, and the audit log names it.
+
+---
+
+# Overview
+
+Protocol version 1: transport, framing and the rules every message follows.
+
+Source: https://oxidepm.com/docs/adapter-protocol/overview/
+
+This is how `oxidepmd` talks to an adapter: an executable it starts and supervises. This is protocol version 1. The examples on these pages are the reference frames that the daemon, its test adapter and the protocol crate's own tests all read. Changing one is a protocol change and needs a new protocol number.
+
+## Transport and framing
+
+- The adapter's standard input carries daemon to adapter, and its standard output adapter to daemon. Both are UTF-8, one JSON object per line, ended by `\n`. A frame never contains a raw newline.
+- Each object is a JSON-RPC 2.0 message with these restrictions:
+  - `"jsonrpc":"2.0"` is required. There are no batches: an array is a violation.
+  - `id` is an unsigned 64-bit integer. Each side numbers its own requests from 1 and never reuses a number.
+  - `params` and `result` are objects. A missing `params` means `{}`.
+  - `method` is 1 to 64 characters of letters, digits, `.`, `_` and `-`.
+  - A response has `result` or `error`, never both. An error is `{code: integer, message: string, data?}`.
+  - A line that is empty, contains a NUL byte or is not valid UTF-8 is not a frame.
+- Unknown fields are ignored. An unknown request method is answered with error `-32601`. An unknown notification is ignored.
+- Standard output carries protocol and nothing else. Standard error is the adapter's log: lines are cut at 8 KiB, rate limited to 1 MiB per second, kept in the adapter's own rotated file (1 MiB, 5 files) and never mixed into the daemon's log.
+
+## The environment
+
+The adapter is started with a cleared environment: a short base (`PATH`, `LANG`, `HOME` set to its state directory), the names its manifest lists in `env_pass`, and `OXIDEPM_ADAPTER_PROTOCOLS`, the comma-separated protocol numbers the daemon speaks. A process that finds that variable missing was not started by the daemon.
+
+## Kinds
+
+`service` is resident and receives events. `tool` is started on demand and exits when idle. The kind is set in the manifest and sent in `initialize`.
+
+## Where to read on
+
+- [Messages](https://oxidepm.com/docs/adapter-protocol/messages/): every method.
+- [Handshake and lifecycle](https://oxidepm.com/docs/adapter-protocol/lifecycle/): starting, checking and stopping.
+- [The host API](https://oxidepm.com/docs/adapter-protocol/host-api/): how an adapter asks the daemon to act.
+- [Events](https://oxidepm.com/docs/adapter-protocol/events/): what a service is told.
+- [Limits and timeouts](https://oxidepm.com/docs/adapter-protocol/limits/) and [Errors](https://oxidepm.com/docs/adapter-protocol/errors/).
+- [Write an adapter](https://oxidepm.com/docs/adapter-protocol/write-an-adapter/): the manifest and the archive.
+
+---
+
+# Messages
+
+Every method the daemon and an adapter may send.
+
+Source: https://oxidepm.com/docs/adapter-protocol/messages/
+
+## Daemon to adapter: requests
+
+The adapter answers each with a `result` or an `error`.
+
+| Method | Params | Result |
+|---|---|---|
+| `initialize` | `protocols`, `host`, `adapter`, `kind`, `grant`, `paths`, `limits` | `{protocol, name, version}` |
+| `ping` | `{}` | `{}`. Sent every 15 seconds to a service. |
+| `shutdown` | `{}` | `{}`. Sent when the adapter is stopped. |
+| `runtime.prepare` | `spec`, `path_hint`, `phase` (`start` or `restart`) | `{steps, notes}` |
+| `runtime.plan` | `spec`, `steps_done` | `{program, args, cwd, extra_env, binary_path}` |
+| `command.invoke` | `verb`, `argv`, `cwd`, `dry_run`, `actor`, `tty` | `{exit_code, result?}` |
+
+`runtime.prepare` and `runtime.plan` are how a runtime adapter launches an app while the core still owns the child. The adapter returns data: build steps (an `id`, an `argv`, a `cwd`, extra environment, a timeout, whether to capture output, and whether the step is optional), and then a launch plan (a program, arguments, a working directory and extra environment). The core checks and runs the steps in their own process group and spawns the plan itself. The adapter runs nothing. The `spec` it sees is a redacted view: the keys of the environment with the value `<redacted>`.
+
+*runtime.prepare and its reply*
+
+```text
+daemon:  {"jsonrpc":"2.0","id":4,"method":"runtime.prepare","params":{"spec":{"name":"web","runtime":"node","command":"server.js","args":["--port","3000"],"cwd":"/srv/web","tags":["prod"],"ports":[3000],"instances":1,"env":{"DATABASE_URL":"<redacted>"},"options":{"node_args":["--max-old-space-size=512"]}},"path_hint":"/usr/local/bin:/usr/bin","phase":"start"}}
+adapter: {"jsonrpc":"2.0","id":4,"result":{"steps":[{"id":"install","argv":["npm","ci"],"cwd":"/srv/web","env_add":{"CI":"1"},"timeout_secs":600,"capture":"none","capture_max":65536,"optional":true,"description":"Install dependencies"}],"notes":["lockfile found"]}}
+```
+
+`command.invoke` runs a command that the adapter added to the CLI, such as `oxidepm notify`. The `actor` is the class and label of whoever asked.
+
+*command.invoke and its reply*
+
+```text
+daemon:  {"jsonrpc":"2.0","id":6,"method":"command.invoke","params":{"verb":"check","argv":["--fix"],"cwd":"/srv/web","dry_run":true,"actor":{"class":"human","label":"cli"},"tty":false}}
+adapter: {"jsonrpc":"2.0","id":6,"result":{"exit_code":0,"result":{"problems":0}}}
+```
+
+## Daemon to adapter: notifications
+
+No answer.
+
+| Method | Params |
+|---|---|
+| `initialized` | `{}` |
+| `event` | `{seq, kind, family, at, app?, data, options?, dropped_before?}`. See [Events](https://oxidepm.com/docs/adapter-protocol/events/). |
+| `cancel` | `{id}`: the request with that id was abandoned, and a late answer will be dropped. |
+
+## Adapter to daemon
+
+| Method | Kind | What it does |
+|---|---|---|
+| `host.request` | request | Asks the daemon to do something. See [The host API](https://oxidepm.com/docs/adapter-protocol/host-api/). |
+| `host.audit_note` | request | Writes a line to the audit log: `{"text": "..."}`. |
+| `invoke.output` | notification | Streams output of a `command.invoke`: `{id, stream, text}`, with `stream` one of `stdout`, `stderr` or `status`. |
+| `cancel` | notification | `{id}`. Accepted and ignored. |
+
+The `provider.*` and `gate.*` method names are reserved.
+
+---
+
+# Handshake and lifecycle
+
+How an adapter starts, is checked and is stopped.
+
+Source: https://oxidepm.com/docs/adapter-protocol/lifecycle/
+
+## The handshake
+
+The daemon speaks first. The adapter stays silent until it receives `initialize`; a frame sent before that is a violation.
+
+*initialize and its reply*
+
+```text
+daemon:  {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+adapter: {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.1.0"}}
+daemon:  {"jsonrpc":"2.0","method":"initialized","params":{}}
+```
+
+The version numbers in this example are illustrative. The daemon puts its own version in `host.version`.
+
+- The adapter must answer within 10 seconds, with the highest protocol it shares with `protocols`, and its own `name` and `version`.
+- The daemon compares `name` and `version` with what it has on record. A difference means the executable is not what was installed: the adapter is killed and marked failed (`tampered`) and does not start again.
+- A protocol that is not in the offered list, or an error `-32022` (optionally with `data.supported`), marks the adapter failed (`incompatible`).
+- After a good reply, the daemon sends the notification `initialized`. A `service` then receives events. A `tool` is idle until a request arrives.
+- A silent or broken handshake ends the process. It counts as a crash, and the supervisor restarts it with a growing delay until it gives up.
+
+*A reply that refuses the protocol*
+
+```text
+adapter: {"jsonrpc":"2.0","id":1,"error":{"code":-32022,"message":"unsupported protocol","data":{"supported":[1],"code":"E_ADAPTER_PROTOCOL"}}}
+```
+
+## Staying alive
+
+A service is sent `ping` every 15 seconds and has 5 seconds to answer. Three misses in a row kill it. A tool is not pinged: it is started for a request, kept warm for 30 seconds, and asked to exit when idle.
+
+*ping*
+
+```text
+daemon:  {"jsonrpc":"2.0","id":2,"method":"ping","params":{}}
+adapter: {"jsonrpc":"2.0","id":2,"result":{}}
+```
+
+## Timeouts and cancellation
+
+- Every wait for an adapter is a timer in the daemon. The adapter's cooperation is not needed.
+- When a deadline passes, or the caller goes away, the daemon forgets the request at once, sends `cancel {id}` and remembers the id. A reply with that id (a late answer, or error `-32024` from an adapter that obeyed the cancel) is dropped and counted, without a strike. An id that was never issued is a strike.
+- When the connection ends for any reason, every request in flight fails with `E_ADAPTER_CRASHED`.
+
+## Shutdown
+
+When the adapter is stopped, the daemon sends `shutdown` and waits up to 2 seconds. It then closes the adapter's standard input (the adapter must also exit when its input closes), waits until 2 seconds are over, sends SIGTERM to the adapter's process group, waits until 5 seconds are over in all, and then sends SIGKILL. The total is fixed. Queued events are written first, for up to a second.
+
+---
+
+# The host API
+
+How an adapter asks the daemon to do something, and what the grant allows.
+
+Source: https://oxidepm.com/docs/adapter-protocol/host-api/
+
+An adapter reaches the daemon through `host.request` and nothing else. `params.request` is the object the CLI would send, for example `{"type":"stop","selector":{"by":"name","value":"web"}}`. `params.dry_run` asks for a plan instead of the action. A request that only reads ignores it. `params.end_user` is an optional label of at most 64 characters, with control characters removed, for the adapter's own end user. The answer's `result.response` is the daemon's response, exactly as the CLI would get it.
+
+*host.request and its reply*
+
+```text
+adapter: {"jsonrpc":"2.0","id":1,"method":"host.request","params":{"request":{"type":"stop","selector":{"by":"name","value":"web"}},"dry_run":true}}
+daemon:  {"jsonrpc":"2.0","id":1,"result":{"response":{"type":"error","code":"E_POLICY_DENIED","message":"denied"}}}
+```
+
+## The daemon decides who is asking
+
+- The request is handled as the adapter, named by the connection, under the grant the user accepted when the adapter was enabled. Nothing the adapter writes can change that. An `actor`, `reveal`, `dry_run` or any other field inside the request object, or extra fields in `params`, is not read. Only `request`, `dry_run` and `end_user` are taken from `params`.
+- The request goes through the same policy, audit log and dry-run handling as a request from the CLI. A refusal is a normal response (`type: "error"`, with `E_POLICY_DENIED`, `E_PROTECTED`, `E_RATE_LIMITED`, `E_SHUTTING_DOWN` and so on), not a protocol error. Denied requests are written to the audit log with the adapter's name.
+- The `end_user` label is written to the audit log as an unverified label. It is never used in a decision.
+
+## What a grant allows
+
+- `read`: safe requests (`status`, `show`, `describe`, `logs`, the daemon's status).
+- `lifecycle`: also stops, restarts and reloads apps.
+- `admin`: also starts apps and does the dangerous and global requests (`delete`, `flush`, `save`, `resurrect`).
+
+All only on apps that are not protected, and, if the grant's scope is `opted-in`, only on apps that list the adapter under `adapters`. `kill`, `set_policy` and revealing environment values are a person's, whatever the grant.
+
+## Logs and size
+
+`logs` for an adapter are scrubbed of the app's environment values (those of 6 or more characters, an exact-match filter) and bounded: at most 10 000 lines and 1 MiB, the newest lines kept. An answer that would not fit in a frame is replaced by `E_REQUEST_TOO_LARGE`.
+
+## Rates
+
+32 requests in flight (the grant may ask for up to 128; the next one is answered with `E_ADAPTER_BUSY`, `-32029`). 50 requests a second with a burst of 100, and 5 requests that change something a minute with a burst of 10 (`E_RATE_LIMITED`). An adapter answered with `E_RATE_LIMITED` 20 times within 10 seconds commits a violation. A `params` that is not a request answers error `-32602`, and that is not a violation.
+
+## Audit notes
+
+`host.audit_note` takes `{"text": "..."}` and writes a line to the audit log, tagged with the adapter's name and cut at 256 characters. It counts against the same rate, and a note is dropped, not waited for, when the log's queue is full.
+
+*host.audit_note*
+
+```text
+adapter: {"jsonrpc":"2.0","id":2,"method":"host.audit_note","params":{"text":"sent a message"}}
+```
+
+---
+
+# Events
+
+The lifecycle and adapter event families, and how delivery works.
+
+Source: https://oxidepm.com/docs/adapter-protocol/events/
+
+Events go to a running `service` that listed the family in its manifest and was granted it. There are two families.
+
+## lifecycle
+
+Something happened to an app. `seq` is the daemon-wide sequence number of the event.
+
+`kind` is one of `started`, `restarted`, `stopped`, `crashed`, `errored`, `unhealthy`, `recovered`, `backoff`, `crash_loop`, `cron_fired`, `memory_limit` and `uptime_limit`.
+
+`app` is `{id, name, tags}`. `data` holds only these keys, and only those the event has: `cause`, `actor`, `pid`, `exit_code`, `exit_signal`, `restarts`, `memory_mb`, `limit_mb` and `reason`. `reason` is a sentence made by the daemon with the app's environment values removed and cut at 1024 characters.
+
+`options` is the app's `adapters.<adapter name>` table for this adapter only, at most 4 KiB. No other adapter's options are ever sent.
+
+The event never carries the app's command, arguments, working directory, environment, hooks or log lines.
+
+*An event*
+
+```text
+daemon: {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-11-20T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}
+```
+
+## adapter
+
+Something happened to an adapter: `started`, `exited`, `killed` or `failed`. It has no `app`, has its own `seq` counter, and `data` holds `adapter`, `version` and, for `failed`, `reason` (a short name). An adapter is not told about itself.
+
+## Delivery
+
+Delivery is best effort and never slows the daemon. Each service has a queue of 1024 events plus 256 critical ones (`crashed`, `errored`, `unhealthy`, `crash_loop` and `memory_limit`; `killed` and `failed` for the adapter family), at most 4 MiB. When it is full, the oldest normal event is dropped, or the oldest critical one when the critical part is full.
+
+A service that is not running does not queue: its events are dropped. The drops are counted, and the next event delivered carries `dropped_before: n`. A gap in `seq` shows where. Events queued when the process ended are dropped, not sent to the next process. When the adapter is stopped on request, queued events are written, for up to a second, before `shutdown`.
+
+An event line is at most 16 KiB. If one would be longer, the daemon removes `options`, then `reason`, then the tags. If it still does not fit, it is dropped and counted.
+
+---
+
+# Limits and timeouts
+
+The numbers the daemon enforces, and what happens when an adapter exceeds them.
+
+Source: https://oxidepm.com/docs/adapter-protocol/limits/
+
+All of these are enforced by the daemon. None depends on the adapter's cooperation. They are constants of the protocol version, not configuration.
+
+| What | Limit | When exceeded |
+|---|---|---|
+| A line, adapter to daemon | 256 KiB | Skipped without being stored. A violation. |
+| A frame the daemon would send | 256 KiB | A request is refused before it is sent (`E_ADAPTER_INVALID`). An answer to an adapter's request that is too large is replaced by `E_REQUEST_TOO_LARGE`. |
+| An `event` line | 16 KiB | Trimmed. |
+| Requests in flight, each direction | 32 (up to 128 for `host.request`, when the grant asks) | The new request fails at once (`-32029`, `E_ADAPTER_BUSY`). |
+| Frames from the adapter | 500 a second sustained, burst 1000; 8 MiB a second | The daemon stops reading, so the adapter blocks on its own pipe. Throttled for 10 seconds without a break is a violation. |
+| A write to the adapter's input | No progress for 5 seconds | The connection is closed and the adapter killed. |
+| Strikes | 3 in 60 seconds | The adapter is killed and counts as a crash. |
+| Expired request ids remembered | 1024, for 5 minutes | A late reply with such an id is dropped without a strike. |
+| `initialize` | 10 seconds | The adapter fails the handshake. |
+| `ping` | 5 seconds to answer | Three misses in a row kill a service. |
+
+## What is a violation
+
+A violation, also called a strike, is: a line that is not a valid frame, an oversize line, a frame before `initialize`, a response to an id that was never issued or was already answered, a reply that does not have the shape of its method, or being throttled too long.
+
+An adapter request with bad params is not a violation. It gets an error. A line that ends the stream half way, an end of file, or a read error closes the connection.
+
+---
+
+# Errors
+
+Error codes in the protocol, and what fails closed or open.
+
+Source: https://oxidepm.com/docs/adapter-protocol/errors/
+
+An error response is `{code, message, data?}`. `data.code` is the stable name.
+
+## Numeric codes
+
+The numeric codes are the JSON-RPC ones, and those of OxidePM's own range.
+
+| Code | Meaning | Name |
+|---|---|---|
+| `-32700` | Parse error | |
+| `-32600` | Invalid request | |
+| `-32601` | Method not found | |
+| `-32602` | Invalid params | |
+| `-32603` | Internal error | |
+| `-32022` | Unsupported protocol | `E_ADAPTER_PROTOCOL` |
+| `-32023` | Permission denied | `E_POLICY_DENIED` |
+| `-32024` | Cancelled | |
+| `-32025` | Timeout | `E_ADAPTER_TIMEOUT` |
+| `-32026` | Shutting down | |
+| `-32027` | Dry run unsupported | `E_DRY_RUN_UNSUPPORTED` |
+| `-32028` | Rate limited | `E_RATE_LIMITED` |
+| `-32029` | Busy | `E_ADAPTER_BUSY` |
+
+*A permission error*
+
+```text
+daemon: {"jsonrpc":"2.0","id":7,"error":{"code":-32023,"message":"outside the grant","data":{"code":"E_POLICY_DENIED"}}}
+```
+
+The other stable names are listed under [Error codes](https://oxidepm.com/docs/commands/error-codes/).
+
+## What fails closed
+
+The operation does not happen:
+
+- The executable's SHA-256 differs from the one recorded at install: it is not started (`E_ADAPTER_TAMPERED`).
+- The handshake names another adapter or version, or no common protocol: the adapter is killed and marked failed.
+- A request to an adapter that is missing, failed or not ready fails with a named error. There is no silent fallback.
+- A frame that is not valid, too large or out of turn is never acted on.
+- The sandbox cannot be set up as the grant says: the adapter is not started.
+
+## What fails open
+
+The daemon carries on:
+
+- Events to a service are dropped, and counted, when its queue is full or it is down.
+- An adapter that crashes, hangs, floods or breaks the protocol is killed and restarted with backoff. The apps the daemon supervises are not touched.
+- Unknown fields, unknown notifications and floods on standard error are ignored or dropped.
+
+The daemon never stops, restarts, signals or changes an app because an adapter failed.
+
+---
+
+# Write an adapter
+
+The manifest file, the archive layout and a minimal adapter.
+
+Source: https://oxidepm.com/docs/adapter-protocol/write-an-adapter/
+
+## The archive
+
+An adapter is a gzip tarball with two files at its top level: `manifest.json`, and the executable that the manifest names in `exec`. `exec` must be a relative path, with no `.` or `..` components. The executable must be a native program for the machine it runs on.
+
+```text
+notifier.tar.gz
+├── manifest.json
+└── oxidepm-notifier
+```
+
+## The manifest
+
+`manifest.json` declares who the adapter is and what it asks for. It is validated at import and again at every load in the daemon. This is the whole manifest of the Prometheus exporter:
+
+*manifest.json*
+
+```json
+{
+  "schema": 1,
+  "name": "exporter-prometheus",
+  "version": "0.1.0",
+  "kind": "service",
+  "summary": "Prometheus metrics for the apps OxidePM manages.",
+  "description": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.",
+  "tags": ["exporter"],
+  "protocol": [1],
+  "min_daemon": "0.1.0",
+  "exec": "oxidepm-exporter-prometheus",
+  "provides": {},
+  "permissions": {
+    "host": {"level": "read", "scope": "all"},
+    "events": [],
+    "env_pass": [],
+    "network": {"mode": "outbound", "hosts": [], "listen": ["127.0.0.1:9616"]},
+    "fs": {"read": ["$STATE"], "write": []},
+    "spawn": {"mode": "none"},
+    "memory_mb": 64,
+    "requires_enforcement": []
+  }
+}
+```
+
+- `schema` (number): Always `1`.
+- `name` (string): 2 to 32 characters: a lowercase letter, then lowercase letters, digits and hyphens. A few names are reserved to every adapter (`core`, `oxidepm`, `oxidepmd`, `all`, `adapter`, `daemon`, `cmd`, `system`, `host`), and the names of the planned official adapters are reserved to adapters signed by an official key.
+- `version` (string): A semantic version.
+- `kind` (string): `service` or `tool`.
+- `summary` (string): One line, at most 120 characters. Required.
+- `description` (string, default: empty): At most 4096 characters. It is shown on the consent screen, followed by the permissions again so it cannot push them out of sight.
+- `tags` (list, default: none): At most 10, for listing and search.
+- `protocol` (list of numbers): The protocol versions the adapter speaks. At least one must be one the daemon speaks.
+- `min_daemon` (string): The oldest daemon version it works with.
+- `exec` (string): The executable, relative to the archive.
+- `provides` (object, default: empty): `runtimes`, `verbs`, `serves`, `programs`, `capture_programs` and `env_set`.
+- `permissions` (object): What it asks for. See [Permissions](/docs/adapters/permissions/).
+
+## Verbs and runtimes
+
+`provides.verbs` adds commands to the CLI. Each has a `name` (2 to 24 characters), a `summary`, a `tier` (`safe`, `caution` or `dangerous`), a `mode` (`relayed` or `session`), whether it `writes`, whether it supports `dry_run`, `max_runtime_secs` (1 to 3600, 600 by default) and an `args_summary`. A verb must not collide with a built-in command or another adapter's verb. A verb that writes cannot be `safe`, and an adapter that may spawn programs or use the network cannot declare a `safe` verb.
+
+`provides.runtimes` names runtimes the adapter provides (a tool only, and never `cmd`), and then must list `provides.programs`, the bare program names it runs.
+
+A `service` may list events, and provides no runtimes. A `tool` receives no events.
+
+## What you write
+
+The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. The frames on these pages are the reference.
+
+The source of the two adapters includes a small SDK crate, `oxidepm-adapter-sdk`, that does the main loop of a service in Rust: the handshake, `ping`, events, relayed verbs and `shutdown`. Both adapters use it. That source is not published yet.
+
+## Try it
+
+```sh
+oxidepm adapter import ./my-adapter.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter enable my-adapter
+oxidepm adapter info my-adapter
+```
+
+`--allow-reserved-name` is only needed for a reserved name. `adapter info` shows the last lines the adapter wrote to standard error, its crashes and its protocol strikes.
+
+---
+
+# OxidePM and PM2
+
+What each process manager is for, where each is the better choice, and the real differences.
+
+Source: https://oxidepm.com/docs/compare/oxidepm-and-pm2/
+
+## In short
+
+PM2 and OxidePM do the same everyday job: they start your apps, restart them when they crash, keep their logs, show a status table and bring the apps back after a reboot. PM2 is written in JavaScript, runs on Node.js and has been used for a long time, especially for Node.js apps. OxidePM is a process manager written in Rust, for Linux, that is young and smaller on purpose, and it adds limits for letting AI agents work with it.
+
+Neither is the right answer for everyone. This page says what each is for, where PM2 is the better choice, where OxidePM is, and what really differs. It describes OxidePM as documented on this site, including the code that is not in a published release yet (see the [release status](https://oxidepm.com/docs/getting-started/install/#release-status)). For PM2, check [its own documentation](https://pm2.keymetrics.io/docs/usage/quick-start/), because this page is written from OxidePM's side and PM2 changes.
+
+## What each is for
+
+- **PM2** is a process manager for Node.js, and it also runs scripts in other languages. It is a good fit when your stack is Node.js and you want clustering, zero-downtime reloads and a large ecosystem around it.
+- **OxidePM** is a process manager for Linux servers whatever the app is written in. It is a good fit when you want one small native daemon that supervises processes, strict config checking, scripting output, and limits on what an AI agent may do to your processes.
+
+## Where PM2 is the better choice
+
+- **Zero-downtime reload for Node.js.** PM2's cluster mode can reload workers one after another so that the app keeps answering. OxidePM has no zero-downtime reload: `reload` is the same as `restart`.
+- **File watching.** PM2 can restart an app when its files change. In OxidePM file watching is not available: `--watch` is refused. A `watch-rebuild` adapter is planned, not built.
+- **Windows.** PM2 runs on Windows. OxidePM does not support Windows.
+- **Age and community.** PM2 has been in use for years, and most questions about it have answers somewhere. OxidePM is new, and its next release is a release candidate.
+- **Deploy and hosted monitoring.** PM2 has its own deploy tooling and an optional hosted monitoring service. OxidePM's deploy commands are provided by an adapter that is planned and not built, and it has no hosted service.
+- **One shared port for a Node.js cluster.** PM2 cluster mode lets Node.js workers share one port. OxidePM clusters give instance `i` the port `port + i`, so you put a reverse proxy or load balancer in front.
+
+## Where OxidePM is the better choice
+
+- **A native manager with no JavaScript runtime.** The OxidePM daemon and CLI are Rust programs. Running them does not need Node.js on the machine. You install the runtimes your apps need, and nothing else.
+- **Limits for AI agents.** The daemon decides who is asking from the connection a request arrives on. An agent on the agent socket may read everything, may only stop or restart apps you opened to it, and can never start, delete or flush. Apps can be marked `protected`, and what agents ask for is written to an audit log. See [Safe use with AI agents](https://oxidepm.com/docs/ai-safety/safe-use/).
+- **Rehearsals.** Most commands that change something take `--dry-run`, which answers with a plan and changes nothing.
+- **Strict configuration.** A config file with an unknown key, a bad cron expression or a dependency cycle is refused as a whole, with the line of the problem, before anything starts.
+- **A crash-loop breaker and a dependency wait that fails closed.** An app that restarts too often ends as `errored` until a person starts it, and an app that waits for `depends_on` fails if its dependencies never come up.
+- **A small core and checked adapters.** Notifications, metrics, the web API, the dashboard and the language runtimes are adapters: separate programs that are hash-checked, show what they ask for before you enable them and, on Linux, run under Landlock and seccomp.
+- **Machine-readable output.** `--json` on commands and stable `E_` error codes.
+
+## The real differences
+
+| | PM2 | OxidePM |
+|---|---|---|
+| Written in | JavaScript, runs on Node.js | Rust, native programs |
+| Platforms | Linux, macOS and Windows | Linux. macOS is built but untested. Not Windows |
+| Languages of the apps | Node.js first, other interpreters by script | Any program with `cmd`. Node.js, Python, Go and Rust through runtime adapters that a release carries |
+| Reload | Zero-downtime reload for cluster mode | `reload` is a restart |
+| Cluster | Node.js workers can share one port | Up to 256 instances, a port each |
+| Watch mode | Yes | Not available |
+| Config file | A JavaScript ecosystem file, or JSON or YAML | TOML, YAML or JSON, checked strictly |
+| Restart policy | Restart on crash, with options | `on-crash`, `always` or `never`, backoff that doubles up to a cap, and a crash-loop breaker |
+| Health checks | Not a core feature | HTTP, TCP or a script, with a choice of action |
+| Start order | Start order is up to you | `depends_on`, which waits and fails closed |
+| Boot | `pm2 startup` and `pm2 save` | `oxidepm startup`, `save` and `resurrect` |
+| Dashboard | `pm2 monit` | `oxidepm top` in the core, and `oxidepm monit` from the `ui-tui` adapter |
+| Notifications and metrics | Modules and a hosted service | The notifier and Prometheus exporter adapters |
+| AI agent limits | None that are built for it | Agent socket, tiers, protected apps and an audit log |
+| Licence | Check PM2's repository | MIT or Apache-2.0 |
+
+## Moving from PM2
+
+The commands map closely.
+
+| PM2 | OxidePM |
+|---|---|
+| `pm2 start app.js` | `oxidepm start app.js` |
+| `pm2 start ecosystem.config.js` | `oxidepm start oxidepm.config.toml` |
+| `pm2 list` | `oxidepm status` |
+| `pm2 logs api` | `oxidepm logs api -f` |
+| `pm2 restart api` | `oxidepm restart api` |
+| `pm2 reload api` | `oxidepm reload api`, which is a restart |
+| `pm2 stop api`, `pm2 delete api` | `oxidepm stop api`, `oxidepm delete api` |
+| `pm2 save`, `pm2 resurrect` | `oxidepm save`, `oxidepm resurrect` |
+| `pm2 startup` | `oxidepm startup systemd` |
+| `pm2 monit` | `oxidepm monit` (needs the `ui-tui` adapter) |
+
+A PM2 ecosystem file is JavaScript, and OxidePM does not read it. Write the same apps as a [config file](https://oxidepm.com/docs/configuration/config-file/) in TOML, YAML or JSON. Apps that run on Node.js need the `runtime-node` adapter, which a release carries. [Install](https://oxidepm.com/docs/getting-started/install/#runtimes) shows how it is enabled.
+
+## Using both
+
+Nothing stops you from running both on one machine for different apps. Keep each app under one manager only.
+
+Next: [OxidePM and systemd](https://oxidepm.com/docs/compare/oxidepm-and-systemd/).
+
+---
+
+# OxidePM and systemd
+
+Where systemd is enough, where a process manager is easier, and how the two work together.
+
+Source: https://oxidepm.com/docs/compare/oxidepm-and-systemd/
+
+## In short
+
+systemd is the init system and service manager of most Linux distributions. OxidePM is a process manager written in Rust for the apps you run on a server. They are not rivals so much as two layers: `oxidepm startup systemd` writes a systemd unit so that the OxidePM daemon starts at boot, and the daemon then supervises your apps.
+
+If you are looking for a systemd alternative for apps, the honest answer is that systemd is often enough. This page says when it is, when a dedicated process manager is easier, and what really differs. It describes OxidePM as documented on this site, including the code that is not in a published release yet (see the [release status](https://oxidepm.com/docs/getting-started/install/#release-status)).
+
+## What each is for
+
+- **systemd** starts the machine and the services that belong to it: the database, the web server, the system's own daemons. It orders them, isolates them, limits their resources and logs them. It is on almost every Linux server already, and a unit file for your own app is a normal way to run it.
+- **OxidePM** supervises the applications of a user or a team, started and stopped from a command line without root, described in one config file, with a status table, and with limits for AI agents.
+
+## Where systemd is the better choice
+
+- **It is already there.** There is no second daemon to install, update or monitor.
+- **System services and boot order.** `After=`, `Requires=` and targets order services across the whole machine, including mounts, networks and sockets. OxidePM's `depends_on` orders only the apps that OxidePM supervises.
+- **Isolation and resource control.** Each service runs in its own control group. Memory and CPU limits (`MemoryMax=`, `CPUQuota=`), filesystem and privilege hardening (`ProtectSystem=`, `NoNewPrivileges=` and more) and killing every process of a service are systemd features. OxidePM signals the app's process group, and a child that starts its own session or detaches itself is not in it.
+- **Socket activation and timers.** Starting a service on the first connection, and scheduled jobs, belong to systemd.
+- **Logs.** journald collects the output of every service, with the same tools for all of them.
+- **Restarts and rate limits.** `Restart=`, `RestartSec=` and `StartLimitBurst=` cover a crash and a crash loop, and the watchdog can restart a service that stops answering.
+
+## Where OxidePM is the better choice
+
+- **No root, and one command per app.** `oxidepm start app.js` runs as your user, and you do not write a unit file for every app or reload systemd after each change.
+- **A status table and a config file for a group of apps.** `oxidepm status` shows every app with its state, restarts, CPU, memory and uptime, and one TOML, YAML or JSON file describes the group.
+- **Health checks that act.** An app can be probed over HTTP, over TCP or with a script, and the daemon can restart it when the probe fails. systemd has no HTTP probe of its own.
+- **Backoff, a breaker and a dependency wait that fails closed.** Restart delays that double up to a cap, an app that ends as `errored` instead of looping, and `depends_on` that fails if the dependency never comes up.
+- **The same tool on a developer's Mac.** The process manager is built for macOS too, though it is not tested there.
+- **Limits for AI agents.** An agent on the agent socket is held to what you allow, `protected` apps cannot be changed by it, and the audit log records what it asked for. See [Safe use with AI agents](https://oxidepm.com/docs/ai-safety/safe-use/).
+- **Rehearsals and JSON.** `--dry-run` on most commands that change something, and `--json` for scripts.
+
+## The real differences
+
+| | systemd | OxidePM |
+|---|---|---|
+| What it is | Init system and service manager, process 1 | A daemon you start per user, which supervises apps |
+| Needs root | For system services. User units exist as well | No |
+| How an app is described | A unit file | A config file, or flags to `oxidepm start` |
+| Stopping an app | Kills every process in the service's control group | Signals the app's process group |
+| Resource limits | Control groups, for memory, CPU and more | Memory and uptime limits that restart the app |
+| Logs | journald | Per-app files, rotated by size (10 MB and 5 files by default) |
+| Ordering | Across the whole system | Between the apps OxidePM supervises |
+| Health checks | A watchdog the service must feed | HTTP, TCP or script probes |
+| Boot | It is the boot | `oxidepm startup systemd` writes a unit for the daemon, and `resurrect` restores the apps |
+| AI agent limits | None that are built for it | Agent socket, tiers, protected apps and an audit log |
+
+## Using them together
+
+The usual setup is both. systemd starts `oxidepmd` at boot through the unit that `oxidepm startup systemd` generates, so that the daemon comes back after a reboot, and OxidePM keeps the apps running. Keep the database and the system's own services as systemd units, and the apps you deploy and restart often under OxidePM. Keep each app under one manager only. See [Survive a reboot](https://oxidepm.com/docs/getting-started/reboot/).
+
+Next: [OxidePM and PM2](https://oxidepm.com/docs/compare/oxidepm-and-pm2/).
+
+---
+
+# Adapters
+
+Built adapters can be imported and enabled; planned ones are not available. Details: https://oxidepm.com/adapters/
+
+- `notifier` (built): Sends a message to Telegram, Discord, Slack or a signed webhook when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails a health check. Adds the notify command.
+- `exporter-prometheus` (built): Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps, and answers 503 with oxidepm_up 0 when it cannot.
+- `ui-web` (built): Serves a REST API and a WebSocket on 127.0.0.1:9615. Every request needs an access key. By default it can show apps and restart, stop and reload the ones that list it, and it cannot create or delete apps or flush logs. Adds the web command.
+- `ui-tui` (built): The terminal dashboard: the apps with state, CPU and memory, the selected app in detail and its log. Stopping or restarting an app asks for y or n first. Runs only while the dashboard is open. Adds the monit command.
+- `runtime-node` (built): Runs Node.js apps: the node, npm, pnpm and yarn runtimes. It tells the daemon what to run and the daemon runs it.
+- `runtime-python` (built): Runs Python apps, in the project's virtualenv when it has one. Provides the python runtime.
+- `runtime-go` (built): Runs Go apps with go run. Provides the go runtime.
+- `runtime-rust` (built): Builds and runs Rust apps: a single file with rustc, a project with cargo. Provides the rust and cargo runtimes.
+- `check` (planned): Project preflight checks (the check command and start --setup). Planned, not built. The core reserves the name.
+- `init` (planned): Scans a project and writes a starter config file (the init command). Planned, not built. The core reserves the name.
+- `git-start` (planned): Clones a repository and starts it (start --git). Planned, not built. The core reserves the name.
+- `deploy` (planned): Deploys over SSH and shows remote changes (the deploy and diff commands). Planned, not built. The core reserves the name.
+- `watch-rebuild` (planned): Restarts an app when its files change. File watching is not available: --watch is refused, and the message points here. Planned, not built.
+- `AI adapters` (planned): A plan, with no code behind it yet: adapters that would let AI agents work with OxidePM, held to the limits described on the security page.

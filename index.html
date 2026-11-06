@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OxidePM — keeps your apps running</title>
-<meta name="description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<title>OxidePM: a process manager written in Rust for Linux</title>
+<meta name="description" content="Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.">
 <link rel="canonical" href="https://oxidepm.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="OxidePM">
-<meta property="og:title" content="OxidePM — keeps your apps running">
-<meta property="og:description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="OxidePM: a process manager written in Rust for Linux">
+<meta property="og:description" content="Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.">
 <meta property="og:url" content="https://oxidepm.com/">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OxidePM — keeps your apps running">
-<meta name="twitter:description" content="OxidePM is an open-source process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot.">
+<meta property="og:image" content="https://oxidepm.com/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OxidePM: a process manager written in Rust for Linux">
+<meta name="twitter:description" content="Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.">
+<meta name="twitter:image" content="https://oxidepm.com/og-image.png">
+<meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/","description":"Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","programmingLanguage":"Rust","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"],"codeRepository":"https://github.com/oxidekit/oxidepm","downloadUrl":"https://github.com/oxidekit/oxidepm/releases","image":"https://oxidepm.com/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/","description":"OxidePM is an open-source process manager written in Rust, for Linux.","inLanguage":"en"}</script>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
@@ -53,8 +64,8 @@
 <main id="main">
 
 <section class="wrap" aria-labelledby="hero-title" style="padding-top:clamp(48px,9vw,120px)">
-  <h1 id="hero-title" class="display display-hero">Keeps your apps running.</h1>
-  <p class="lede">OxidePM is a process manager for Linux servers. It starts your apps, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, written in Rust and licensed under MIT or Apache-2.0.</p>
+  <h1 id="hero-title" class="display display-hero">OxidePM is a process manager written in Rust.</h1>
+  <p class="lede">OxidePM is a process manager written in Rust, for Linux servers. It keeps your apps running: it starts them, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, under the MIT or Apache-2.0 licence, and it has limits for letting AI agents work with it. <a href="/docs/compare/oxidepm-and-pm2/">Compared with PM2</a> and <a href="/docs/compare/oxidepm-and-systemd/">with systemd</a>.</p>
 
   <div style="max-width:70ch;margin-top:28px"><div class="blueprint note release-note" role="note">
   <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -332,7 +343,7 @@ Enable notifier with this grant? [y/N] <span data-pending><button type="button" 
         <svg width="20" height="20" viewBox="0 0 22 22" aria-hidden="true"><rect x="0.75" y="0.75" width="20.5" height="20.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle class="brand-dot" cx="15" cy="7" r="2.4"/></svg>
         <span class="brand-word">oxide<span>pm</span></span>
       </a>
-      <p>A small process manager for Linux servers. Open source, written in Rust.</p>
+      <p>A process manager written in Rust, for Linux servers. Open source.</p>
     </div>
     <div class="footer-col">
       <h2>Source</h2>
@@ -356,6 +367,9 @@ Enable notifier with this grant? [y/N] <span data-pending><button type="button" 
       <h2>Project</h2>
       <ul>
         <li><a href="/adapters/">Adapters</a></li>
+        <li><a href="/docs/compare/oxidepm-and-pm2/">OxidePM and PM2</a></li>
+        <li><a href="/docs/compare/oxidepm-and-systemd/">OxidePM and systemd</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm#license">MIT or Apache-2.0</a></li>
         <li><a href="https://github.com/oxidekit/oxidepm/security/advisories/new">Report a vulnerability</a></li>
       </ul>
