@@ -31,7 +31,7 @@ IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of fou
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
 RELEASE_VERSION = "0.4.0-rc.6"
-INSTALL_COMMAND = f"curl -fsSL {SITE}/install.sh | OXIDEPM_VERSION={RELEASE_VERSION} sh"
+INSTALL_COMMAND = f"curl -fsSL {SITE}/install.sh | sh"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",
     "anthropic-ai", "Google-Extended", "PerplexityBot", "Perplexity-User", "CCBot",
@@ -603,7 +603,7 @@ def llms_files(nav, flat, adapters):
         "- [Security and AI safety](%s/security/): how agents and adapters are limited" % SITE,
         "- [Release signing](%s/security/#release-signing): public keys and how they rotate" % SITE,
         "- [Source code and releases](%s): the repository, issues and release archives" % REPO,
-        "- [Install script](%s/install.sh) — run `%s` to install this release" % (SITE, INSTALL_COMMAND),
+        "- [Install script](%s/install.sh) — run `%s` to install the latest release" % (SITE, INSTALL_COMMAND),
         "- [Full documentation in one file](%s/llms-full.txt): every docs page in Markdown" % SITE,
         "",
     ]

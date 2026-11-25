@@ -31,7 +31,7 @@ Install `minisign` before running the script to verify the release signature.
 *Install*
 
 ```sh
-curl -fsSL https://oxidepm.com/install.sh | OXIDEPM_VERSION=0.4.0-rc.6 sh
+curl -fsSL https://oxidepm.com/install.sh | sh
 ```
 
 The [install script](https://oxidepm.com/install.sh) uses `OXIDEPM_VERSION` to select a version or tag. It defaults to the latest published release.

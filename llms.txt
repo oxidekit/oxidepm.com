@@ -80,5 +80,5 @@ On Linux, install any adapter from the release with `oxidepm adapter import --bu
 - [Security and AI safety](https://oxidepm.com/security/): how agents and adapters are limited
 - [Release signing](https://oxidepm.com/security/#release-signing): public keys and how they rotate
 - [Source code and releases](https://github.com/oxidekit/oxidepm): the repository, issues and release archives
-- [Install script](https://oxidepm.com/install.sh) — run `curl -fsSL https://oxidepm.com/install.sh | OXIDEPM_VERSION=0.4.0-rc.6 sh` to install this release
+- [Install script](https://oxidepm.com/install.sh) — run `curl -fsSL https://oxidepm.com/install.sh | sh` to install the latest release
 - [Full documentation in one file](https://oxidepm.com/llms-full.txt): every docs page in Markdown
