@@ -1,0 +1,2 @@
+$ oxidepm adapter update --all
+✓ Updated watch 0.4.0-rc.5 to 0.4.0-rc.6 (it passed its probation)

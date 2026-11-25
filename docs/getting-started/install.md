@@ -17,10 +17,10 @@ Install `minisign` before running the script to verify the release signature.
 *Install*
 
 ```sh
-curl -fsSL https://oxidepm.com/install.sh | sh
+curl -fsSL https://oxidepm.com/install.sh | OXIDEPM_VERSION=0.4.0-rc.6 sh
 ```
 
-The [install script](https://oxidepm.com/install.sh) installs the latest published release. Set `OXIDEPM_VERSION` to select a specific version or tag.
+The [install script](https://oxidepm.com/install.sh) uses `OXIDEPM_VERSION` to select a version or tag. It defaults to the latest published release.
 
 - Detects the platform with `uname` and downloads its archive and `checksums.txt` from GitHub.
 - When `minisign` is on `PATH`, verifies `checksums.txt.minisig` against the [release signing keys](https://oxidepm.com/security/#release-signing) and requires the trusted comment to match the release tag. Without `minisign`, the script reports that it skipped signature verification.
@@ -33,7 +33,7 @@ With `minisign` installed, the script allows a missing signature only when you e
 
 ## Other ways
 
-The [0.4.0-rc.5 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.5) has archives for these platforms:
+The [0.4.0-rc.6 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.6) has archives for these platforms:
 
 | Platform | Architecture | Archive |
 |---|---|---|
@@ -46,9 +46,9 @@ The [0.4.0-rc.5 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0
 
 ```sh
 # x86_64
-sudo dpkg -i oxidepm_0.4.0.rc.5_amd64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.6_amd64.deb
 # ARM64
-sudo dpkg -i oxidepm_0.4.0.rc.5_arm64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.6_arm64.deb
 ```
 
 On Linux, run the runtime import below after installing manually.
@@ -57,7 +57,7 @@ For Homebrew and Arch Linux instructions, see the [OxidePM README](https://githu
 
 ## Verify a release download
 
-0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.5`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.5`.
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.6`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.6`.
 
 ```sh
 PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
@@ -89,7 +89,7 @@ On Linux, serving a runtime request requires its adapter to be imported and enab
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.5 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0-rc.6 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```

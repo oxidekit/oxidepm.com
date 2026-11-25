@@ -9,10 +9,10 @@
 Install `minisign` before running the script to verify the release signature.
 
 ```sh title="Install"
-curl -fsSL https://oxidepm.com/install.sh | sh
+{{install_command}}
 ```
 
-The [install script](/install.sh) installs the latest published release. Set `OXIDEPM_VERSION` to select a specific version or tag.
+The [install script](/install.sh) uses `OXIDEPM_VERSION` to select a version or tag. It defaults to the latest published release.
 
 - Detects the platform with `uname` and downloads its archive and `checksums.txt` from GitHub.
 - When `minisign` is on `PATH`, verifies `checksums.txt.minisig` against the [release signing keys](/security/#release-signing) and requires the trusted comment to match the release tag. Without `minisign`, the script reports that it skipped signature verification.

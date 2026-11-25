@@ -108,8 +108,8 @@ Started 3 apps</pre></figure>
 ╭────┬──────┬──────┬─────────┬───┬──────────┬──────┬─────┬────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status   │ cpu  │ mem │ uptime │
 ├────┼──────┼──────┼─────────┼───┼──────────┼──────┼─────┼────────┤
-│  1 │ db   │ cmd  │ 3847547 │ 0 │ <span class="t-hi">online</span>   │ 0.0% │ 0B  │ 0s     │
-│  2 │ api  │ cmd  │ 3847553 │ 0 │ <span class="t-dim">starting</span> │ 0.0% │ 0B  │ 0s     │
+│  1 │ db   │ cmd  │ 2112950 │ 0 │ <span class="t-hi">online</span>   │ 0.0% │ 0B  │ 0s     │
+│  2 │ api  │ cmd  │ 2112953 │ 0 │ <span class="t-dim">starting</span> │ 0.0% │ 0B  │ 0s     │
 │  3 │ web  │ cmd  │ -       │ 0 │ <span class="t-dim">waiting</span>  │ 0.0% │ 0B  │ 0s     │
 ╰────┴──────┴──────┴─────────┴───┴──────────┴──────┴─────┴────────╯</pre></figure>
 <p>The columns are <code>id</code>, <code>name</code>, <code>mode</code> (the runtime), <code>pid</code>, <code>↺</code> (restarts), <code>status</code>, <code>cpu</code>, <code>mem</code> and <code>uptime</code>. <code>online</code> is the status the table shows for an app that is running; <code>--json</code> calls it <code>running</code>. <a href="/docs/configuration/restarts/">All statuses</a>.</p>

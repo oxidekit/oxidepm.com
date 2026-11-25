@@ -30,7 +30,8 @@ IMAGE = SITE + "/og-image.png"
 IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of four apps that are online."
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
-RELEASE_VERSION = "0.4.0-rc.5"
+RELEASE_VERSION = "0.4.0-rc.6"
+INSTALL_COMMAND = f"curl -fsSL {SITE}/install.sh | OXIDEPM_VERSION={RELEASE_VERSION} sh"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",
     "anthropic-ai", "Google-Extended", "PerplexityBot", "Perplexity-User", "CCBot",
@@ -577,7 +578,10 @@ def llms_files(nav, flat, adapters):
         "OxidePM %s bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. "
         "macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. "
         "Source: %s." % (RELEASE_VERSION, REPO), "",
-        "`oxidepm update` verifies the release signature before downloading the archive.", "",
+        "`oxidepm update` verifies the release signature before downloading the archive. "
+        "On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` "
+        "to refresh installed bundled adapters. The updater suggests this command starting with "
+        "0.4.0-rc.6. If you upgrade from an older CLI, run it yourself.", "",
         "On Linux, install any adapter from the release with `oxidepm adapter import --bundled <name> --enable`. "
         "Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed "
         "`oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. "
@@ -599,7 +603,7 @@ def llms_files(nav, flat, adapters):
         "- [Security and AI safety](%s/security/): how agents and adapters are limited" % SITE,
         "- [Release signing](%s/security/#release-signing): public keys and how they rotate" % SITE,
         "- [Source code and releases](%s): the repository, issues and release archives" % REPO,
-        "- [Install script](%s/install.sh): the script that `curl -fsSL https://oxidepm.com/install.sh | sh` runs" % SITE,
+        "- [Install script](%s/install.sh) — run `%s` to install this release" % (SITE, INSTALL_COMMAND),
         "- [Full documentation in one file](%s/llms-full.txt): every docs page in Markdown" % SITE,
         "",
     ]
@@ -674,6 +678,7 @@ def build_docs(site):
         "release_version": RELEASE_VERSION,
         "deb_version": RELEASE_VERSION.replace("-", "."),
         "release_url": REPO + "/releases/tag/v" + RELEASE_VERSION,
+        "install_command": INSTALL_COMMAND,
     }
     for p in flat:
         if "seo_title" not in p or "description" not in p:
@@ -775,6 +780,7 @@ def main():
         "count_later": str(counts["later"]),
         "count_text": "%d adapters" % counts["all"],
         "release_version": RELEASE_VERSION,
+        "install_command": INSTALL_COMMAND,
     }
 
     site = Site()

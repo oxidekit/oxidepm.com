@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.5    # a specific version
+oxidepm update --version 0.4.0-rc.6    # a specific version
 ```
 
 Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before downloading the archive.
@@ -20,7 +20,24 @@ Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before down
 
 `oxidepm --dry-run update` performs the same verification, downloads and unpacks the archive in a private temporary directory, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release bundle with all 13 adapters alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the four runtimes. For other bundled adapters, see [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release). macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+
+## Update bundled adapters
+
+On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter update --all` to update the adapters you imported from the release bundle.
+
+*Excerpt from oxidepm adapter update --all*
+
+```text
+$ oxidepm adapter update --all
+✓ Updated watch 0.4.0-rc.5 to 0.4.0-rc.6 (it passed its probation)
+```
+
+When you run `oxidepm update` with 0.4.0-rc.6 or later, it lists installed bundled adapters that are older than the new bundle and suggests `oxidepm adapter update --all`. When upgrading from an older CLI, run the adapter update command yourself after restarting the daemon.
+
+To update one adapter, run `oxidepm adapter update <name>`. If an update needs a broader grant, review the permissions and update that adapter with `--accept <fingerprint>`. See [Update bundled adapters](https://oxidepm.com/docs/adapters/import-and-enable/#update-bundled-adapters).
+
+To add runtimes for the first time, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable all four. See [Import from the release](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release) for the other adapters.
 
 ## Keep the CLI and daemon together
 
@@ -28,7 +45,7 @@ The CLI and the daemon must come from the same release. A config file is sent to
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install 0.4.0-rc.5. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
+From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install 0.4.0-rc.6. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
 
 From 0.3.x, use the manual verification and installation instructions.
 

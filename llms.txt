@@ -2,9 +2,9 @@
 
 > OxidePM is an open-source process manager written in Rust, for Linux. It starts apps, restarts them when they crash, keeps their logs and brings them back after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are adapters. Licensed MIT or Apache-2.0.
 
-OxidePM 0.4.0-rc.5 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
+OxidePM 0.4.0-rc.6 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
 
-`oxidepm update` verifies the release signature before downloading the archive.
+`oxidepm update` verifies the release signature before downloading the archive. On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` to refresh installed bundled adapters. The updater suggests this command starting with 0.4.0-rc.6. If you upgrade from an older CLI, run it yourself.
 
 On Linux, install any adapter from the release with `oxidepm adapter import --bundled <name> --enable`. Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed `oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. For a self-built adapter, import the archive with `oxidepm adapter import ./my-adapter.tar.gz --sha256 <digest> --enable`. Add `--allow-reserved-name` if it uses a reserved name.
 
@@ -80,5 +80,5 @@ On Linux, install any adapter from the release with `oxidepm adapter import --bu
 - [Security and AI safety](https://oxidepm.com/security/): how agents and adapters are limited
 - [Release signing](https://oxidepm.com/security/#release-signing): public keys and how they rotate
 - [Source code and releases](https://github.com/oxidekit/oxidepm): the repository, issues and release archives
-- [Install script](https://oxidepm.com/install.sh): the script that `curl -fsSL https://oxidepm.com/install.sh | sh` runs
+- [Install script](https://oxidepm.com/install.sh) — run `curl -fsSL https://oxidepm.com/install.sh | OXIDEPM_VERSION=0.4.0-rc.6 sh` to install this release
 - [Full documentation in one file](https://oxidepm.com/llms-full.txt): every docs page in Markdown

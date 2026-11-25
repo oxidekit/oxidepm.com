@@ -75,24 +75,24 @@ No adapters are installed. `oxidepm adapter list --available` shows what the ind
 <p>Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against <code>SHA256SUMS</code>. The installer runs <code>oxidepm adapter import --bundled --tag runtime --enable --yes</code> to enable only the four runtime adapters. To select groups, use <code>--tag dev</code> for <code>watch</code>, <code>check</code> and <code>init</code>, <code>--tag deploy</code> for <code>git-start</code> and <code>deploy</code>, <code>--tag ui</code> for <code>ui-web</code> and <code>ui-tui</code>, <code>--tag notifier</code> for <code>notifier</code>, or <code>--tag exporter</code> for <code>exporter-prometheus</code>.</p>
 <p>Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit <code>--enable</code>. The adapter stays disabled until you approve the grant.</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter import --bundled watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.6 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 371f2cb27fdd00b167cc79dbeb3fc593d7bd5b9bb93e3afb12c41fb3f99e9f3a verified. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
+Trust     bundled with this release. Archive sha256 4996a0c4c7a7217cd0cfb4307297edb366fd36f863c8f982ce03efa1033539bf verified. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept aa264b261bedefb3
+Next      oxidepm adapter enable watch --accept c154e886d2394a5b
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-<span class="t-hi">✓</span> Installed watch 0.4.0-rc.5 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept aa264b261bedefb3</pre></figure>
+<span class="t-hi">✓</span> Installed watch 0.4.0-rc.6 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept c154e886d2394a5b</pre></figure>
 <p><code>Needs</code> lists the permissions. <code>Again, what it needs</code> repeats the list after the description. <code>[BROAD]</code> marks permissions such as access to all files the current user can read. <code>Enforced on this machine</code> shows what the operating system can enforce. <code>Trust</code> identifies the source of the archive.</p>
 <p><code>oxidepm adapter import &lt;name&gt;</code> uses a configured signed index. This release ships without a network catalog.</p>
 <h2 id="enable">Enable</h2>
@@ -100,17 +100,17 @@ Again, what it needs:
 <p>For broader grants such as <code>watch</code>, run the printed command after reviewing the permissions if approval was deferred or the import ran without an interactive terminal. Get the fingerprint from <code>adapter import</code> or <code>adapter info</code>. It ties your consent to that adapter release. <code>--yes</code> accepts without asking only for pure adapters such as the four runtimes.</p>
 <p>On a terminal, <code>oxidepm adapter enable watch</code> shows the permissions and asks for consent again.</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter enable watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.6 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-25T21:34:47Z
-Trust     bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
+Source    bundled installed 2026-11-25T22:24:39Z
+Trust     bundled with this release. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept aa264b261bedefb3
+Next      oxidepm adapter enable watch --accept c154e886d2394a5b
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -123,50 +123,55 @@ Enable watch with this grant? [y/N]</pre></figure>
 <span class="t-ox">Error:</span> Not enabled</pre></figure>
 <p>If you answer yes:</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output when the answer is yes"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body">Enable watch with this grant? [y/N] yes
-<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.5 (level lifecycle, scope opted-in)
+<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.6 (level lifecycle, scope opted-in)
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn</pre></figure>
 <p>You can enable with less than the adapter asks for. <code>--level read</code> or <code>--level lifecycle</code> gives a lower host level, and <code>--scope opted-in</code> limits it to the apps that list the adapter. On Linux, <code>--allow-unenforced</code> accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</p>
+<h2 id="update-bundled-adapters">Update bundled adapters</h2>
+<p>After <code>oxidepm update</code>, restart the daemon and run <code>oxidepm adapter update --all</code> to refresh the adapters you imported from the release bundle. Use <code>oxidepm adapter update &lt;name&gt;</code> to update just one.</p>
+<figure class="blueprint term" role="img" aria-label="Excerpt from oxidepm adapter update --all"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter update --all
+<span class="t-hi">✓</span> Updated watch 0.4.0-rc.5 to 0.4.0-rc.6 (it passed its probation)</pre></figure>
+<p>The update uses the bundle installed with the new release and follows the same verification and consent checks as import. If it needs a broader grant, review the permissions and run <code>oxidepm adapter update &lt;name&gt; --accept &lt;fingerprint&gt;</code> with the fingerprint from the preview. See <a href="/docs/getting-started/upgrade/#update-bundled-adapters">Upgrade</a> for when the updater prints the reminder.</p>
 <h2 id="import-a-self-built-adapter">Import a self-built adapter</h2>
 <p>An adapter archive is a gzip tarball containing <code>manifest.json</code> and the executable named in <code>exec</code>. To package a local build from the <a href="https://github.com/oxidekit/oxidepm-adapters">adapter sources</a>, keep the core checkout in <code>../oxidepm</code> so Cargo can find the shared crates. For example, build and package <code>watch</code> for x86_64 Linux from the adapters checkout.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>cargo build --release -p oxidepm-adapter-watch -p oxidepm-adapter-bundle
 target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   --target x86_64-unknown-linux-gnu --url-base https://example.org/adapters --sequence 1 \
   watch:target/release/oxidepm-watch</code></pre></figure>
-<p>Use the filename and digest from your build&#x27;s <code>target/watch-bundle/SHA256SUMS</code>. This example uses an archive built from the 0.4.0-rc.5 sources.</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.5.tar.gz --sha256 &lt;digest&gt; --allow-reserved-name --enable</code></pre></figure>
+<p>Use the filename and digest from your build&#x27;s <code>target/watch-bundle/SHA256SUMS</code>. This example uses an archive built from the 0.4.0-rc.6 sources.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.6.tar.gz --sha256 &lt;digest&gt; --allow-reserved-name --enable</code></pre></figure>
 <p>The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add <code>--allow-reserved-name</code> only if the adapter uses a reserved name, such as <code>watch</code> or <code>notifier</code>. A pinned archive appears as <code>pinned by you</code> with <code>No signature</code> in the preview.</p>
 <h2 id="look-at-it-and-manage-it">Look at it, and manage it</h2>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter info watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter info watch
-watch 0.4.0-rc.5 (service)  Restart an app when its files change.
+watch 0.4.0-rc.6 (service)  Restart an app when its files change.
 State:    ready
 Source:   bundled
-Trust:    bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
-Installed 2026-11-25T21:34:47Z
+Trust:    bundled with this release. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
+Installed 2026-11-25T22:24:39Z
 Grant:    level lifecycle, scope opted-in
 Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.6 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundled
-Trust     bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
+Trust     bundled with this release. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      fingerprint aa264b261bedefb3
+Next      fingerprint c154e886d2394a5b
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.</pre></figure>
-<div class="table-wrap"><table><thead><tr><th>Command</th><th>Meaning</th></tr></thead><tbody><tr><td><code>adapter list</code></td><td>The installed adapters, with state and trust.</td></tr><tr><td><code>adapter info &lt;name&gt;</code></td><td>Everything about one: state, source, grant, what is enforced, crashes and protocol strikes, and the last lines it wrote to stderr.</td></tr><tr><td><code>adapter disable &lt;name&gt;</code></td><td>Stop it and take its rights away.</td></tr><tr><td><code>adapter remove &lt;name&gt; [--purge]</code></td><td>Remove its files. Its state directory is kept unless you pass <code>--purge</code>, because it may hold tokens and keys.</td></tr><tr><td><code>adapter update &lt;name&gt;</code> or <code>--all</code></td><td>Update to a newer release. An update that asks for more than the installed one needs <code>--accept</code> with the new fingerprint. <code>--rollback</code> goes back to the previous version without the network.</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Command</th><th>Meaning</th></tr></thead><tbody><tr><td><code>adapter list</code></td><td>The installed adapters, with state and trust.</td></tr><tr><td><code>adapter info &lt;name&gt;</code></td><td>Everything about one: state, source, grant, what is enforced, crashes and protocol strikes, and the last lines it wrote to stderr.</td></tr><tr><td><code>adapter disable &lt;name&gt;</code></td><td>Stop it and take its rights away.</td></tr><tr><td><code>adapter remove &lt;name&gt; [--purge]</code></td><td>Remove its files. Its state directory is kept unless you pass <code>--purge</code>, because it may hold tokens and keys.</td></tr><tr><td><code>adapter update &lt;name&gt;</code> or <code>--all</code></td><td>Update to a newer version. Bundled adapters use the installed release bundle. <code>--rollback</code> goes back to the previous version without the network.</td></tr></tbody></table></div>
 <p><code>import</code>, <code>update</code>, <code>enable</code>, <code>disable</code> and <code>remove</code> take [<code>--dry-run</code>](/docs/commands/dry-run/). Enabling, disabling and removing are dangerous requests, so an AI actor cannot make them.</p>
 <h2 id="if-the-program-changes">If the program changes</h2>
-<p>The SHA-256 of the executable is recorded at import. If it no longer matches when the daemon starts the adapter, the adapter is not started and is marked failed (<code>E_ADAPTER_TAMPERED</code>).</p></div><p class="small-note"><a href="/docs/adapters/import-and-enable.md" type="text/markdown">This page as Markdown</a></p><div class="pager"><a href="/docs/adapters/how-adapters-work/" rel="prev"><small>Previous</small><span>How adapters work</span></a><a href="/docs/adapters/permissions/" rel="next"><small>Next</small><span>Permissions</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#list">List</a></li><li><a href="#import-from-the-release">Import from the release</a></li><li><a href="#enable">Enable</a></li><li><a href="#import-a-self-built-adapter">Import a self-built adapter</a></li><li><a href="#look-at-it-and-manage-it">Look at it, and manage it</a></li><li><a href="#if-the-program-changes">If the program changes</a></li></ul></nav></div>
+<p>The SHA-256 of the executable is recorded at import. If it no longer matches when the daemon starts the adapter, the adapter is not started and is marked failed (<code>E_ADAPTER_TAMPERED</code>).</p></div><p class="small-note"><a href="/docs/adapters/import-and-enable.md" type="text/markdown">This page as Markdown</a></p><div class="pager"><a href="/docs/adapters/how-adapters-work/" rel="prev"><small>Previous</small><span>How adapters work</span></a><a href="/docs/adapters/permissions/" rel="next"><small>Next</small><span>Permissions</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#list">List</a></li><li><a href="#import-from-the-release">Import from the release</a></li><li><a href="#enable">Enable</a></li><li><a href="#update-bundled-adapters">Update bundled adapters</a></li><li><a href="#import-a-self-built-adapter">Import a self-built adapter</a></li><li><a href="#look-at-it-and-manage-it">Look at it, and manage it</a></li><li><a href="#if-the-program-changes">If the program changes</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">

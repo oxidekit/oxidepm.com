@@ -14,7 +14,20 @@ Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before down
 
 `oxidepm --dry-run update` performs the same verification, downloads and unpacks the archive in a private temporary directory, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release bundle with all 13 adapters alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the four runtimes. For other bundled adapters, see [Import and enable](/docs/adapters/import-and-enable/#import-from-the-release). macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+
+## Update bundled adapters
+
+On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter update --all` to update the adapters you imported from the release bundle.
+
+```term cap="adapter-update" wrap="yes" label="Excerpt from oxidepm adapter update --all"
+```
+
+When you run `oxidepm update` with 0.4.0-rc.6 or later, it lists installed bundled adapters that are older than the new bundle and suggests `oxidepm adapter update --all`. When upgrading from an older CLI, run the adapter update command yourself after restarting the daemon.
+
+To update one adapter, run `oxidepm adapter update <name>`. If an update needs a broader grant, review the permissions and update that adapter with `--accept <fingerprint>`. See [Update bundled adapters](/docs/adapters/import-and-enable/#update-bundled-adapters).
+
+To add runtimes for the first time, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable all four. See [Import from the release](/docs/adapters/import-and-enable/#import-from-the-release) for the other adapters.
 
 ## Keep the CLI and daemon together
 

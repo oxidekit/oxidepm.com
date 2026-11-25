@@ -56,6 +56,15 @@ Enable watch with this grant? [y/N] yes
 
 You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. On Linux, `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
+## Update bundled adapters
+
+After `oxidepm update`, restart the daemon and run `oxidepm adapter update --all` to refresh the adapters you imported from the release bundle. Use `oxidepm adapter update <name>` to update just one.
+
+```term cap="adapter-update" wrap="yes" label="Excerpt from oxidepm adapter update --all"
+```
+
+The update uses the bundle installed with the new release and follows the same verification and consent checks as import. If it needs a broader grant, review the permissions and run `oxidepm adapter update <name> --accept <fingerprint>` with the fingerprint from the preview. See [Upgrade](/docs/getting-started/upgrade/#update-bundled-adapters) for when the updater prints the reminder.
+
 ## Import a self-built adapter
 
 An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For example, build and package `watch` for x86_64 Linux from the adapters checkout.
@@ -86,7 +95,7 @@ The bundle builder requires a catalog URL. A pinned import reads the file or HTT
 | `adapter info <name>` | Everything about one: state, source, grant, what is enforced, crashes and protocol strikes, and the last lines it wrote to stderr. |
 | `adapter disable <name>` | Stop it and take its rights away. |
 | `adapter remove <name> [--purge]` | Remove its files. Its state directory is kept unless you pass `--purge`, because it may hold tokens and keys. |
-| `adapter update <name>` or `--all` | Update to a newer release. An update that asks for more than the installed one needs `--accept` with the new fingerprint. `--rollback` goes back to the previous version without the network. |
+| `adapter update <name>` or `--all` | Update to a newer version. Bundled adapters use the installed release bundle. `--rollback` goes back to the previous version without the network. |
 
 `import`, `update`, `enable`, `disable` and `remove` take [`--dry-run`](/docs/commands/dry-run/). Enabling, disabling and removing are dangerous requests, so an AI actor cannot make them.
 
