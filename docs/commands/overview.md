@@ -33,7 +33,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 
 ## Provided by adapters
 
-On Linux, [import and enable the adapter](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) to use its commands.
+On Linux, [import and enable the adapter from the release bundle](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release) to use its commands.
 
 | Command | Adapter | What it is |
 |---|---|---|
@@ -63,7 +63,7 @@ For more information, try '--help'.
 Install it with: oxidepm adapter import notifier   (see: oxidepm adapter list --available)
 ```
 
-The import hint uses the signed-index form. This release has no configured network catalog, so use the [pinned archive instructions](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter).
+The import hint uses the signed-index form. This release has no configured network catalog. Use `oxidepm adapter import --bundled notifier --enable`.
 
 ## Runtimes
 
@@ -86,7 +86,7 @@ $ oxidepm start /srv/app/app.js
 Error: runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
 ```
 
-The command in the message is the one for a missing adapter. If the adapter is installed but off, it says `Run: oxidepm adapter enable runtime-node` instead. The error code is `E_ADAPTER_MISSING`.
+Use `oxidepm adapter import --bundled runtime-node --enable` with the release bundle. If the adapter is already installed, run `oxidepm adapter enable runtime-node`. The error code is `E_ADAPTER_MISSING`.
 
 Still in the core: `top`, a live resource monitor.
 

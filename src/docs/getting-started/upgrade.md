@@ -14,7 +14,7 @@ oxidepm update --version {{release_version}}    # a specific version
 
 `oxidepm --dry-run update` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release's adapter bundle alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the bundled runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the four runtimes. For other bundled adapters, see [Import and enable](/docs/adapters/import-and-enable/#import-from-the-release). macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
 ## Keep the CLI and daemon together
 

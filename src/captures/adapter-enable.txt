@@ -1,21 +1,19 @@
-$ oxidepm adapter enable notifier
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    pinned:notifier.tar.gz installed 2026-10-31T04:06:41Z
-Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+$ oxidepm adapter enable watch
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundled installed 2026-11-25T01:48:58Z
+Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      oxidepm adapter enable watch --accept 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
-Enable notifier with this grant? [y/N] 
+  memory    64 MiB.
+Enable watch with this grant? [y/N]

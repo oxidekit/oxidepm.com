@@ -1,5 +1,5 @@
 title: OxidePM adapters: runtimes, notifications, web API, metrics
-description: Adapters for the OxidePM process manager: language runtimes, notifications, a web API, a terminal dashboard and Prometheus metrics, each with its own permissions.
+description: Browse bundled OxidePM adapters for runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics. See each adapter’s permissions.
 path: /adapters/
 nav: adapters
 ---
@@ -10,13 +10,13 @@ nav: adapters
       <p style="font-size:18px;max-width:52ch;margin:20px 0 0" class="muted">The core supervises processes. Features that are not part of that job are adapters you choose to install. Each adapter is a separate program, and you approve what it asks for before it runs.</p>
     </div>
     <div class="cmds">
-      <div><span class="p">$</span> oxidepm adapter import &lt;archive&gt; --sha256 &lt;hex&gt;</div>
-      <div><span class="p">$</span> oxidepm adapter enable &lt;name&gt;</div>
+      <div><span class="p">$</span> oxidepm adapter import --bundled &lt;name&gt; --enable</div>
+      <div><span class="p">$</span> oxidepm adapter enable &lt;name&gt; --accept &lt;fingerprint&gt;</div>
       <div><span class="p">$</span> oxidepm adapter list</div>
     </div>
   </div>
 
-  <p class="small-note" style="max-width:70ch">On Linux, the install script enables the four bundled runtime adapters for Node.js, Python, Go and Rust. Build optional adapters from the <a href="https://github.com/oxidekit/oxidepm-adapters">adapter sources</a> and <a href="/docs/adapters/import-and-enable/#build-an-optional-adapter">import the archive by SHA-256</a>. This release has no configured network catalog.</p>
+  <p class="small-note" style="max-width:70ch">OxidePM {{release_version}} bundles all 13 adapters. On Linux, the install script enables only the four runtimes for Node.js, Python, Go and Rust. Review each additional adapter’s permissions and confirm the grant at the prompt. If approval is deferred, use the fingerprint printed by the import. For an adapter you build yourself, <a href="/docs/adapters/import-and-enable/#import-a-self-built-adapter">import the archive by SHA-256</a>.</p>
 
   <div class="toolbar">
     <label class="search">
@@ -26,7 +26,7 @@ nav: adapters
     </label>
     <div class="seg" role="radiogroup" aria-label="Filter by status">
       <label class="seg-opt"><input type="radio" name="adapter-filter" value="all" checked><span>All</span><span class="seg-count" data-count="all">{{count_all}}</span></label>
-      <label class="seg-opt"><input type="radio" name="adapter-filter" value="available"><span>Built</span><span class="seg-count" data-count="available">{{count_available}}</span></label>
+      <label class="seg-opt"><input type="radio" name="adapter-filter" value="available"><span>Bundled</span><span class="seg-count" data-count="available">{{count_available}}</span></label>
       <label class="seg-opt"><input type="radio" name="adapter-filter" value="later"><span>Coming later</span><span class="seg-count" data-count="later">{{count_later}}</span></label>
     </div>
     <p class="result-count" role="status" aria-live="polite" data-result>{{count_text}}</p>
@@ -59,7 +59,7 @@ nav: adapters
         <pre class="term-body">{
   <span class="t-hi">"schema"</span>: 1,
   <span class="t-hi">"name"</span>: "exporter-prometheus",
-  <span class="t-hi">"version"</span>: "0.4.0-rc.1",
+  <span class="t-hi">"version"</span>: "{{release_version}}",
   <span class="t-hi">"kind"</span>: "service",
   <span class="t-hi">"summary"</span>: "Prometheus metrics for the apps OxidePM manages.",
   <span class="t-hi">"protocol"</span>: [1],

@@ -22,11 +22,11 @@ ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect
 
 ## Commands that come from adapters
 
-On Linux, [build, import and enable the optional adapter](/docs/adapters/import-and-enable/#build-an-optional-adapter) before using its commands. The CLI names the adapter when a command is unavailable. See [Provided by adapters](/docs/commands/overview/#provided-by-adapters).
+On Linux, run `oxidepm adapter import --bundled <name> --enable` before using an adapter's commands. Review the grant and [confirm any requested permissions](/docs/adapters/import-and-enable/#enable). See [Provided by adapters](/docs/commands/overview/#provided-by-adapters) for adapter names.
 
 ## init and check
 
-Import the `init` and `check` adapters to generate a project config and check project readiness.
+Use `oxidepm adapter import --bundled init --enable` to add config generation and `oxidepm adapter import --bundled check --enable` to add project checks.
 
 ```sh
 oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
@@ -40,7 +40,7 @@ oxidepm --dry-run init ./my-project
 
 ## git-start
 
-The `git-start` adapter prepares a Git checkout in its own state directory and starts it. Use `--offline` to reuse a local checkout or `--no-start` to prepare it without launching. `--install` opts into Node dependency installation. Add `--allow-scripts` to allow dependency lifecycle scripts.
+Run `oxidepm adapter import --bundled git-start --enable` to add the `git-start` command. The adapter prepares a Git checkout in its own state directory and starts it. Use `--offline` to reuse a local checkout or `--no-start` to prepare it without launching. `--install` opts into Node dependency installation. Add `--allow-scripts` to allow dependency lifecycle scripts.
 
 ```sh
 oxidepm git-start https://github.com/user/repo --branch main
@@ -49,7 +49,7 @@ oxidepm --dry-run git-start https://github.com/user/repo
 
 ## deploy and diff
 
-The `deploy` adapter provides both commands.
+Run `oxidepm adapter import --bundled deploy --enable` to add both commands.
 
 ```sh
 oxidepm deploy user@myserver --cwd /srv/myapp --post "npm run build" --restart api
@@ -61,7 +61,13 @@ oxidepm diff user@myserver --cwd /srv/myapp --count 10
 
 ## File watching
 
-Import and enable the `watch` service on Linux. Add this table to each app you want to restart when its files change:
+On Linux, install the `watch` service from the release bundle.
+
+```sh
+oxidepm adapter import --bundled watch --enable
+```
+
+Review its permissions. If approval is deferred, run `oxidepm adapter enable watch --accept <fingerprint>` with the fingerprint printed by the import. Add this table to each app you want to restart when its files change.
 
 ```toml
 [apps.adapters.watch]
@@ -74,7 +80,7 @@ Paths are relative to the app's working directory. If `paths` is omitted, the ad
 
 ## web
 
-Build and import the `ui-web` adapter before using these commands.
+Run `oxidepm adapter import --bundled ui-web --enable` before using these commands.
 
 ```sh
 oxidepm web              # where it listens, and its access key (shown once)
@@ -101,7 +107,7 @@ With the default `lifecycle` grant, it shows every app and can restart or stop t
 
 ## monit and top
 
-`oxidepm monit` is the terminal dashboard from the `ui-tui` adapter. It shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
+Run `oxidepm adapter import --bundled ui-tui --enable` to add `oxidepm monit`. The terminal dashboard shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
 
 ```sh
 oxidepm monit

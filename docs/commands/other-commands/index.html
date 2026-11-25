@@ -74,9 +74,9 @@ ssh user@newserver &quot;oxidepm restore my-server-backup.tar.gz &amp;&amp; oxid
 <h2 id="adapter">adapter</h2>
 <p><code>oxidepm adapter import</code>, <code>list</code>, <code>info</code>, <code>search</code>, <code>enable</code>, <code>disable</code>, <code>update</code> and <code>remove</code>. See <a href="/docs/adapters/import-and-enable/">Import and enable</a>.</p>
 <h2 id="commands-that-come-from-adapters">Commands that come from adapters</h2>
-<p>On Linux, <a href="/docs/adapters/import-and-enable/#build-an-optional-adapter">build, import and enable the optional adapter</a> before using its commands. The CLI names the adapter when a command is unavailable. See <a href="/docs/commands/overview/#provided-by-adapters">Provided by adapters</a>.</p>
+<p>On Linux, run <code>oxidepm adapter import --bundled &lt;name&gt; --enable</code> before using an adapter&#x27;s commands. Review the grant and <a href="/docs/adapters/import-and-enable/#enable">confirm any requested permissions</a>. See <a href="/docs/commands/overview/#provided-by-adapters">Provided by adapters</a> for adapter names.</p>
 <h2 id="init-and-check">init and check</h2>
-<p>Import the <code>init</code> and <code>check</code> adapters to generate a project config and check project readiness.</p>
+<p>Use <code>oxidepm adapter import --bundled init --enable</code> to add config generation and <code>oxidepm adapter import --bundled check --enable</code> to add project checks.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
 oxidepm check ./my-app             # is the project ready to run?
 oxidepm check ./my-app --fix       # install dependencies, create .env
@@ -84,24 +84,26 @@ oxidepm start ./my-app --check     # check before starting one app
 oxidepm --dry-run init ./my-project</code></pre></figure>
 <p><code>init</code> detects Node.js, Cargo, Python and Go projects and preserves existing configs. <code>check</code> reports on dependencies, lockfiles, environment files and port availability. With <code>--strict</code>, warnings make it fail. <code>--fix</code> can install Node dependencies and create <code>.env</code> from a template, and <code>--set-env KEY=VALUE</code> edits <code>.env</code>. Both write options are limited to projects within the current directory.</p>
 <h2 id="git-start">git-start</h2>
-<p>The <code>git-start</code> adapter prepares a Git checkout in its own state directory and starts it. Use <code>--offline</code> to reuse a local checkout or <code>--no-start</code> to prepare it without launching. <code>--install</code> opts into Node dependency installation. Add <code>--allow-scripts</code> to allow dependency lifecycle scripts.</p>
+<p>Run <code>oxidepm adapter import --bundled git-start --enable</code> to add the <code>git-start</code> command. The adapter prepares a Git checkout in its own state directory and starts it. Use <code>--offline</code> to reuse a local checkout or <code>--no-start</code> to prepare it without launching. <code>--install</code> opts into Node dependency installation. Add <code>--allow-scripts</code> to allow dependency lifecycle scripts.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm git-start https://github.com/user/repo --branch main
 oxidepm --dry-run git-start https://github.com/user/repo</code></pre></figure>
 <h2 id="deploy-and-diff">deploy and diff</h2>
-<p>The <code>deploy</code> adapter provides both commands.</p>
+<p>Run <code>oxidepm adapter import --bundled deploy --enable</code> to add both commands.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm deploy user@myserver --cwd /srv/myapp --post &quot;npm run build&quot; --restart api
 oxidepm --dry-run deploy user@myserver --cwd /srv/myapp --branch main
 oxidepm diff user@myserver --cwd /srv/myapp --count 10</code></pre></figure>
 <p><code>deploy</code> pulls from <code>origin</code> on the remote branch, or the branch selected by <code>--branch</code>. It runs the optional <code>--post</code> command and restarts processes using the remote <code>oxidepm</code> executable, which <code>--remote-bin</code> can override. A restart failure returns exit status 3. <code>diff</code> shows recent commits, working-tree status and a diff summary. Both use noninteractive SSH and require a known-hosts entry. Both support <code>--dry-run</code>.</p>
 <h2 id="file-watching">File watching</h2>
-<p>Import and enable the <code>watch</code> service on Linux. Add this table to each app you want to restart when its files change:</p>
+<p>On Linux, install the <code>watch</code> service from the release bundle.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import --bundled watch --enable</code></pre></figure>
+<p>Review its permissions. If approval is deferred, run <code>oxidepm adapter enable watch --accept &lt;fingerprint&gt;</code> with the fingerprint printed by the import. Add this table to each app you want to restart when its files change.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>[apps.adapters.watch]
 paths = [&quot;src&quot;]
 ignore = [&quot;generated/*&quot;]
 debounce_ms = 200</code></pre></figure>
 <p>Paths are relative to the app&#x27;s working directory. If <code>paths</code> is omitted, the adapter watches that directory. Your ignore patterns extend the defaults, which include <code>.git</code>, <code>node_modules</code> and <code>target</code>.</p>
 <h2 id="web">web</h2>
-<p>Build and import the <code>ui-web</code> adapter before using these commands.</p>
+<p>Run <code>oxidepm adapter import --bundled ui-web --enable</code> before using these commands.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm web              # where it listens, and its access key (shown once)
 oxidepm web new-key      # replace the key</code></pre></figure>
 <p>The adapter serves a REST API and a WebSocket on <code>127.0.0.1:9615</code>. API endpoints other than <code>/api/health</code> require the <code>X-API-Key</code> header, even on loopback. The first start makes a random key in the adapter&#x27;s <code>config.toml</code>. A browser WebSocket can send it through the <code>oxidepm-key.&lt;key&gt;</code> subprotocol alongside <code>oxidepm.v1</code>. The adapter validates <code>Host</code>. For writes and WebSocket upgrades, <code>Origin</code> must be absent or match the configured origin.</p>
@@ -109,7 +111,7 @@ oxidepm web new-key      # replace the key</code></pre></figure>
 <div class="table-wrap"><table><thead><tr><th>Endpoint</th><th>Method</th><th>Key</th><th>Description</th></tr></thead><tbody><tr><td><code>/api/health</code></td><td>GET</td><td>No</td><td><code>{&quot;ok&quot;:true}</code>.</td></tr><tr><td><code>/api/processes</code></td><td>GET</td><td>Yes</td><td>All apps.</td></tr><tr><td><code>/api/processes/:selector</code></td><td>GET</td><td>Yes</td><td>One app.</td></tr><tr><td><code>/api/processes/:selector/stop</code></td><td>POST</td><td>Yes</td><td>Stop.</td></tr><tr><td><code>/api/processes/:selector/restart</code></td><td>POST</td><td>Yes</td><td>Restart.</td></tr><tr><td><code>/api/processes/:selector/logs</code></td><td>GET</td><td>Yes</td><td>Logs.</td></tr><tr><td><code>/api/ping</code></td><td>GET</td><td>Yes</td><td>Ask the daemon whether it is alive.</td></tr><tr><td><code>/api/save</code>, <code>/api/resurrect</code></td><td>POST</td><td>Yes</td><td>Save or start the saved apps. Requires <code>admin</code>.</td></tr><tr><td><code>/ws</code></td><td>WebSocket</td><td>Yes</td><td>The daemon&#x27;s lifecycle events as they happen.</td></tr></tbody></table></div>
 <p><code>POST /api/processes</code> (start an app) and <code>DELETE</code> require the <code>admin</code> level and return 403 under the default grant. Use the <a href="/docs/adapters/exporter-prometheus/">Prometheus exporter</a> for <code>/metrics</code>.</p>
 <h2 id="monit-and-top">monit and top</h2>
-<p><code>oxidepm monit</code> is the terminal dashboard from the <code>ui-tui</code> adapter. It shows app state, CPU and memory, details and logs. It asks for <code>y</code> or <code>n</code> before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.</p>
+<p>Run <code>oxidepm adapter import --bundled ui-tui --enable</code> to add <code>oxidepm monit</code>. The terminal dashboard shows app state, CPU and memory, details and logs. It asks for <code>y</code> or <code>n</code> before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm monit</code></pre></figure>
 <p><code>oxidepm top</code>, a live resource monitor, is still in the core.</p>
 <h2 id="completions-and-man">completions and man</h2>

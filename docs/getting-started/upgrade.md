@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.2    # a specific version
+oxidepm update --version 0.4.0-rc.3    # a specific version
 ```
 
 `update` downloads the release archive for your platform and installs it. It is careful about it:
@@ -20,7 +20,7 @@ oxidepm update --version 0.4.0-rc.2    # a specific version
 
 `oxidepm --dry-run update` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release's adapter bundle alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the bundled runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the four runtimes. For other bundled adapters, see [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release). macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
 ## Keep the CLI and daemon together
 

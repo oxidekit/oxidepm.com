@@ -4,7 +4,7 @@ Install an adapter from an archive you pin, read what it asks for, and enable it
 
 Source: https://oxidepm.com/docs/adapters/import-and-enable/
 
-On Linux, `adapter import` verifies and installs an adapter. `adapter enable` asks you to accept its permissions. Use `import --enable` to do both in one command. Services start when enabled, and tools start when called.
+On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it also asks you to approve the grant. Services start when enabled, and tools start when called.
 
 ## List
 
@@ -19,80 +19,78 @@ Error: no index is configured in this build. Import by a pinned hash (`oxidepm a
 
 `list` shows the installed adapters. `list --available` and `search` require a configured signed index. This release ships without a network catalog.
 
-## Import
+## Import from the release
 
-An archive is a gzip tarball with `manifest.json` and the executable the manifest names in `exec`, side by side. Import it from a file or an https URL, and pin it with its SHA-256:
+The release ships all 13 adapters under `share/oxidepm/adapters`. On Linux, run `oxidepm adapter import --bundled <name> --enable` for any adapter you want to use. This command adds file watching.
 
 ```sh
-oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter import --bundled watch --enable
 ```
 
-Without `--sha256` nothing is installed: the command prints the archive's hash and asks you to run it again with `--sha256` if you trust it. On a terminal, a pinned import asks you to type the first 12 digits of the hash when it is not given.
+Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against `SHA256SUMS`. The installer runs `oxidepm adapter import --bundled --tag runtime --enable --yes` to enable only the four runtime adapters. To select groups, use `--tag dev` for `watch`, `check` and `init`, `--tag deploy` for `git-start` and `deploy`, `--tag ui` for `ui-web` and `ui-tui`, `--tag notifier` for `notifier`, or `--tag exporter` for `exporter-prometheus`.
 
-For pinned archives that use a reserved name, add `--allow-reserved-name`. That applies to `notifier`, `ui-web`, `ui-tui`, `check`, `init`, `git-start`, `deploy`, `watch` and the runtime adapters. Import `exporter-prometheus` with the digest alone.
+Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit `--enable`. The adapter stays disabled until you approve the grant.
 
-`oxidepm adapter import <name>` looks up an adapter in a configured signed index. When the release bundle is installed, `oxidepm adapter import --bundled --tag runtime --enable --yes` verifies its `SHA256SUMS` and imports and enables the bundled runtimes offline. The install script runs this command on Linux.
-
-*Terminal output of oxidepm adapter import*
+*Terminal output of oxidepm adapter import --bundled watch*
 
 ```text
-$ oxidepm adapter import notifier.tar.gz --sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203 --allow-reserved-name
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    notifier.tar.gz (pinned by you)
-Trust     pinned by you: sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+$ oxidepm adapter import --bundled watch
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundle /usr/local/share/oxidepm/adapters
+Trust     bundled with this release. Archive sha256 cefdc9f384848afb3007d9e8eae8385b2f2f725d8d7cc154a1485c44a75c2222 verified. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      oxidepm adapter enable watch --accept 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
-✓ Installed notifier 0.1.0 (disabled, nothing runs). Enable it with: oxidepm adapter enable notifier --accept 33926d31eb91080f
+  memory    64 MiB.
+✓ Installed watch 0.4.0-rc.3 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept 80359c388911f8f1
 ```
 
-Read this before you go on. `Needs` is what the adapter asks for, and `Again, what it needs` repeats it at the end so nothing in the description can push it out of sight. `[BROAD]` marks power that deserves a second look. `Enforced on this machine` says what the operating system can hold the adapter to here. `Trust` says where the archive came from: a pinned archive says `pinned by you` and `No signature`. Nothing runs yet.
+`Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
+
+`oxidepm adapter import <name>` uses a configured signed index. This release ships without a network catalog.
 
 ## Enable
 
 ```sh
-oxidepm adapter enable notifier
+oxidepm adapter enable <name> --accept <fingerprint>
 ```
 
-`enable` shows the permissions again and asks for consent. On a terminal you answer the question. In a script, pass `--accept <fingerprint>` with the fingerprint that `import` and `info` print, which ties your consent to exactly that release. `--yes` accepts without asking, only for an adapter that needs nothing broad.
+For broader grants such as `watch`, run the printed command after reviewing the permissions if approval was deferred or the import ran without an interactive terminal. Get the fingerprint from `adapter import` or `adapter info`. It ties your consent to that adapter release. `--yes` accepts without asking only for pure adapters such as the four runtimes.
 
-*Terminal output of oxidepm adapter enable: the consent screen*
+On a terminal, `oxidepm adapter enable watch` shows the permissions and asks for consent again.
+
+*Terminal output of oxidepm adapter enable watch*
 
 ```text
-$ oxidepm adapter enable notifier
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    pinned:notifier.tar.gz installed 2026-10-31T04:06:41Z
-Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+$ oxidepm adapter enable watch
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundled installed 2026-11-25T01:48:58Z
+Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      oxidepm adapter enable watch --accept 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
-Enable notifier with this grant? [y/N] 
+  memory    64 MiB.
+Enable watch with this grant? [y/N]
 ```
 
 If you answer no, nothing is changed:
@@ -100,7 +98,7 @@ If you answer no, nothing is changed:
 *Terminal output when the answer is no*
 
 ```text
-Enable notifier with this grant? [y/N] no
+Enable watch with this grant? [y/N] no
 Error: Not enabled
 ```
 
@@ -109,16 +107,16 @@ If you answer yes:
 *Terminal output when the answer is yes*
 
 ```text
-Enable notifier with this grant? [y/N] yes
-✓ Enabled notifier 0.1.0 (level read, scope all)
-  Enforced by the OS on this machine: fs_write, fs_read, spawn
+Enable watch with this grant? [y/N] yes
+✓ Enabled watch 0.4.0-rc.3 (level lifecycle, scope opted-in)
+  Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
 You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. On Linux, `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
-## Build an optional adapter
+## Import a self-built adapter
 
-Build an archive from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters). Keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For the `watch` adapter on x86_64 Linux, run these commands in the adapters checkout:
+An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For example, build and package `watch` for x86_64 Linux from the adapters checkout.
 
 ```sh
 cargo build --release -p oxidepm-adapter-watch -p oxidepm-adapter-bundle
@@ -127,48 +125,46 @@ target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   watch:target/release/oxidepm-watch
 ```
 
-Start the daemon with `oxidepm resurrect` if it is down. Use the archive's filename and its digest from `target/watch-bundle/SHA256SUMS`:
+Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0-rc.3 sources.
 
 ```sh
-oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.1.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.3.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
-For the other optional adapters, use their directory, executable and digest. The catalog URL is required by the bundle builder. A local pinned import reads the archive directly.
+The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
 
 ## Look at it, and manage it
 
-*Terminal output of oxidepm adapter info*
+*Terminal output of oxidepm adapter info watch*
 
 ```text
-$ oxidepm adapter info notifier
-notifier 0.1.0 (service)  Telegram, Discord, Slack and webhook notifications.
+$ oxidepm adapter info watch
+watch 0.4.0-rc.3 (service)  Restart an app when its files change.
 State:    ready
-Source:   pinned:notifier.tar.gz
-Trust:    pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Installed 2026-10-31T04:06:41Z
-Grant:    level read, scope all
-Enforced: fs_write, fs_read, spawn
+Source:   bundled
+Trust:    bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Installed 2026-11-25T01:48:58Z
+Grant:    level lifecycle, scope opted-in
+Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    pinned:notifier.tar.gz
-Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundled
+Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      fingerprint 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      fingerprint 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
+  memory    64 MiB.
 ```
 
 | Command | Meaning |

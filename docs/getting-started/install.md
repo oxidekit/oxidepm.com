@@ -18,13 +18,13 @@ Source: https://oxidepm.com/docs/getting-started/install/
 curl -fsSL https://oxidepm.com/install.sh | sh
 ```
 
-The [install script](https://oxidepm.com/install.sh) installs the latest published release, 0.4.0-rc.2.
+The [install script](https://oxidepm.com/install.sh) installs the latest published release, 0.4.0-rc.3.
 
 - Detects the platform with `uname`, looks up the latest release on GitHub and downloads its platform archive and `checksums.txt`.
 - Checks the archive's SHA-256 against the entry for that exact filename in `checksums.txt`.
 - Installs `oxidepm`, `oxidepmd` and `oxidepm-sandbox` into `/usr/local/bin`, using `sudo` when needed. Set `INSTALL_DIR` to install elsewhere.
-- Copies the bundle into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
-- On Linux, imports and enables the runtimes offline with `oxidepm adapter import --bundled --tag runtime --enable --yes`. The CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
+- Copies all 13 adapter archives into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
+- Attempts to import and enable only the four runtime adapters with `oxidepm adapter import --bundled --tag runtime --enable --yes`. On Linux, this works offline, and the CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
 
 ## Other ways
 
@@ -37,6 +37,17 @@ The [Releases page](https://github.com/oxidekit/oxidepm/releases) has the archiv
 | macOS | Intel | `oxidepm-x86_64-apple-darwin.tar.gz` |
 | macOS | Apple Silicon | `oxidepm-aarch64-apple-darwin.tar.gz` |
 
+On Debian or Ubuntu, download the package for your architecture and install it with `dpkg`.
+
+```sh
+# x86_64
+sudo dpkg -i oxidepm_0.4.0.rc.3_amd64.deb
+# ARM64
+sudo dpkg -i oxidepm_0.4.0.rc.3_arm64.deb
+```
+
+On Linux, run the runtime import below after installing manually.
+
 For Homebrew and Arch Linux instructions, see the [OxidePM README](https://github.com/oxidekit/oxidepm/blob/prod/README.md#installation).
 
 ## Runtimes
@@ -47,14 +58,14 @@ The built-in `cmd` runtime runs an executable. The `runtime-node`, `runtime-pyth
 oxidepm adapter import --bundled --tag runtime --enable --yes
 ```
 
-On Linux, serving a runtime request requires its adapter to be imported and enabled. For optional adapters, see [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/).
+On Linux, serving a runtime request requires its adapter to be imported and enabled. To use any of the other nine adapters, [import and enable it from the release bundle](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release).
 
 ## From source
 
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.2 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0-rc.3 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```

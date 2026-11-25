@@ -24,7 +24,7 @@ notifier.tar.gz
 {
   "schema": 1,
   "name": "exporter-prometheus",
-  "version": "0.4.0-rc.1",
+  "version": "0.4.0-rc.3",
   "kind": "service",
   "summary": "Prometheus metrics for the apps OxidePM manages.",
   "description": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.",

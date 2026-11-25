@@ -30,7 +30,7 @@ IMAGE = SITE + "/og-image.png"
 IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of four apps that are online."
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
-RELEASE_VERSION = "0.4.0-rc.2"
+RELEASE_VERSION = "0.4.0-rc.3"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",
     "anthropic-ai", "Google-Extended", "PerplexityBot", "Perplexity-User", "CCBot",
@@ -472,7 +472,7 @@ def adapter_cards(adapters):
         search = " ".join([a["name"], a["kind"], a["summary"]] + a["perms"]).lower()
         cmd = ""
         if not later:
-            cmd = '<p class="acard-cmd">%s</p>' % esc(a["cmd"])
+            cmd = '<p class="acard-cmd"><code>oxidepm adapter import --bundled %s --enable</code></p>' % esc(a["name"])
         items.append(
             '<li class="blueprint acard" data-card data-status="%s" data-text="%s">%s'
             '<div class="acard-top"><span class="acard-kind">%s</span>%s</div>'
@@ -574,9 +574,14 @@ def llms_files(nav, flat, adapters):
         "> %s It starts apps, restarts them when they crash, keeps their logs and brings them back "
         "after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and "
         "Prometheus metrics are adapters. Licensed MIT or Apache-2.0." % TAGLINE, "",
-        "Latest release: %s. On Linux, the install script imports and enables the four bundled runtime adapters. "
+        "OxidePM %s bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. "
         "macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. "
         "Source: %s." % (RELEASE_VERSION, REPO), "",
+        "On Linux, install any adapter from the release with `oxidepm adapter import --bundled <name> --enable`. "
+        "Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed "
+        "`oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. "
+        "For a self-built adapter, import the archive with `oxidepm adapter import ./my-adapter.tar.gz --sha256 <digest> --enable`. "
+        "Add `--allow-reserved-name` if it uses a reserved name.", "",
     ]
     short = ["# OxidePM"] + head[1:]
     lines = list(head)
@@ -589,7 +594,7 @@ def llms_files(nav, flat, adapters):
     lines += [
         "## Optional", "",
         "- [Home](%s/): what OxidePM is, with a sample status table" % SITE,
-        "- [Adapters](%s/adapters/): the adapters that are built and planned, with their permissions" % SITE,
+        "- [Adapters](%s/adapters/): the bundled adapters and their permissions" % SITE,
         "- [Security and AI safety](%s/security/): how agents and adapters are limited" % SITE,
         "- [Source code and releases](%s): the repository, issues and release archives" % REPO,
         "- [Install script](%s/install.sh): the script that `curl -fsSL https://oxidepm.com/install.sh | sh` runs" % SITE,
@@ -603,9 +608,9 @@ def llms_files(nav, flat, adapters):
     for p in flat:
         full += ["---", "", read(ROOT / (p["path"].strip("/") + ".md")).rstrip("\n"), ""]
     full += ["---", "", "# Adapters", "",
-             "On Linux, import the bundled runtimes or build and import an archive for an optional adapter. Details: %s/adapters/" % SITE, ""]
+             "Details: %s/adapters/" % SITE, ""]
     for a in adapters:
-        state = "built" if a["status"] == "available" else "planned"
+        state = "bundled" if a["status"] == "available" else "planned"
         full.append("- `%s` (%s): %s" % (a["name"], state, a["summary"]))
     full.append("")
     write("llms-full.txt", "\n".join(full))
@@ -663,6 +668,7 @@ def docs_shell(nav, current_path, label, inner, toc_html):
 
 def build_docs(site):
     nav, flat = load_docs()
+    versions = {"release_version": RELEASE_VERSION, "deb_version": RELEASE_VERSION.replace("-", ".")}
     for p in flat:
         if "seo_title" not in p or "description" not in p:
             raise SystemExit("docs page %s/%s has no seo_title or description" % (p["group"]["slug"], p["slug"]))
@@ -673,8 +679,9 @@ def build_docs(site):
             raise SystemExit("missing docs source: %s" % src)
         toc = []
         source = read(src)
-        modified = lastmod(src, Path(__file__)) if "{{release_version}}" in source else lastmod(src)
-        source = source.replace("{{release_version}}", RELEASE_VERSION)
+        sources = [src, Path(__file__)] if any("{{" + key + "}}" in source for key in versions) else [src]
+        modified = lastmod(*sources)
+        source = fill(source, versions)
         body_html = markdown(source, toc)
         crumbs = (
             '<nav class="crumbs" aria-label="Breadcrumb"><ol>'
@@ -770,8 +777,9 @@ def main():
         body = fill(resolve_captures(body), values) if "{{" in body else body
         path = meta["path"]
         sources = [page_file] + ([SRC / "adapters.json"] if path in ("/", "/adapters/") else [])
-        if path == "/":
+        if path in ("/", "/adapters/"):
             sources.append(Path(__file__))
+        if path == "/":
             ld = home_ld(meta["description"])
         elif meta.get("robots") == "noindex":
             ld = []

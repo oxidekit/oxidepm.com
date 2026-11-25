@@ -153,7 +153,8 @@ install_adapters() {
 # and enables the ones the release carries; it is printed and run, and a failure does not undo
 # the install.
 import_runtimes() {
-    if [ "$OS" != Linux ] || [ -z "$BUNDLE_DIR" ]; then
+    if [ -z "$BUNDLE_DIR" ]; then
+        warn "This release carries no adapters, so no runtime is installed. Import one with: oxidepm adapter import <name> --enable"
         return 0
     fi
     IMPORT="$INSTALL_DIR/oxidepm adapter import --bundled --tag runtime --enable --yes"
@@ -163,6 +164,7 @@ import_runtimes() {
     else
         warn "The runtimes were not imported. Run this when the reason above is dealt with:"
         warn "  $IMPORT"
+        warn "On a machine that cannot enforce the adapters' sandbox the command stops and says so; add --allow-unenforced if you accept that."
     fi
 }
 
@@ -173,7 +175,7 @@ verify() {
         echo ""
         oxidepm --version
         echo ""
-        info "Get started with: oxidepm start --mode cmd ./your-program"
+        info "Get started with: oxidepm start ./your-app"
     else
         warn "Installation complete but oxidepm not in PATH"
         info "Add $INSTALL_DIR to your PATH or run: $INSTALL_DIR/oxidepm"
@@ -184,7 +186,7 @@ main() {
     echo ""
     echo "  ╔═══════════════════════════════════╗"
     echo "  ║       OxidePM Installer           ║"
-    echo "  ║    Keeps your apps running        ║"
+    echo "  ║   Process manager with adapters   ║"
     echo "  ╚═══════════════════════════════════╝"
     echo ""
 

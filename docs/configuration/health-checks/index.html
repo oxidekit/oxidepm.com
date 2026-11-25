@@ -66,7 +66,7 @@
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm start ./server --health-check http://localhost:3000/health   # HTTP
 oxidepm start ./server --health-check ./check-health.sh              # a script</code></pre></figure>
 <p>In a config file a check is a table with exactly one of <code>http_url</code>, <code>tcp</code> or <code>script</code>:</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepm.config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-18" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-18">[[apps]]
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepm.config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-19" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-19">[[apps]]
 name = &quot;api&quot;
 mode = &quot;cmd&quot;
 script = &quot;./target/release/api&quot;

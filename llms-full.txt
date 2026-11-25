@@ -2,7 +2,9 @@
 
 > OxidePM is an open-source process manager written in Rust, for Linux. It starts apps, restarts them when they crash, keeps their logs and brings them back after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are adapters. Licensed MIT or Apache-2.0.
 
-Latest release: 0.4.0-rc.2. On Linux, the install script imports and enables the four bundled runtime adapters. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
+OxidePM 0.4.0-rc.3 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
+
+On Linux, install any adapter from the release with `oxidepm adapter import --bundled <name> --enable`. Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed `oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. For a self-built adapter, import the archive with `oxidepm adapter import ./my-adapter.tar.gz --sha256 <digest> --enable`. Add `--allow-reserved-name` if it uses a reserved name.
 
 This file holds every documentation page of oxidepm.com in Markdown. Each page also has its own `.md` address next to its HTML address.
 
@@ -28,13 +30,13 @@ Source: https://oxidepm.com/docs/getting-started/install/
 curl -fsSL https://oxidepm.com/install.sh | sh
 ```
 
-The [install script](https://oxidepm.com/install.sh) installs the latest published release, 0.4.0-rc.2.
+The [install script](https://oxidepm.com/install.sh) installs the latest published release, 0.4.0-rc.3.
 
 - Detects the platform with `uname`, looks up the latest release on GitHub and downloads its platform archive and `checksums.txt`.
 - Checks the archive's SHA-256 against the entry for that exact filename in `checksums.txt`.
 - Installs `oxidepm`, `oxidepmd` and `oxidepm-sandbox` into `/usr/local/bin`, using `sudo` when needed. Set `INSTALL_DIR` to install elsewhere.
-- Copies the bundle into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
-- On Linux, imports and enables the runtimes offline with `oxidepm adapter import --bundled --tag runtime --enable --yes`. The CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
+- Copies all 13 adapter archives into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
+- Attempts to import and enable only the four runtime adapters with `oxidepm adapter import --bundled --tag runtime --enable --yes`. On Linux, this works offline, and the CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
 
 ## Other ways
 
@@ -47,6 +49,17 @@ The [Releases page](https://github.com/oxidekit/oxidepm/releases) has the archiv
 | macOS | Intel | `oxidepm-x86_64-apple-darwin.tar.gz` |
 | macOS | Apple Silicon | `oxidepm-aarch64-apple-darwin.tar.gz` |
 
+On Debian or Ubuntu, download the package for your architecture and install it with `dpkg`.
+
+```sh
+# x86_64
+sudo dpkg -i oxidepm_0.4.0.rc.3_amd64.deb
+# ARM64
+sudo dpkg -i oxidepm_0.4.0.rc.3_arm64.deb
+```
+
+On Linux, run the runtime import below after installing manually.
+
 For Homebrew and Arch Linux instructions, see the [OxidePM README](https://github.com/oxidekit/oxidepm/blob/prod/README.md#installation).
 
 ## Runtimes
@@ -57,14 +70,14 @@ The built-in `cmd` runtime runs an executable. The `runtime-node`, `runtime-pyth
 oxidepm adapter import --bundled --tag runtime --enable --yes
 ```
 
-On Linux, serving a runtime request requires its adapter to be imported and enabled. For optional adapters, see [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/).
+On Linux, serving a runtime request requires its adapter to be imported and enabled. To use any of the other nine adapters, [import and enable it from the release bundle](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release).
 
 ## From source
 
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.2 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0-rc.3 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```
@@ -258,7 +271,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.2    # a specific version
+oxidepm update --version 0.4.0-rc.3    # a specific version
 ```
 
 `update` downloads the release archive for your platform and installs it. It is careful about it:
@@ -270,7 +283,7 @@ oxidepm update --version 0.4.0-rc.2    # a specific version
 
 `oxidepm --dry-run update` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release's adapter bundle alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the bundled runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the four runtimes. For other bundled adapters, see [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release). macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
 ## Keep the CLI and daemon together
 
@@ -920,7 +933,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 
 ## Provided by adapters
 
-On Linux, [import and enable the adapter](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) to use its commands.
+On Linux, [import and enable the adapter from the release bundle](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release) to use its commands.
 
 | Command | Adapter | What it is |
 |---|---|---|
@@ -950,7 +963,7 @@ For more information, try '--help'.
 Install it with: oxidepm adapter import notifier   (see: oxidepm adapter list --available)
 ```
 
-The import hint uses the signed-index form. This release has no configured network catalog, so use the [pinned archive instructions](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter).
+The import hint uses the signed-index form. This release has no configured network catalog. Use `oxidepm adapter import --bundled notifier --enable`.
 
 ## Runtimes
 
@@ -973,7 +986,7 @@ $ oxidepm start /srv/app/app.js
 Error: runtime 'node' is provided by the adapter 'runtime-node', which is not enabled. Run: oxidepm adapter import runtime-node --enable
 ```
 
-The command in the message is the one for a missing adapter. If the adapter is installed but off, it says `Run: oxidepm adapter enable runtime-node` instead. The error code is `E_ADAPTER_MISSING`.
+Use `oxidepm adapter import --bundled runtime-node --enable` with the release bundle. If the adapter is already installed, run `oxidepm adapter enable runtime-node`. The error code is `E_ADAPTER_MISSING`.
 
 Still in the core: `top`, a live resource monitor.
 
@@ -1412,11 +1425,11 @@ ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect
 
 ## Commands that come from adapters
 
-On Linux, [build, import and enable the optional adapter](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) before using its commands. The CLI names the adapter when a command is unavailable. See [Provided by adapters](https://oxidepm.com/docs/commands/overview/#provided-by-adapters).
+On Linux, run `oxidepm adapter import --bundled <name> --enable` before using an adapter's commands. Review the grant and [confirm any requested permissions](https://oxidepm.com/docs/adapters/import-and-enable/#enable). See [Provided by adapters](https://oxidepm.com/docs/commands/overview/#provided-by-adapters) for adapter names.
 
 ## init and check
 
-Import the `init` and `check` adapters to generate a project config and check project readiness.
+Use `oxidepm adapter import --bundled init --enable` to add config generation and `oxidepm adapter import --bundled check --enable` to add project checks.
 
 ```sh
 oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
@@ -1430,7 +1443,7 @@ oxidepm --dry-run init ./my-project
 
 ## git-start
 
-The `git-start` adapter prepares a Git checkout in its own state directory and starts it. Use `--offline` to reuse a local checkout or `--no-start` to prepare it without launching. `--install` opts into Node dependency installation. Add `--allow-scripts` to allow dependency lifecycle scripts.
+Run `oxidepm adapter import --bundled git-start --enable` to add the `git-start` command. The adapter prepares a Git checkout in its own state directory and starts it. Use `--offline` to reuse a local checkout or `--no-start` to prepare it without launching. `--install` opts into Node dependency installation. Add `--allow-scripts` to allow dependency lifecycle scripts.
 
 ```sh
 oxidepm git-start https://github.com/user/repo --branch main
@@ -1439,7 +1452,7 @@ oxidepm --dry-run git-start https://github.com/user/repo
 
 ## deploy and diff
 
-The `deploy` adapter provides both commands.
+Run `oxidepm adapter import --bundled deploy --enable` to add both commands.
 
 ```sh
 oxidepm deploy user@myserver --cwd /srv/myapp --post "npm run build" --restart api
@@ -1451,7 +1464,13 @@ oxidepm diff user@myserver --cwd /srv/myapp --count 10
 
 ## File watching
 
-Import and enable the `watch` service on Linux. Add this table to each app you want to restart when its files change:
+On Linux, install the `watch` service from the release bundle.
+
+```sh
+oxidepm adapter import --bundled watch --enable
+```
+
+Review its permissions. If approval is deferred, run `oxidepm adapter enable watch --accept <fingerprint>` with the fingerprint printed by the import. Add this table to each app you want to restart when its files change.
 
 ```toml
 [apps.adapters.watch]
@@ -1464,7 +1483,7 @@ Paths are relative to the app's working directory. If `paths` is omitted, the ad
 
 ## web
 
-Build and import the `ui-web` adapter before using these commands.
+Run `oxidepm adapter import --bundled ui-web --enable` before using these commands.
 
 ```sh
 oxidepm web              # where it listens, and its access key (shown once)
@@ -1491,7 +1510,7 @@ With the default `lifecycle` grant, it shows every app and can restart or stop t
 
 ## monit and top
 
-`oxidepm monit` is the terminal dashboard from the `ui-tui` adapter. It shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
+Run `oxidepm adapter import --bundled ui-tui --enable` to add `oxidepm monit`. The terminal dashboard shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
 
 ```sh
 oxidepm monit
@@ -1540,11 +1559,11 @@ An adapter never starts, stops or changes an app on its own authority. When it a
 
 ## Which adapters exist
 
-The release bundles `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`. On Linux, build an archive for any of the optional adapters: `check`, `init`, `git-start`, `deploy`, `watch`, `ui-web`, `ui-tui`, [notifier](https://oxidepm.com/docs/adapters/notifier/) and [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/). See the [adapter list](https://oxidepm.com/adapters/) for what each one provides and the permissions it asks for. AI adapters are unavailable in this release.
+The release bundles all 13 adapters. On Linux, the install script enables the four runtimes (`runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`). To add `check`, `init`, `git-start`, `deploy`, `watch`, `ui-web`, `ui-tui`, [notifier](https://oxidepm.com/docs/adapters/notifier/) or [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/), run `oxidepm adapter import --bundled <name> --enable`. See the [adapter list](https://oxidepm.com/adapters/) for what each one provides and the permissions it asks for. AI adapters are unavailable in this release.
 
 ## Where they come from
 
-Import an archive by SHA-256 from a file or HTTPS URL, from the release bundle with `oxidepm adapter import --bundled`, or by name with `oxidepm adapter import <name>` when a signed index is configured. This release ships without a configured network catalog. See [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/).
+If the adapter is installed but still disabled after you review its permissions, run the printed `oxidepm adapter enable <name> --accept <fingerprint>` command. For a self-built archive, [import the file by SHA-256](https://oxidepm.com/docs/adapters/import-and-enable/#import-a-self-built-adapter). Import by name with `oxidepm adapter import <name>` requires a configured signed index. This release ships without a network catalog.
 
 ---
 
@@ -1554,7 +1573,7 @@ Install an adapter from an archive you pin, read what it asks for, and enable it
 
 Source: https://oxidepm.com/docs/adapters/import-and-enable/
 
-On Linux, `adapter import` verifies and installs an adapter. `adapter enable` asks you to accept its permissions. Use `import --enable` to do both in one command. Services start when enabled, and tools start when called.
+On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it also asks you to approve the grant. Services start when enabled, and tools start when called.
 
 ## List
 
@@ -1569,80 +1588,78 @@ Error: no index is configured in this build. Import by a pinned hash (`oxidepm a
 
 `list` shows the installed adapters. `list --available` and `search` require a configured signed index. This release ships without a network catalog.
 
-## Import
+## Import from the release
 
-An archive is a gzip tarball with `manifest.json` and the executable the manifest names in `exec`, side by side. Import it from a file or an https URL, and pin it with its SHA-256:
+The release ships all 13 adapters under `share/oxidepm/adapters`. On Linux, run `oxidepm adapter import --bundled <name> --enable` for any adapter you want to use. This command adds file watching.
 
 ```sh
-oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter import --bundled watch --enable
 ```
 
-Without `--sha256` nothing is installed: the command prints the archive's hash and asks you to run it again with `--sha256` if you trust it. On a terminal, a pinned import asks you to type the first 12 digits of the hash when it is not given.
+Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against `SHA256SUMS`. The installer runs `oxidepm adapter import --bundled --tag runtime --enable --yes` to enable only the four runtime adapters. To select groups, use `--tag dev` for `watch`, `check` and `init`, `--tag deploy` for `git-start` and `deploy`, `--tag ui` for `ui-web` and `ui-tui`, `--tag notifier` for `notifier`, or `--tag exporter` for `exporter-prometheus`.
 
-For pinned archives that use a reserved name, add `--allow-reserved-name`. That applies to `notifier`, `ui-web`, `ui-tui`, `check`, `init`, `git-start`, `deploy`, `watch` and the runtime adapters. Import `exporter-prometheus` with the digest alone.
+Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit `--enable`. The adapter stays disabled until you approve the grant.
 
-`oxidepm adapter import <name>` looks up an adapter in a configured signed index. When the release bundle is installed, `oxidepm adapter import --bundled --tag runtime --enable --yes` verifies its `SHA256SUMS` and imports and enables the bundled runtimes offline. The install script runs this command on Linux.
-
-*Terminal output of oxidepm adapter import*
+*Terminal output of oxidepm adapter import --bundled watch*
 
 ```text
-$ oxidepm adapter import notifier.tar.gz --sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203 --allow-reserved-name
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    notifier.tar.gz (pinned by you)
-Trust     pinned by you: sha256 fa85a17e321cfbb84e5af87835ea399def9cd0d6670df6f8f16746d0149cb203. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+$ oxidepm adapter import --bundled watch
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundle /usr/local/share/oxidepm/adapters
+Trust     bundled with this release. Archive sha256 cefdc9f384848afb3007d9e8eae8385b2f2f725d8d7cc154a1485c44a75c2222 verified. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      oxidepm adapter enable watch --accept 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
-✓ Installed notifier 0.1.0 (disabled, nothing runs). Enable it with: oxidepm adapter enable notifier --accept 33926d31eb91080f
+  memory    64 MiB.
+✓ Installed watch 0.4.0-rc.3 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept 80359c388911f8f1
 ```
 
-Read this before you go on. `Needs` is what the adapter asks for, and `Again, what it needs` repeats it at the end so nothing in the description can push it out of sight. `[BROAD]` marks power that deserves a second look. `Enforced on this machine` says what the operating system can hold the adapter to here. `Trust` says where the archive came from: a pinned archive says `pinned by you` and `No signature`. Nothing runs yet.
+`Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
+
+`oxidepm adapter import <name>` uses a configured signed index. This release ships without a network catalog.
 
 ## Enable
 
 ```sh
-oxidepm adapter enable notifier
+oxidepm adapter enable <name> --accept <fingerprint>
 ```
 
-`enable` shows the permissions again and asks for consent. On a terminal you answer the question. In a script, pass `--accept <fingerprint>` with the fingerprint that `import` and `info` print, which ties your consent to exactly that release. `--yes` accepts without asking, only for an adapter that needs nothing broad.
+For broader grants such as `watch`, run the printed command after reviewing the permissions if approval was deferred or the import ran without an interactive terminal. Get the fingerprint from `adapter import` or `adapter info`. It ties your consent to that adapter release. `--yes` accepts without asking only for pure adapters such as the four runtimes.
 
-*Terminal output of oxidepm adapter enable: the consent screen*
+On a terminal, `oxidepm adapter enable watch` shows the permissions and asks for consent again.
+
+*Terminal output of oxidepm adapter enable watch*
 
 ```text
-$ oxidepm adapter enable notifier
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    pinned:notifier.tar.gz installed 2026-10-31T04:06:41Z
-Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+$ oxidepm adapter enable watch
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundled installed 2026-11-25T01:48:58Z
+Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      oxidepm adapter enable notifier --accept 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      oxidepm adapter enable watch --accept 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
-Enable notifier with this grant? [y/N] 
+  memory    64 MiB.
+Enable watch with this grant? [y/N]
 ```
 
 If you answer no, nothing is changed:
@@ -1650,7 +1667,7 @@ If you answer no, nothing is changed:
 *Terminal output when the answer is no*
 
 ```text
-Enable notifier with this grant? [y/N] no
+Enable watch with this grant? [y/N] no
 Error: Not enabled
 ```
 
@@ -1659,16 +1676,16 @@ If you answer yes:
 *Terminal output when the answer is yes*
 
 ```text
-Enable notifier with this grant? [y/N] yes
-✓ Enabled notifier 0.1.0 (level read, scope all)
-  Enforced by the OS on this machine: fs_write, fs_read, spawn
+Enable watch with this grant? [y/N] yes
+✓ Enabled watch 0.4.0-rc.3 (level lifecycle, scope opted-in)
+  Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
 You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. On Linux, `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
-## Build an optional adapter
+## Import a self-built adapter
 
-Build an archive from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters). Keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For the `watch` adapter on x86_64 Linux, run these commands in the adapters checkout:
+An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For example, build and package `watch` for x86_64 Linux from the adapters checkout.
 
 ```sh
 cargo build --release -p oxidepm-adapter-watch -p oxidepm-adapter-bundle
@@ -1677,48 +1694,46 @@ target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   watch:target/release/oxidepm-watch
 ```
 
-Start the daemon with `oxidepm resurrect` if it is down. Use the archive's filename and its digest from `target/watch-bundle/SHA256SUMS`:
+Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0-rc.3 sources.
 
 ```sh
-oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.1.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.3.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
-For the other optional adapters, use their directory, executable and digest. The catalog URL is required by the bundle builder. A local pinned import reads the archive directly.
+The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
 
 ## Look at it, and manage it
 
-*Terminal output of oxidepm adapter info*
+*Terminal output of oxidepm adapter info watch*
 
 ```text
-$ oxidepm adapter info notifier
-notifier 0.1.0 (service)  Telegram, Discord, Slack and webhook notifications.
+$ oxidepm adapter info watch
+watch 0.4.0-rc.3 (service)  Restart an app when its files change.
 State:    ready
-Source:   pinned:notifier.tar.gz
-Trust:    pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Installed 2026-10-31T04:06:41Z
-Grant:    level read, scope all
-Enforced: fs_write, fs_read, spawn
+Source:   bundled
+Trust:    bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Installed 2026-11-25T01:48:58Z
+Grant:    level lifecycle, scope opted-in
+Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   notifier 0.1.0 (service)   Telegram, Discord, Slack and webhook notifications.
-          Sends a message to the channels you configure when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails its health check. It reads only those events and its own config.toml, and it never touches your apps.
-Source    pinned:notifier.tar.gz
-Trust     pinned by you. Program sha256 d57290e957af80897bea384066311d07cf4bfb1d9da4e314760e35503b85fe77. No signature
-Needs     host      read only (status). Events: lifecycle.
-          network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-          files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+          Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
+Source    bundled
+Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+          network   none.                                                                   Enforced on this machine: yes (seccomp)
+          files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-          environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-          memory    128 MiB.
-Adds      commands: notify (caution, writes)
-Next      fingerprint 33926d31eb91080f
+          memory    64 MiB.
+Adds      no commands
+Next      fingerprint 80359c388911f8f1
 Again, what it needs:
-  host      read only (status). Events: lifecycle.
-  network   outbound. It says it uses api.telegram.org, discord.com, hooks.slack.com. Not enforceable per host.  [BROAD]  Enforced on this machine: yes (seccomp)
-  files     writes only its own directory, reads /etc/resolv.conf, /etc/hosts, /etc/nsswitch.conf, /etc/host.conf, /etc/gai.conf.  Enforced on this machine: yes (Landlock 10)
+  host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
+  network   none.                                                                   Enforced on this machine: yes (seccomp)
+  files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
-  environment receives OXIDEPM_TELEGRAM_TOKEN from your environment.  [BROAD]
-  memory    128 MiB.
+  memory    64 MiB.
 ```
 
 | Command | Meaning |
@@ -1831,13 +1846,13 @@ The notifier is a service adapter. It listens to the lifecycle events of the dae
 
 ## Install it
 
-On Linux, [build the notifier archive](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) and use its filename and digest from `SHA256SUMS`. `notifier` is a reserved name.
+On Linux, import the notifier from the release bundle.
 
 ```sh
-oxidepm adapter import ./notifier-0.4.0-rc.1.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import --bundled notifier --enable
 ```
 
-See [Import and enable](https://oxidepm.com/docs/adapters/import-and-enable/). The manifest asks for read access to status and lifecycle events, outbound network (it names `api.telegram.org`, `discord.com` and `hooks.slack.com`), write access only to its own state directory, and the environment variable `OXIDEPM_TELEGRAM_TOKEN`.
+Review the permissions at the prompt. If approval is deferred, use the printed `oxidepm adapter enable notifier --accept <fingerprint>` command. The manifest asks for read access to status and lifecycle events, outbound network (it names `api.telegram.org`, `discord.com` and `hooks.slack.com`), write access only to its own state directory, and the environment variable `OXIDEPM_TELEGRAM_TOKEN`. For a self-built archive, see [Import a self-built adapter](https://oxidepm.com/docs/adapters/import-and-enable/#import-a-self-built-adapter).
 
 ## Events
 
@@ -1921,13 +1936,13 @@ The exporter is a service adapter with read access only. On each scrape it asks 
 
 ## Install it
 
-On Linux, [build the exporter archive](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) and use its filename and digest from `SHA256SUMS`.
+On Linux, import the exporter from the release bundle.
 
 ```sh
-oxidepm adapter import ./exporter-prometheus-0.4.0-rc.1.tar.gz --sha256 <digest> --enable
+oxidepm adapter import --bundled exporter-prometheus --enable
 ```
 
-The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host; the consent screen marks that last one `[BROAD]`. It serves the Prometheus text format on `/metrics`, and nothing else.
+Review the permissions at the prompt. If approval is deferred, use the printed `oxidepm adapter enable exporter-prometheus --accept <fingerprint>` command. The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host. The consent screen marks outbound network `[BROAD]`. The exporter serves the Prometheus text format on `/metrics`. For a self-built archive, see [Import a self-built adapter](https://oxidepm.com/docs/adapters/import-and-enable/#import-a-self-built-adapter).
 
 *prometheus.yml*
 
@@ -2409,8 +2424,8 @@ The daemon speaks first. The adapter stays silent until it receives `initialize`
 *initialize and its reply*
 
 ```text
-daemon:  {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"1.2.3"},"adapter":{"name":"notifier","version":"0.1.0"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
-adapter: {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.1.0"}}
+daemon:  {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0-rc.3"},"adapter":{"name":"notifier","version":"0.4.0-rc.3"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+adapter: {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.4.0-rc.3"}}
 daemon:  {"jsonrpc":"2.0","method":"initialized","params":{}}
 ```
 
@@ -2653,7 +2668,7 @@ notifier.tar.gz
 {
   "schema": 1,
   "name": "exporter-prometheus",
-  "version": "0.4.0-rc.1",
+  "version": "0.4.0-rc.3",
   "kind": "service",
   "summary": "Prometheus metrics for the apps OxidePM manages.",
   "description": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.",
@@ -2858,19 +2873,19 @@ Next: [OxidePM and PM2](https://oxidepm.com/docs/compare/oxidepm-and-pm2/).
 
 # Adapters
 
-On Linux, import the bundled runtimes or build and import an archive for an optional adapter. Details: https://oxidepm.com/adapters/
+Details: https://oxidepm.com/adapters/
 
-- `notifier` (built): Sends a message to Telegram, Discord, Slack or a signed webhook when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails a health check. Adds the notify command.
-- `exporter-prometheus` (built): Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps, and answers 503 with oxidepm_up 0 when it cannot.
-- `ui-web` (built): Serves a REST API and a WebSocket on 127.0.0.1:9615 by default. Shows apps and can stop and restart opted-in apps. API requests require an access key except for /api/health. Adds the web command.
-- `ui-tui` (built): The terminal dashboard: the apps with state, CPU and memory, the selected app in detail and its log. Stopping or restarting an app asks for y or n first. Runs only while the dashboard is open. Adds the monit command.
-- `runtime-node` (built): Runs Node.js apps: the node, npm, pnpm and yarn runtimes. It tells the daemon what to run and the daemon runs it.
-- `runtime-python` (built): Runs Python apps, in the project's virtualenv when it has one. Provides the python runtime.
-- `runtime-go` (built): Runs Go apps with go run. Provides the go runtime.
-- `runtime-rust` (built): Builds and runs Rust apps: a single file with rustc, a project with cargo. Provides the rust and cargo runtimes.
-- `check` (built): Check project readiness with oxidepm check. Use start --check to opt in to preflight for a single target.
-- `init` (built): Scan a project and generate oxidepm.config.toml with oxidepm init.
-- `git-start` (built): Clone or update a Git checkout and start it with oxidepm git-start.
-- `deploy` (built): Pull code and restart services with oxidepm deploy. Inspect the remote checkout with oxidepm diff.
-- `watch` (built): Restart opted-in apps when files change under the paths set in apps.adapters.watch.
+- `notifier` (bundled): Sends a message to Telegram, Discord, Slack or a signed webhook when an app starts, stops, restarts, crashes, loops, goes over its memory limit or fails a health check. Adds the notify command.
+- `exporter-prometheus` (bundled): Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps, and answers 503 with oxidepm_up 0 when it cannot.
+- `ui-web` (bundled): Serves a REST API and a WebSocket on 127.0.0.1:9615 by default. Shows apps and can stop and restart opted-in apps. API requests require an access key except for /api/health. Adds the web command.
+- `ui-tui` (bundled): The terminal dashboard: the apps with state, CPU and memory, the selected app in detail and its log. Stopping or restarting an app asks for y or n first. Runs only while the dashboard is open. Adds the monit command.
+- `runtime-node` (bundled): Runs Node.js apps: the node, npm, pnpm and yarn runtimes. It tells the daemon what to run and the daemon runs it.
+- `runtime-python` (bundled): Runs Python apps, in the project's virtualenv when it has one. Provides the python runtime.
+- `runtime-go` (bundled): Runs Go apps with go run. Provides the go runtime.
+- `runtime-rust` (bundled): Builds and runs Rust apps: a single file with rustc, a project with cargo. Provides the rust and cargo runtimes.
+- `check` (bundled): Check project readiness with oxidepm check. Use start --check to opt in to preflight for a single target.
+- `init` (bundled): Scan a project and generate oxidepm.config.toml with oxidepm init.
+- `git-start` (bundled): Clone or update a Git checkout and start it with oxidepm git-start.
+- `deploy` (bundled): Pull code and restart services with oxidepm deploy. Inspect the remote checkout with oxidepm diff.
+- `watch` (bundled): Restart opted-in apps when files change under the paths set in apps.adapters.watch.
 - `AI adapters` (planned): AI adapters are unavailable in this release.

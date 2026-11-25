@@ -2,13 +2,13 @@ The exporter is a service adapter with read access only. On each scrape it asks 
 
 ## Install it
 
-On Linux, [build the exporter archive](/docs/adapters/import-and-enable/#build-an-optional-adapter) and use its filename and digest from `SHA256SUMS`.
+On Linux, import the exporter from the release bundle.
 
 ```sh
-oxidepm adapter import ./exporter-prometheus-0.4.0-rc.1.tar.gz --sha256 <digest> --enable
+oxidepm adapter import --bundled exporter-prometheus --enable
 ```
 
-The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host; the consent screen marks that last one `[BROAD]`. It serves the Prometheus text format on `/metrics`, and nothing else.
+Review the permissions at the prompt. If approval is deferred, use the printed `oxidepm adapter enable exporter-prometheus --accept <fingerprint>` command. The manifest asks for read access to status, to listen on `127.0.0.1:9616`, to read its own state directory, and for outbound network without naming any host. The consent screen marks outbound network `[BROAD]`. The exporter serves the Prometheus text format on `/metrics`. For a self-built archive, see [Import a self-built adapter](/docs/adapters/import-and-enable/#import-a-self-built-adapter).
 
 ```yaml title="prometheus.yml"
 scrape_configs:

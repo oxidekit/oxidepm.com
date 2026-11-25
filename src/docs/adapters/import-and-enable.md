@@ -1,4 +1,4 @@
-On Linux, `adapter import` verifies and installs an adapter. `adapter enable` asks you to accept its permissions. Use `import --enable` to do both in one command. Services start when enabled, and tools start when called.
+On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it also asks you to approve the grant. Services start when enabled, and tools start when called.
 
 ## List
 
@@ -7,56 +7,58 @@ On Linux, `adapter import` verifies and installs an adapter. `adapter enable` as
 
 `list` shows the installed adapters. `list --available` and `search` require a configured signed index. This release ships without a network catalog.
 
-## Import
+## Import from the release
 
-An archive is a gzip tarball with `manifest.json` and the executable the manifest names in `exec`, side by side. Import it from a file or an https URL, and pin it with its SHA-256:
+The release ships all 13 adapters under `share/oxidepm/adapters`. On Linux, run `oxidepm adapter import --bundled <name> --enable` for any adapter you want to use. This command adds file watching.
 
 ```sh
-oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter import --bundled watch --enable
 ```
 
-Without `--sha256` nothing is installed: the command prints the archive's hash and asks you to run it again with `--sha256` if you trust it. On a terminal, a pinned import asks you to type the first 12 digits of the hash when it is not given.
+Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against `SHA256SUMS`. The installer runs `oxidepm adapter import --bundled --tag runtime --enable --yes` to enable only the four runtime adapters. To select groups, use `--tag dev` for `watch`, `check` and `init`, `--tag deploy` for `git-start` and `deploy`, `--tag ui` for `ui-web` and `ui-tui`, `--tag notifier` for `notifier`, or `--tag exporter` for `exporter-prometheus`.
 
-For pinned archives that use a reserved name, add `--allow-reserved-name`. That applies to `notifier`, `ui-web`, `ui-tui`, `check`, `init`, `git-start`, `deploy`, `watch` and the runtime adapters. Import `exporter-prometheus` with the digest alone.
+Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit `--enable`. The adapter stays disabled until you approve the grant.
 
-`oxidepm adapter import <name>` looks up an adapter in a configured signed index. When the release bundle is installed, `oxidepm adapter import --bundled --tag runtime --enable --yes` verifies its `SHA256SUMS` and imports and enables the bundled runtimes offline. The install script runs this command on Linux.
-
-```term cap="adapter-import" label="Terminal output of oxidepm adapter import"
+```term cap="adapter-import" wrap="yes" label="Terminal output of oxidepm adapter import --bundled watch"
 ```
 
-Read this before you go on. `Needs` is what the adapter asks for, and `Again, what it needs` repeats it at the end so nothing in the description can push it out of sight. `[BROAD]` marks power that deserves a second look. `Enforced on this machine` says what the operating system can hold the adapter to here. `Trust` says where the archive came from: a pinned archive says `pinned by you` and `No signature`. Nothing runs yet.
+`Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
+
+`oxidepm adapter import <name>` uses a configured signed index. This release ships without a network catalog.
 
 ## Enable
 
 ```sh
-oxidepm adapter enable notifier
+oxidepm adapter enable <name> --accept <fingerprint>
 ```
 
-`enable` shows the permissions again and asks for consent. On a terminal you answer the question. In a script, pass `--accept <fingerprint>` with the fingerprint that `import` and `info` print, which ties your consent to exactly that release. `--yes` accepts without asking, only for an adapter that needs nothing broad.
+For broader grants such as `watch`, run the printed command after reviewing the permissions if approval was deferred or the import ran without an interactive terminal. Get the fingerprint from `adapter import` or `adapter info`. It ties your consent to that adapter release. `--yes` accepts without asking only for pure adapters such as the four runtimes.
 
-```term cap="adapter-enable" label="Terminal output of oxidepm adapter enable: the consent screen"
+On a terminal, `oxidepm adapter enable watch` shows the permissions and asks for consent again.
+
+```term cap="adapter-enable" wrap="yes" label="Terminal output of oxidepm adapter enable watch"
 ```
 
 If you answer no, nothing is changed:
 
 ```term label="Terminal output when the answer is no"
-Enable notifier with this grant? [y/N] no
+Enable watch with this grant? [y/N] no
 {ox:Error:} Not enabled
 ```
 
 If you answer yes:
 
 ```term label="Terminal output when the answer is yes"
-Enable notifier with this grant? [y/N] yes
-{hi:✓} Enabled notifier 0.1.0 (level read, scope all)
-  Enforced by the OS on this machine: fs_write, fs_read, spawn
+Enable watch with this grant? [y/N] yes
+{hi:✓} Enabled watch {{release_version}} (level lifecycle, scope opted-in)
+  Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
 You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. On Linux, `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
-## Build an optional adapter
+## Import a self-built adapter
 
-Build an archive from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters). Keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For the `watch` adapter on x86_64 Linux, run these commands in the adapters checkout:
+An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For example, build and package `watch` for x86_64 Linux from the adapters checkout.
 
 ```sh
 cargo build --release -p oxidepm-adapter-watch -p oxidepm-adapter-bundle
@@ -65,17 +67,17 @@ target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   watch:target/release/oxidepm-watch
 ```
 
-Start the daemon with `oxidepm resurrect` if it is down. Use the archive's filename and its digest from `target/watch-bundle/SHA256SUMS`:
+Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the {{release_version}} sources.
 
 ```sh
-oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.1.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import ./target/watch-bundle/watch-{{release_version}}.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
-For the other optional adapters, use their directory, executable and digest. The catalog URL is required by the bundle builder. A local pinned import reads the archive directly.
+The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
 
 ## Look at it, and manage it
 
-```term cap="adapter-info" label="Terminal output of oxidepm adapter info"
+```term cap="adapter-info" wrap="yes" label="Terminal output of oxidepm adapter info watch"
 ```
 
 | Command | Meaning |

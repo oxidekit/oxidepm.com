@@ -10,8 +10,7 @@
    "Make outbound network connections; the manifest names api.telegram.org, discord.com and hooks.slack.com",
    "Write only to its own state directory",
    "Receive OXIDEPM_TELEGRAM_TOKEN from the daemon's environment"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256."
+  ]
  },
  {
   "name": "exporter-prometheus",
@@ -24,8 +23,7 @@
    "Make outbound network connections (no hosts named)",
    "Listen on 127.0.0.1:9616",
    "Read its own state directory, write nothing"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256."
+  ]
  },
  {
   "name": "ui-web",
@@ -39,8 +37,7 @@
    "Make outbound network connections (no hosts named)",
    "Listen on 127.0.0.1:9615",
    "Read and write only its own state directory"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256."
+  ]
  },
  {
   "name": "ui-tui",
@@ -52,8 +49,7 @@
    "Stop and restart apps (lifecycle access, all apps)",
    "No network connections",
    "No file access of its own"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256."
+  ]
  },
  {
   "name": "runtime-node",
@@ -66,8 +62,7 @@
    "No network connections",
    "Read only its own state directory, write nothing",
    "Start no programs of its own: it tells the daemon what to run"
-  ],
-  "cmd": "Bundled under share/oxidepm/adapters. On Linux, the installer enables it with oxidepm adapter import --bundled --tag runtime --enable --yes."
+  ]
  },
  {
   "name": "runtime-python",
@@ -80,8 +75,7 @@
    "No network connections",
    "Read only its own state directory, write nothing",
    "Start no programs of its own: it tells the daemon what to run"
-  ],
-  "cmd": "Bundled under share/oxidepm/adapters. On Linux, the installer enables it with oxidepm adapter import --bundled --tag runtime --enable --yes."
+  ]
  },
  {
   "name": "runtime-go",
@@ -94,8 +88,7 @@
    "No network connections",
    "Read only its own state directory, write nothing",
    "Start no programs of its own: it tells the daemon what to run"
-  ],
-  "cmd": "Bundled under share/oxidepm/adapters. On Linux, the installer enables it with oxidepm adapter import --bundled --tag runtime --enable --yes."
+  ]
  },
  {
   "name": "runtime-rust",
@@ -108,8 +101,7 @@
    "No network connections",
    "Read only its own state directory, write nothing",
    "Start no programs of its own: it tells the daemon what to run"
-  ],
-  "cmd": "Bundled under share/oxidepm/adapters. On Linux, the installer enables it with oxidepm adapter import --bundled --tag runtime --enable --yes."
+  ]
  },
  {
   "name": "check",
@@ -121,8 +113,7 @@
    "Read files and app status",
    "Write within the current working directory and its own state directory",
    "Make outbound network connections and start programs"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256 and --allow-reserved-name."
+  ]
  },
  {
   "name": "init",
@@ -135,8 +126,7 @@
    "Read and write within the current working directory and its own state directory",
    "Require enforcement of its network block",
    "Start no programs"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256 and --allow-reserved-name."
+  ]
  },
  {
   "name": "git-start",
@@ -149,8 +139,7 @@
    "Write only inside its own state directory",
    "Make outbound network connections and start programs",
    "Receive HOME and SSH_AUTH_SOCK from the daemon environment"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256 and --allow-reserved-name."
+  ]
  },
  {
   "name": "deploy",
@@ -163,8 +152,7 @@
    "Make outbound network connections and start ssh",
    "Receive HOME and SSH_AUTH_SOCK and request access to the SSH agent socket",
    "Write no local files"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256 and --allow-reserved-name."
+  ]
  },
  {
   "name": "watch",
@@ -177,8 +165,7 @@
    "Read files without writing",
    "Require enforcement of its network block",
    "Start no programs"
-  ],
-  "cmd": "On Linux, build the archive and import it with its SHA-256 and --allow-reserved-name."
+  ]
  },
  {
   "name": "AI adapters",
@@ -188,7 +175,6 @@
   "head": "Permissions",
   "perms": [
    "To be announced"
-  ],
-  "cmd": ""
+  ]
  }
 ]
