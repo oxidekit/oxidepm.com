@@ -16,7 +16,7 @@ notifier.tar.gz
 {
   "schema": 1,
   "name": "exporter-prometheus",
-  "version": "0.1.0",
+  "version": "0.4.0-rc.1",
   "kind": "service",
   "summary": "Prometheus metrics for the apps OxidePM manages.",
   "description": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.",
@@ -42,7 +42,7 @@ notifier.tar.gz
 schema | number
 : Always `1`.
 name | string
-: 2 to 32 characters: a lowercase letter, then lowercase letters, digits and hyphens. A few names are reserved to every adapter (`core`, `oxidepm`, `oxidepmd`, `all`, `adapter`, `daemon`, `cmd`, `system`, `host`), and the names of the planned official adapters are reserved to adapters signed by an official key.
+: 2 to 32 characters. Start with a lowercase letter and use lowercase letters, digits and hyphens. Names such as `core`, `oxidepm`, `oxidepmd`, `all`, `adapter`, `daemon`, `cmd`, `system` and `host` are reserved. See [Import and enable](/docs/adapters/import-and-enable/) for the rules on official adapter names.
 version | string
 : A semantic version.
 kind | string
@@ -77,12 +77,12 @@ A `service` may list events, and provides no runtimes. A `tool` receives no even
 
 The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. The frames on these pages are the reference.
 
-The source of the two adapters includes a small SDK crate, `oxidepm-adapter-sdk`, that does the main loop of a service in Rust: the handshake, `ping`, events, relayed verbs and `shutdown`. Both adapters use it. That source is not published yet.
+The [adapter sources](https://github.com/oxidekit/oxidepm-adapters) include `oxidepm-adapter-sdk`, a Rust crate that handles the handshake, `ping`, events, relayed verbs and `shutdown`.
 
 ## Try it
 
 ```sh
-oxidepm adapter import ./my-adapter.tar.gz --sha256 <hex> --allow-reserved-name
+oxidepm adapter import ./my-adapter.tar.gz --sha256 <hex>
 oxidepm adapter enable my-adapter
 oxidepm adapter info my-adapter
 ```

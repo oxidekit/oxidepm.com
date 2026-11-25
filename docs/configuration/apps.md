@@ -61,8 +61,6 @@ Every key an app can have in a config file. Times are in the unit the key names:
 - `protected` (boolean, default: false): Read-only for AI actors and other non-human callers. See [Protected apps](/docs/ai-safety/protected-apps/).
 - `ai_control` (boolean, default: false): AI actors may stop, restart and reload the app. They can never start or delete it.
 
-## Accepted, with no effect
+## Adapter options
 
-- `watch` (boolean, default: false): `true` is an error: file watching is not available yet. `false` is accepted.
-- `ignore` (list of strings): Ignore patterns for watching. They have no effect while watching is refused.
-- `adapters` (table): Reserved. It must be empty.
+- `adapters` (table): Per-app adapter options. Each adapter name maps to a table. Use `[apps.adapters.watch]` to opt in to [file watching](/docs/commands/other-commands/#file-watching), or `[apps.adapters.ui-web]` to opt in to [web API lifecycle controls](/docs/commands/other-commands/#web).

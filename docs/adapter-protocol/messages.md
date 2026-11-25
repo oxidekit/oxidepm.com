@@ -26,13 +26,13 @@ daemon:  {"jsonrpc":"2.0","id":4,"method":"runtime.prepare","params":{"spec":{"n
 adapter: {"jsonrpc":"2.0","id":4,"result":{"steps":[{"id":"install","argv":["npm","ci"],"cwd":"/srv/web","env_add":{"CI":"1"},"timeout_secs":600,"capture":"none","capture_max":65536,"optional":true,"description":"Install dependencies"}],"notes":["lockfile found"]}}
 ```
 
-`command.invoke` runs a command that the adapter added to the CLI, such as `oxidepm notify`. The `actor` is the class and label of whoever asked.
+`command.invoke` runs a command that an adapter added to the CLI. The `actor` is the class and label of whoever asked. The `init` adapter supports dry runs and returns the generated configuration.
 
 *command.invoke and its reply*
 
 ```text
-daemon:  {"jsonrpc":"2.0","id":6,"method":"command.invoke","params":{"verb":"check","argv":["--fix"],"cwd":"/srv/web","dry_run":true,"actor":{"class":"human","label":"cli"},"tty":false}}
-adapter: {"jsonrpc":"2.0","id":6,"result":{"exit_code":0,"result":{"problems":0}}}
+daemon:  {"jsonrpc":"2.0","id":6,"method":"command.invoke","params":{"verb":"init","argv":[],"cwd":"/srv/web","dry_run":true,"actor":{"class":"human","label":"cli"},"tty":false}}
+adapter: {"jsonrpc":"2.0","id":6,"result":{"exit_code":0,"result":{"path":"/srv/web/oxidepm.config.toml","config":"[[apps]]\nname = \"web\"\nmode = \"npm\"\nscript = \"start\"\ncwd = \".\"\n","written":false}}}
 ```
 
 ## Daemon to adapter: notifications

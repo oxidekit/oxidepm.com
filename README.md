@@ -46,11 +46,9 @@ chromium --headless --no-sandbox --hide-scrollbars --force-device-scale-factor=1
   --screenshot=og-image.png file://$PWD/src/og-image.html
 ```
 
-## Before it goes live
+## Release updates
 
-The pages describe code that is newer than the latest published release (0.3.2), and the adapters are not published yet. Until a release contains them, the notice in `src/partials/release-note.html` (shown on the home, security and adapters pages), the "Release status" section of `src/docs/getting-started/install.md` and the sentence in the docs index and `LLMS_RELEASE_NOTE` (`scripts/build.py`, shown in `llms.txt`) say so. Remove them when a release has the code, and link the adapters repository and archives when they exist.
-
-The text was checked against a build of the unpublished core. `check`, `init`, `start --git`, `deploy` and `diff` are described as provided by adapters, as the core's table of adapter names says; re-check `src/docs/commands/` and the adapters list when those adapters exist. `install.sh` imports the runtime adapters that a release carries and stays quiet for a release that has none.
+Set `RELEASE_VERSION` in `scripts/build.py` when the site moves to a new release. The build uses it on the home page, in the install and upgrade docs, in structured data and in the plain-text exports. Check the release archives and the adapter installation instructions before rebuilding.
 
 `src/` and `scripts/` are in the served root because Pages serves the repository root. They contain nothing that is not already public in the repository.
 

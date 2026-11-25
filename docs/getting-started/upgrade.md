@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.3.2      # a specific one
+oxidepm update --version 0.4.0-rc.2    # a specific version
 ```
 
 `update` downloads the release archive for your platform and installs it. It is careful about it:
@@ -20,10 +20,12 @@ oxidepm update --version 0.3.2      # a specific one
 
 `oxidepm --dry-run update` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
+The update installs the release's adapter bundle alongside the executables. On Linux, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable the bundled runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+
 ## Keep the CLI and daemon together
 
 The CLI and the daemon must come from the same release. A config file is sent to the daemon as one `StartBatch` request, so `oxidepm start <config file>` needs a daemon of the same release.
 
 ## State from older releases
 
-The daemon's database is `state.db`, schema version 2. An old `oxidepm.db` is not migrated. A `saved.json` written by an older release is refused: run `oxidepm save` again. To go back to a release from before the policy markers, move `state.db` aside or put back `state.db.pre-v2`, the copy the daemon made before it migrated the file. Changes made since are lost.
+When upgrading from 0.3.2, keep a copy of your app configuration and stop the old daemon before installing. The new daemon uses `state.db` and a versioned `saved.json`. Start your apps from their configs and run `oxidepm save` to record the new state.

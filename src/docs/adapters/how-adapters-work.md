@@ -4,7 +4,7 @@ An adapter is a separate executable that `oxidepmd` starts and supervises. It ta
 
 There are two kinds, named by the `kind` field of the manifest:
 
-- **service**: resident. It starts when you enable it, receives events about the apps, and the supervisor restarts it if it dies. The notifier, the Prometheus exporter and the web API (`ui-web`) are services.
+- **service**: resident. It starts when you enable it and the supervisor restarts it if it dies. It can subscribe to app events. The notifier, Prometheus exporter, web API (`ui-web`) and `watch` are services.
 - **tool**: started on demand to answer a request, kept warm for 30 seconds, then asked to exit. The runtime adapters, the terminal dashboard (`ui-tui`) and commands that run once are tools.
 
 ## What an adapter can add
@@ -22,10 +22,8 @@ An adapter never starts, stops or changes an app on its own authority. When it a
 
 ## Which adapters exist
 
-Built and tested: the [notifier](/docs/adapters/notifier/), the [Prometheus exporter](/docs/adapters/exporter-prometheus/), `ui-web` (the web API and WebSocket), `ui-tui` (the terminal dashboard) and the four runtime adapters, `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`. The runtime adapters are carried, signed, by each release. The other built adapters have no published archive yet.
-
-Planned and not built: adapters for project checks and `init` (`check`, `init`), `start --git` (`git-start`), `deploy` and `diff` (`deploy`), file watching (`watch-rebuild`) and, later, adapters for AI agents. The core reserves the names of the official adapters, so only a signed adapter can use one. See the [list](/adapters/).
+The release bundles `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`. On Linux, build an archive for any of the optional adapters: `check`, `init`, `git-start`, `deploy`, `watch`, `ui-web`, `ui-tui`, [notifier](/docs/adapters/notifier/) and [exporter-prometheus](/docs/adapters/exporter-prometheus/). See the [adapter list](/adapters/) for what each one provides and the permissions it asks for. AI adapters are unavailable in this release.
 
 ## Where they come from
 
-An adapter is imported from an archive. You can pin an archive by its SHA-256 (a file or an https URL), take one from the bundle a release carries (`oxidepm adapter import --bundled`), or take one from a signed index. The signing code is in the CLI and the daemon, but there is no index address configured in a build yet, so there is no index to search. See [Import and enable](/docs/adapters/import-and-enable/).
+Import an archive by SHA-256 from a file or HTTPS URL, from the release bundle with `oxidepm adapter import --bundled`, or by name with `oxidepm adapter import <name>` when a signed index is configured. This release ships without a configured network catalog. See [Import and enable](/docs/adapters/import-and-enable/).

@@ -64,11 +64,6 @@
   <h1 class="display display-page" style="max-width:14ch">Security and AI safety</h1>
   <p style="font-size:19px;line-height:1.55;max-width:58ch;margin:24px 0 0" class="muted">OxidePM runs your services, so it matters who can tell it what to do. This page explains what an AI agent or an adapter is allowed to do, what gets recorded, and where the protections stop.</p>
 
-  <div style="max-width:70ch;margin-top:28px"><div class="blueprint note release-note" role="note">
-  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-  <span class="lbl">Not in the latest release (0.3.2)</span>
-  <p>The install command installs <strong>0.3.2</strong>, the latest published release. The agent socket, audit log, dry runs, policy markers and adapters described on this site are not in that release, and the code that has them is not published yet. These pages describe what is coming. <a href="/docs/getting-started/install/#release-status">What 0.3.2 has and does not have</a>.</p>
-</div></div>
 
   <nav class="sec-nav" aria-label="On this page">
     <ol>
@@ -140,7 +135,7 @@ ai_control = true    # AI actors may stop, restart and reload it</code></pre>
         <span class="num">03</span>
         <h2 id="h-prot" class="h-block" style="margin-bottom:16px">Protected apps and dry runs</h2>
         <p class="max-52">Mark an app <code>protected</code> and an AI actor can’t stop, restart or reload it, whatever <code>ai_control</code> says. It can still read status and logs. A person can still do everything. You change the markers of a running app with <code>oxidepm policy set</code>, without a restart.</p>
-        <p class="max-52 muted">Most commands that change something accept <code>--dry-run</code>. The daemon runs the policy as for the real request and answers with a plan: the apps it would reach, in which order, and what it would refuse. It starts, stops and writes nothing. A few commands, such as <code>web</code>, <code>init</code>, <code>env set</code> and <code>check --fix</code>, refuse the flag, and an adapter's own commands may have no rehearsal (<code>E_DRY_RUN_UNSUPPORTED</code>).</p>
+        <p class="max-52 muted">Most commands that change something accept <code>--dry-run</code>. The daemon runs the policy as for the real request and answers with a plan. The <code>init</code>, <code>git-start</code>, <code>deploy</code> and <code>diff</code> commands use their adapters to preview changes through a running daemon. See <a href="/docs/commands/dry-run/">Dry runs</a> for which commands accept the flag.</p>
       </div>
       <figure class="blueprint term">
         <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -187,10 +182,10 @@ ai_control = true    # AI actors may stop, restart and reload it</code></pre>
       <p class="max-60" style="margin:0;align-self:end">Adapters run as separate programs. Four checks stand between an adapter and your server. None of them is enough on its own.</p>
     </div>
     <ol class="checks">
-      <li><span class="n">01</span><h3>Hash check</h3><p>An archive is imported only if its SHA-256 matches the one you give, or the one in a signed index. The program’s hash is recorded, and an adapter whose executable has changed is not started.</p></li>
+      <li><span class="n">01</span><h3>Hash check</h3><p>An archive must match the SHA-256 you provide, the signed index lists or the release bundle records in <code>SHA256SUMS</code>. The daemon checks the executable's recorded hash before starting it.</p></li>
       <li><span class="n">02</span><h3>Consent</h3><p>Enabling an adapter shows what it asks for, and asks. Nothing runs until you approve. An update that asks for more needs a new approval.</p></li>
       <li><span class="n">03</span><h3>A grant</h3><p>What an adapter may ask the daemon to do is limited by the grant you accepted, enforced by the daemon through the same policy, audit log and rate limits as everyone else.</p></li>
-      <li><span class="n">04</span><h3>Sandbox</h3><p>On Linux, an adapter is started under Landlock (files) and seccomp, limited to what its manifest says. Where the kernel cannot enforce something, the consent screen says so.</p></li>
+      <li><span class="n">04</span><h3>Sandbox</h3><p>Linux uses Landlock and seccomp where the kernel supports them. The consent screen shows which restrictions this machine can enforce.</p></li>
     </ol>
     <div class="blueprint two-col">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -206,7 +201,7 @@ ai_control = true    # AI actors may stop, restart and reload it</code></pre>
         <h3 class="h-sub">What it doesn’t do</h3>
         <ul>
           <li>It does not fully contain a hostile adapter. Only install adapters you trust.</li>
-          <li>It is a Linux feature. Adapters are started only on Linux, so on macOS there are no adapters and no sandbox.</li>
+          <li>macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</li>
           <li>It does not block every local socket. Unix sockets such as the session bus, an ssh agent or the display server may stay reachable, and <code>adapter info</code> lists the ones its self-test could connect to. Newer kernels (Landlock ABI 10, shown as <code>restricts unix connect</code> in <code>status --daemon</code>) can restrict connecting to Unix sockets as well.</li>
           <li>It can’t enforce which hosts an adapter connects to. The manifest names them, and the consent screen says “Not enforceable per host”.</li>
           <li>It can’t take back permissions you approved on the consent screen.</li>

@@ -37,12 +37,10 @@ oxidepm start ./server -i 4 --port 3000
 | `--health-check <url or script>` | An http(s) URL or a script. |
 | `--on-start`, `--on-stop`, `--on-restart`, `--on-crash` | Event hooks. |
 | `--protected`, `--ai-control` | The policy markers. |
-| `--git <url>`, `--branch`, `--clone-dir` | Clone a repository and start it. Provided by the `git-start` adapter. |
-| `--setup` | Install dependencies and create `.env` from a template first. Provided by the `check` adapter. |
-| `--no-check` | Skip preflight checks. Not recommended. |
+| `--check` | Run preflight via the `check` adapter before starting a file or directory. Requires the enabled adapter. |
 | `-- <args>` | Arguments passed to the program. |
 
-`--watch` is refused with an error: file watching is not available yet.
+Use [`git-start <url>`](https://oxidepm.com/docs/commands/other-commands/#git-start) to start from Git. Set [`[apps.adapters.watch]`](https://oxidepm.com/docs/commands/other-commands/#file-watching) for file watching. To apply project fixes, run `oxidepm check <target> --fix` separately. Run `oxidepm check` separately before starting a config file, too.
 
 ## stop, restart, reload, delete
 
@@ -65,4 +63,4 @@ $ oxidepm restart web
 ✓ Restarted 1 process(es)
 ```
 
-A `start` of an app that is not at rest is refused with `E_APP_EXISTS` and changes nothing. These commands take [`--dry-run`](https://oxidepm.com/docs/commands/dry-run/), except `start --git` and `start --setup`, which refuse it.
+A `start` of an app that is not at rest is refused with `E_APP_EXISTS` and changes nothing. These commands take [`--dry-run`](https://oxidepm.com/docs/commands/dry-run/), except `start --check`.

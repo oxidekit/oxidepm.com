@@ -8,7 +8,7 @@ This is a runbook for letting an AI assistant manage processes through OxidePM. 
 
 ## Commands by risk
 
-**Safe, read-only:** `status`, `show`, `logs`, `env list`, `describe`, `ping`, `top`, `--version`, and `check` (without `--fix`) where the `check` adapter is installed.
+**Safe, read-only:** `status`, `show`, `logs`, `env list`, `describe`, `ping`, `top` and `--version`.
 
 **Caution:**
 
@@ -19,8 +19,8 @@ This is a runbook for letting an AI assistant manage processes through OxidePM. 
 | `save` | Refuses to replace a non-empty file with an empty list unless `--force`. |
 | `startup` | Generates an autostart script. |
 | `resurrect` | Starts everything the registry says should run. Verify the saved state first. |
-| `check --fix` | Installs dependencies and creates `.env` from a template. |
-| `deploy` | High: pulls code and restarts processes on a remote host. |
+| `check` | The adapter command is caution-tier. `--fix` can install Node dependencies and create `.env`, and `--set-env` can edit `.env`. |
+| `deploy` | Pulls code and restarts processes on a remote host. |
 | `update` | Replaces the installed binaries and stops a running daemon. |
 
 **Dangerous:** `kill` (stops the daemon and every app), `delete`, `flush` (the log contents are lost), `restore`, `policy set`, and `show --reveal` (its output ends up in the conversation).
@@ -37,7 +37,7 @@ Treat `all` as a higher-risk variant of every command that accepts it.
 | A very high `max_restarts` | A crash loop can run for a long time. |
 | Editing the config while the app runs | The running process keeps the spec it was started with. Stop it, then start the file again. |
 | `env set` or `env unset` | Both are refused. Use `--env` or the config file. |
-| `--watch` or `watch = true` | Refused. File watching is not available. |
+| `--watch` or `watch = true` | The CLI refuses these legacy settings. Use `[apps.adapters.watch]` to [opt in to file watching](https://oxidepm.com/docs/commands/other-commands/#file-watching). |
 | `pkill` or `kill -9` instead of `oxidepm stop` | OxidePM's state no longer matches the real processes. |
 | `flush` to clean up | It destroys the diagnostic history. Rotation is already automatic. |
 | Restarting an `errored` app without reading its logs | You find the cause first, then restart. |
@@ -59,4 +59,4 @@ Treat `all` as a higher-risk variant of every command that accepts it.
 
 ## The web API
 
-The `ui-web` adapter listens on `127.0.0.1` and needs an access key for every request, loopback included. By default it can only show apps and restart, stop and reload the ones that list it under `adapters`; it cannot create or delete apps or flush logs. Do not give an AI the access key, and do not raise the adapter's level to `admin` for one. The daemon sees every request as the actor `adapter:ui-web`, and the audit log names it.
+The `ui-web` adapter listens on `127.0.0.1` by default and requires an access key for its API, with an exception for `/api/health`. The default grant shows all apps and permits stops and restarts only for apps that list `ui-web` under `adapters`. Keep the access key private. The daemon applies policy to requests from `adapter:ui-web` and records them in the audit log.

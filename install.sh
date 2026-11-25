@@ -34,7 +34,7 @@ detect_platform() {
             ;;
         Darwin)
             case "$ARCH" in
-                x86_64)  error "No build is published for Intel Macs (x86_64 Darwin). Builds exist for Linux (x86_64, aarch64) and macOS on Apple Silicon (arm64)" ;;
+                x86_64)  TARGET="x86_64-apple-darwin" ;;
                 arm64)   TARGET="aarch64-apple-darwin" ;;
                 *)       error "Unsupported architecture: $ARCH" ;;
             esac
@@ -153,8 +153,7 @@ install_adapters() {
 # and enables the ones the release carries; it is printed and run, and a failure does not undo
 # the install.
 import_runtimes() {
-    if [ -z "$BUNDLE_DIR" ]; then
-        # a release without an adapter bundle (0.3.2 and older) has its runtimes built in
+    if [ "$OS" != Linux ] || [ -z "$BUNDLE_DIR" ]; then
         return 0
     fi
     IMPORT="$INSTALL_DIR/oxidepm adapter import --bundled --tag runtime --enable --yes"
@@ -164,7 +163,6 @@ import_runtimes() {
     else
         warn "The runtimes were not imported. Run this when the reason above is dealt with:"
         warn "  $IMPORT"
-        warn "On a machine that cannot enforce the adapters' sandbox the command stops and says so; add --allow-unenforced if you accept that."
     fi
 }
 
@@ -175,7 +173,7 @@ verify() {
         echo ""
         oxidepm --version
         echo ""
-        info "Get started with: oxidepm start ./your-app"
+        info "Get started with: oxidepm start --mode cmd ./your-program"
     else
         warn "Installation complete but oxidepm not in PATH"
         info "Add $INSTALL_DIR to your PATH or run: $INSTALL_DIR/oxidepm"

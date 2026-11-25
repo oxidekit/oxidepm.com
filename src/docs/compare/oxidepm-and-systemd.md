@@ -2,7 +2,7 @@
 
 systemd is the init system and service manager of most Linux distributions. OxidePM is a process manager written in Rust for the apps you run on a server. They are not rivals so much as two layers: `oxidepm startup systemd` writes a systemd unit so that the OxidePM daemon starts at boot, and the daemon then supervises your apps.
 
-If you are looking for a systemd alternative for apps, the honest answer is that systemd is often enough. This page says when it is, when a dedicated process manager is easier, and what really differs. It describes OxidePM as documented on this site, including the code that is not in a published release yet (see the [release status](/docs/getting-started/install/#release-status)).
+systemd alone is often enough to supervise apps. A dedicated process manager can make app operations more convenient.
 
 ## What each is for
 
@@ -24,7 +24,7 @@ If you are looking for a systemd alternative for apps, the honest answer is that
 - **A status table and a config file for a group of apps.** `oxidepm status` shows every app with its state, restarts, CPU, memory and uptime, and one TOML, YAML or JSON file describes the group.
 - **Health checks that act.** An app can be probed over HTTP, over TCP or with a script, and the daemon can restart it when the probe fails. systemd has no HTTP probe of its own.
 - **Backoff, a breaker and a dependency wait that fails closed.** Restart delays that double up to a cap, an app that ends as `errored` instead of looping, and `depends_on` that fails if the dependency never comes up.
-- **The same tool on a developer's Mac.** The process manager is built for macOS too, though it is not tested there.
+- **The same tool on a developer's Mac.** macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 - **Limits for AI agents.** An agent on the agent socket is held to what you allow, `protected` apps cannot be changed by it, and the audit log records what it asked for. See [Safe use with AI agents](/docs/ai-safety/safe-use/).
 - **Rehearsals and JSON.** `--dry-run` on most commands that change something, and `--json` for scripts.
 

@@ -30,12 +30,7 @@ IMAGE = SITE + "/og-image.png"
 IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of four apps that are online."
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
-# The sentence llms.txt carries while the notice in src/partials/release-note.html is shown.
-# Remove it together with that notice when a release has the code (see README.md).
-LLMS_RELEASE_NOTE = (
-    "The pages describe newer code than the latest published release (0.3.2). That code is not "
-    "published yet, so some of what they describe is not in any release."
-)
+RELEASE_VERSION = "0.4.0-rc.2"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",
     "anthropic-ai", "Google-Extended", "PerplexityBot", "Perplexity-User", "CCBot",
@@ -385,6 +380,7 @@ def home_ld(description):
         "description": description,
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Linux",
+        "softwareVersion": RELEASE_VERSION,
         "license": ["https://opensource.org/license/mit", "https://www.apache.org/licenses/LICENSE-2.0"],
         "isBasedOn": {"@id": REPO + "#source"},
         "downloadUrl": REPO + "/releases",
@@ -565,9 +561,9 @@ def md_export(text):
     return "\n".join(out)
 
 
-def doc_markdown(p, canonical):
+def doc_markdown(p, canonical, source):
     return "# %s\n\n%s\n\nSource: %s\n\n%s\n" % (
-        p["title"], absolute_links(p["summary"]), canonical, md_export(read(SRC / "docs" / p["group"]["slug"] / (p["slug"] + ".md"))).strip("\n"))
+        p["title"], absolute_links(p["summary"]), canonical, md_export(source).strip("\n"))
 
 
 def llms_files(nav, flat, adapters):
@@ -578,8 +574,9 @@ def llms_files(nav, flat, adapters):
         "> %s It starts apps, restarts them when they crash, keeps their logs and brings them back "
         "after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and "
         "Prometheus metrics are adapters. Licensed MIT or Apache-2.0." % TAGLINE, "",
-        "OxidePM runs on Linux; macOS is built but untested and Windows is not supported. "
-        "Source: %s. %s" % (REPO, LLMS_RELEASE_NOTE), "",
+        "Latest release: %s. On Linux, the install script imports and enables the four bundled runtime adapters. "
+        "macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. "
+        "Source: %s." % (RELEASE_VERSION, REPO), "",
     ]
     short = ["# OxidePM"] + head[1:]
     lines = list(head)
@@ -604,10 +601,9 @@ def llms_files(nav, flat, adapters):
     full = list(head)
     full += ["This file holds every documentation page of oxidepm.com in Markdown. Each page also has its own `.md` address next to its HTML address.", ""]
     for p in flat:
-        canonical = SITE + p["path"]
-        full += ["---", "", doc_markdown(p, canonical).rstrip("\n"), ""]
+        full += ["---", "", read(ROOT / (p["path"].strip("/") + ".md")).rstrip("\n"), ""]
     full += ["---", "", "# Adapters", "",
-             "Built adapters can be imported and enabled; planned ones are not available. Details: %s/adapters/" % SITE, ""]
+             "On Linux, import the bundled runtimes or build and import an archive for an optional adapter. Details: %s/adapters/" % SITE, ""]
     for a in adapters:
         state = "built" if a["status"] == "available" else "planned"
         full.append("- `%s` (%s): %s" % (a["name"], state, a["summary"]))
@@ -676,7 +672,10 @@ def build_docs(site):
         if not src.exists():
             raise SystemExit("missing docs source: %s" % src)
         toc = []
-        body_html = markdown(read(src), toc)
+        source = read(src)
+        modified = lastmod(src, Path(__file__)) if "{{release_version}}" in source else lastmod(src)
+        source = source.replace("{{release_version}}", RELEASE_VERSION)
+        body_html = markdown(source, toc)
         crumbs = (
             '<nav class="crumbs" aria-label="Breadcrumb"><ol>'
             '<li><a href="/docs/">Docs</a></li><li aria-hidden="true">/</li>'
@@ -704,11 +703,10 @@ def build_docs(site):
         body = docs_shell(nav, p["path"], label, article, toc_html)
         canonical = SITE + p["path"]
         md_path = p["path"].rstrip("/") + ".md"
-        modified = lastmod(src)
         title = p["seo_title"] if "oxidepm" in p["seo_title"].lower() else p["seo_title"] + " | OxidePM"
         crumb_items = [("Home", SITE + "/"), ("Docs", SITE + "/docs/"),
                        (g["title"], SITE + g["pages"][0]["path"]), (p["title"], canonical)]
-        write(md_path.lstrip("/"), doc_markdown(p, canonical))
+        write(md_path.lstrip("/"), doc_markdown(p, canonical, source))
         site.page(
             p["path"], title, p["description"], body, nav="docs",
             og_type="article", alternate=md_path, modified=modified,
@@ -723,13 +721,13 @@ def build_docs(site):
     inner = (
         '<article class="docs-article wide"><h1>Documentation</h1>'
         '<p class="docs-lede">How to install OxidePM, configure apps, use the commands, add adapters and keep AI agents inside limits. '
-        'These pages describe newer code than the latest published release (0.3.2), which the install script installs. That code is not published yet, so the agent socket, the audit log, dry runs, policy markers and adapters are not in any release. <a href="/docs/getting-started/install/#release-status">Release status</a>. Where something is not built at all, the page says so.</p>'
-        '<div class="docs-index">%s</div></article>' % "".join(cards)
+        'These pages cover OxidePM %s.</p>'
+        '<div class="docs-index">%s</div></article>' % (RELEASE_VERSION, "".join(cards))
     )
     body = docs_shell(nav, "", "Documentation", inner, "")
     site.page("/docs/", "OxidePM documentation: install, config, commands, adapters",
               "Documentation for OxidePM, a process manager written in Rust: install, configuration, commands, adapters, comparisons with PM2 and systemd, and AI safety.",
-              body, nav="docs", modified=lastmod(SRC / "docs" / "nav.json"),
+              body, nav="docs", modified=lastmod(SRC / "docs" / "nav.json", Path(__file__)),
               jsonld=[breadcrumb_ld([("Home", SITE + "/"), ("Docs", SITE + "/docs/")])])
     return flat
 
@@ -763,7 +761,7 @@ def main():
         "count_available": str(counts["available"]),
         "count_later": str(counts["later"]),
         "count_text": "%d adapters" % counts["all"],
-        "release_note": read(SRC / "partials" / "release-note.html").strip(),
+        "release_version": RELEASE_VERSION,
     }
 
     site = Site()
@@ -773,6 +771,7 @@ def main():
         path = meta["path"]
         sources = [page_file] + ([SRC / "adapters.json"] if path in ("/", "/adapters/") else [])
         if path == "/":
+            sources.append(Path(__file__))
             ld = home_ld(meta["description"])
         elif meta.get("robots") == "noindex":
             ld = []

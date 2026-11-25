@@ -8,8 +8,6 @@ path: /
   <h1 id="hero-title" class="display display-hero">OxidePM is a process manager written in Rust.</h1>
   <p class="lede">OxidePM is a process manager written in Rust, for Linux servers. It keeps your apps running: it starts them, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, under the MIT or Apache-2.0 licence, and it has limits for letting AI agents work with it. <a href="/docs/compare/oxidepm-and-pm2/">Compared with PM2</a> and <a href="/docs/compare/oxidepm-and-systemd/">with systemd</a>.</p>
 
-  <div style="max-width:70ch;margin-top:28px">{{release_note}}</div>
-
   <div class="cta-row">
     <div class="blueprint install">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -25,12 +23,12 @@ path: /
       Read the docs first
     </a>
   </div>
-  <p class="small-note">Want to read the script before you run it? <a href="/install.sh">View install.sh</a>. It installs the latest published release, 0.3.2.</p>
+  <p class="small-note"><a href="/install.sh">Read the install script</a>. It installs {{release_version}} and enables the bundled runtimes on Linux.</p>
 
 
   <dl class="platforms">
     <div><dt>Linux</dt><dd>the main platform</dd></div>
-    <div><dt>macOS</dt><dd>process manager only, untested; no adapters or sandbox</dd></div>
+    <div><dt>macOS</dt><dd>built-in <code>cmd</code> runtime</dd></div>
     <div><dt>Windows</dt><dd>not supported</dd></div>
   </dl>
 
@@ -53,7 +51,7 @@ path: /
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">Notifications, Prometheus metrics, the web API, the terminal dashboard and the Node.js, Python, Go and Rust runtimes are adapters, not part of the core. The core runs one runtime itself, <code>cmd</code>, which runs any program. Project checks, <code>init</code>, <code>start --git</code> and <code>deploy</code> are provided by adapters too, and those adapters are planned.</p>
+      <p class="muted">On Linux, the installer enables the bundled Node.js, Python, Go and Rust runtimes. Add optional adapters for project checks, config generation, starting from Git, SSH deployments, file watching, notifications, Prometheus metrics, the web API and the terminal dashboard. The built-in <code>cmd</code> runtime runs any executable.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -131,9 +129,9 @@ path: /
     </div>
     <dl class="facts">
       <div><dt>Windows</dt><dd>Not supported.</dd></div>
-      <div><dt>macOS</dt><dd>The process manager is built for it but not tested there. Adapters, the sandbox and recovery of orphaned apps are Linux only.</dd></div>
+      <div><dt>macOS</dt><dd>macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</dd></div>
       <div><dt>Reload</dt><dd>There is no zero-downtime reload. A reload is a restart.</dd></div>
-      <div><dt>File watching</dt><dd>Not available yet. <code>--watch</code> is refused.</dd></div>
+      <div><dt>File watching</dt><dd>The <a href="/docs/commands/other-commands/#file-watching">watch adapter</a> restarts opted-in apps when their files change.</dd></div>
       <div><dt>Sandbox</dt><dd>It limits the damage a buggy adapter can do. It does not fully contain a hostile one. That is why every adapter is hash-checked and shows what it asks for before you enable it. <a href="/security/#adapters">Details</a>.</dd></div>
     </dl>
   </div>
@@ -167,7 +165,7 @@ path: /
     </figure>
   </div>
   <noscript><style>[data-panel][hidden]{display:block!important}</style></noscript>
-  <p class="term-ink">Example output from a local build of the adapter. The hashes are those of that build, and the archive is not published yet.</p>
+  <p class="term-ink">Example output from a local build of the adapter. Use the SHA-256 from the archive you build.</p>
 
   <div class="lists">
     <div>

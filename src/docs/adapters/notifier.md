@@ -2,12 +2,10 @@ The notifier is a service adapter. It listens to the lifecycle events of the dae
 
 ## Install it
 
-The archive is not published yet. `--allow-reserved-name` is needed because the core reserves the name `notifier`.
-
+On Linux, [build the notifier archive](/docs/adapters/import-and-enable/#build-an-optional-adapter) and use its filename and digest from `SHA256SUMS`. `notifier` is a reserved name.
 
 ```sh
-oxidepm adapter import notifier.tar.gz --sha256 <hex> --allow-reserved-name
-oxidepm adapter enable notifier
+oxidepm adapter import ./notifier-0.4.0-rc.1.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
 See [Import and enable](/docs/adapters/import-and-enable/). The manifest asks for read access to status and lifecycle events, outbound network (it names `api.telegram.org`, `discord.com` and `hooks.slack.com`), write access only to its own state directory, and the environment variable `OXIDEPM_TELEGRAM_TOKEN`.

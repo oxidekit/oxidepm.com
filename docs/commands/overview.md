@@ -9,6 +9,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 | Command | What it does |
 |---|---|
 | `start <target>` | Start a process, or every app of a config file (sent as one batch). |
+| `start <target> --check` | Run preflight using the `check` adapter before starting a single file or project. |
 | `stop <selector>` | Stop apps. |
 | `restart <selector>` | Hard restart apps. Also starts an app that is at rest. |
 | `reload <selector>` | The same as `restart`. There is no zero-downtime reload. |
@@ -32,18 +33,19 @@ Source: https://oxidepm.com/docs/commands/overview/
 
 ## Provided by adapters
 
-These commands are not in the core. An adapter provides each one, and until you import and enable it, the command is not there. The core knows only the names.
+On Linux, [import and enable the adapter](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter) to use its commands.
 
 | Command | Adapter | What it is |
 |---|---|---|
-| `notify status\|test\|events\|severity\|telegram\|remove` | [notifier](https://oxidepm.com/docs/adapters/notifier/) | Notifications to Telegram, Discord, Slack and webhooks. |
-| `web [status\|new-key]` | `ui-web` | The web API and its WebSocket. See [web](https://oxidepm.com/docs/commands/other-commands/#web). |
+| `notify` | [notifier](https://oxidepm.com/docs/adapters/notifier/#the-notify-command) | Show, test and configure notifications to Telegram, Discord, Slack and webhooks. |
+| `web`, `web status`, `web new-key` | `ui-web` | The web API and its WebSocket. See [web](https://oxidepm.com/docs/commands/other-commands/#web). |
 | `monit` | `ui-tui` | The terminal dashboard, a session command that runs on your terminal. See [monit](https://oxidepm.com/docs/commands/other-commands/#monit-and-top). |
-| `check`, `init`, `start --setup` | `check`, `init` | Project checks and a starter config file. Planned adapters. |
-| `start --git` | `git-start` | Clone a repository and start it. A planned adapter. |
-| `deploy`, `diff` | `deploy` | Deploy over SSH and show the remote changes. A planned adapter. |
+| `check [target]` | `check` | Check project readiness. |
+| `init [dir]` | `init` | Generate a starter config file. |
+| `git-start <url>` | `git-start` | Clone or update a repository and start it. |
+| `deploy <host>`, `diff <host>` | `deploy` | Deploy over SSH and inspect the remote checkout. |
 
-The Prometheus `/metrics` endpoint comes from the [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/) adapter.
+The [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/) service serves `/metrics`. The [`watch` service](https://oxidepm.com/docs/commands/other-commands/#file-watching) restarts opted-in apps when files change.
 
 When an adapter is not installed, the command is refused with exit code 2 and the message names the adapter:
 
@@ -61,7 +63,7 @@ For more information, try '--help'.
 Install it with: oxidepm adapter import notifier   (see: oxidepm adapter list --available)
 ```
 
-If the adapter is installed but switched off, the message says so and points to `oxidepm adapter enable <name>`. [How adapters work](https://oxidepm.com/docs/adapters/how-adapters-work/).
+The import hint uses the signed-index form. This release has no configured network catalog, so use the [pinned archive instructions](https://oxidepm.com/docs/adapters/import-and-enable/#build-an-optional-adapter).
 
 ## Runtimes
 
@@ -74,7 +76,7 @@ The core runs one runtime itself: `cmd`, which runs any program with its argumen
 | `go` | `runtime-go` |
 | `rust`, `cargo` | `runtime-rust` |
 
-The install script, the packages and the release archives put the signed adapters next to the programs and import them with `oxidepm adapter import --bundled --tag runtime --enable --yes`. A build from source has none until you import them from a release. Starting an app whose runtime is missing fails and creates nothing:
+On Linux, the install script runs `oxidepm adapter import --bundled --tag runtime --enable --yes` after installing the release bundle. See [Runtimes](https://oxidepm.com/docs/getting-started/install/#runtimes) for manual installs. Starting an app whose runtime is missing fails and creates nothing:
 
 *Terminal output of oxidepm start when the runtime adapter is not enabled*
 

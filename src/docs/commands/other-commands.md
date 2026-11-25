@@ -22,46 +22,68 @@ ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect
 
 ## Commands that come from adapters
 
-The commands below are not in the core. Each one is provided by an adapter you import and enable, and the core only knows the name. Without the adapter, the command is refused with exit code 2 and a message such as `'web' is provided by the adapter 'ui-web', which is not installed.` followed by the `oxidepm adapter import` command to run. See [Provided by adapters](/docs/commands/overview/#provided-by-adapters).
+On Linux, [build, import and enable the optional adapter](/docs/adapters/import-and-enable/#build-an-optional-adapter) before using its commands. The CLI names the adapter when a command is unavailable. See [Provided by adapters](/docs/commands/overview/#provided-by-adapters).
 
 ## init and check
 
-Provided by the `init` and `check` adapters, which are planned and not published yet.
+Import the `init` and `check` adapters to generate a project config and check project readiness.
 
 ```sh
 oxidepm init ./my-project          # scan a directory and write oxidepm.config.toml
 oxidepm check ./my-app             # is the project ready to run?
 oxidepm check ./my-app --fix       # install dependencies, create .env
-oxidepm start ./my-app --setup     # the same, then start
+oxidepm start ./my-app --check     # check before starting one app
+oxidepm --dry-run init ./my-project
 ```
 
-`init` detects Node.js (npm, pnpm, yarn), Cargo, Python and Go projects. `check` looks for `node_modules/` and a lockfile for Node.js, `Cargo.lock` for Cargo, and a `.env` file for all of them (`--fix` copies it from `.env.example`).
+`init` detects Node.js, Cargo, Python and Go projects and preserves existing configs. `check` reports on dependencies, lockfiles, environment files and port availability. With `--strict`, warnings make it fail. `--fix` can install Node dependencies and create `.env` from a template, and `--set-env KEY=VALUE` edits `.env`. Both write options are limited to projects within the current directory.
+
+## git-start
+
+The `git-start` adapter prepares a Git checkout in its own state directory and starts it. Use `--offline` to reuse a local checkout or `--no-start` to prepare it without launching. `--install` opts into Node dependency installation. Add `--allow-scripts` to allow dependency lifecycle scripts.
+
+```sh
+oxidepm git-start https://github.com/user/repo --branch main
+oxidepm --dry-run git-start https://github.com/user/repo
+```
 
 ## deploy and diff
 
-Provided by the `deploy` adapter, which is planned and not published yet. `start --git <url>` is provided by the `git-start` adapter.
+The `deploy` adapter provides both commands.
 
 ```sh
 oxidepm deploy user@myserver --cwd /srv/myapp --post "npm run build" --restart api
-oxidepm deploy user@myserver --cwd /srv/myapp --branch main --dry-run
+oxidepm --dry-run deploy user@myserver --cwd /srv/myapp --branch main
 oxidepm diff user@myserver --cwd /srv/myapp --count 10
 ```
 
-`deploy` pulls code on the remote host over SSH and restarts processes. It needs SSH key authentication: no password prompts. `diff` shows the remote git history since the last deploy. Both are dangerous: an AI actor should never run `deploy` without a person confirming it.
+`deploy` pulls from `origin` on the remote branch, or the branch selected by `--branch`. It runs the optional `--post` command and restarts processes using the remote `oxidepm` executable, which `--remote-bin` can override. A restart failure returns exit status 3. `diff` shows recent commits, working-tree status and a diff summary. Both use noninteractive SSH and require a known-hosts entry. Both support `--dry-run`.
+
+## File watching
+
+Import and enable the `watch` service on Linux. Add this table to each app you want to restart when its files change:
+
+```toml
+[apps.adapters.watch]
+paths = ["src"]
+ignore = ["generated/*"]
+debounce_ms = 200
+```
+
+Paths are relative to the app's working directory. If `paths` is omitted, the adapter watches that directory. Your ignore patterns extend the defaults, which include `.git`, `node_modules` and `target`.
 
 ## web
 
-Provided by the `ui-web` adapter. It is built and tested; its archive is not published yet.
+Build and import the `ui-web` adapter before using these commands.
 
 ```sh
-oxidepm adapter import ui-web --enable
 oxidepm web              # where it listens, and its access key (shown once)
 oxidepm web new-key      # replace the key
 ```
 
-The adapter serves a REST API and a WebSocket on `127.0.0.1:9615`. Every request, loopback included, needs the access key in the `X-API-Key` header. Only `/api/health` needs none. The first start makes a random key in the adapter's `config.toml`, and a browser WebSocket sends the key as a subprotocol, never in the URL. The `Host` header must be the address it is bound to, and `Origin` must be absent or the one set in `config.toml`, so a web page you visit cannot drive the API.
+The adapter serves a REST API and a WebSocket on `127.0.0.1:9615`. API endpoints other than `/api/health` require the `X-API-Key` header, even on loopback. The first start makes a random key in the adapter's `config.toml`. A browser WebSocket can send it through the `oxidepm-key.<key>` subprotocol alongside `oxidepm.v1`. The adapter validates `Host`. For writes and WebSocket upgrades, `Origin` must be absent or match the configured origin.
 
-By default it works on the apps that list `ui-web` under `adapters`, at the `lifecycle` level: it shows every app and can restart, stop and reload the opted-in ones. It cannot create or delete apps or flush logs. There is no TLS: put a reverse proxy in front for anything but a trusted network. The daemon sees each request as the actor `adapter:ui-web`, so its policy and audit log apply.
+With the default `lifecycle` grant, it shows every app and can restart or stop the ones that list `ui-web` under `adapters`. The daemon applies its policy to each request from `adapter:ui-web` and records it in the audit log. Use a TLS reverse proxy when exposing the service outside a trusted network.
 
 | Endpoint | Method | Key | Description |
 |---|---|---|---|
@@ -72,17 +94,16 @@ By default it works on the apps that list `ui-web` under `adapters`, at the `lif
 | `/api/processes/:selector/restart` | POST | Yes | Restart. |
 | `/api/processes/:selector/logs` | GET | Yes | Logs. |
 | `/api/ping` | GET | Yes | Ask the daemon whether it is alive. |
-| `/api/save`, `/api/resurrect` | POST | Yes | Save, and start the saved apps. |
+| `/api/save`, `/api/resurrect` | POST | Yes | Save or start the saved apps. Requires `admin`. |
 | `/ws` | WebSocket | Yes | The daemon's lifecycle events as they happen. |
 
-`POST /api/processes` (start an app) and `DELETE` need the adapter to hold the `admin` level, and answer 403 otherwise. The adapter has no `/metrics`: use the [Prometheus exporter](/docs/adapters/exporter-prometheus/).
+`POST /api/processes` (start an app) and `DELETE` require the `admin` level and return 403 under the default grant. Use the [Prometheus exporter](/docs/adapters/exporter-prometheus/) for `/metrics`.
 
 ## monit and top
 
-`oxidepm monit` is the terminal dashboard of the `ui-tui` adapter: the apps with state, CPU and memory, the selected app in detail and a log viewer. It can stop and restart apps, and asks for `y` or `n` first. It is a session command: the daemon starts the adapter on your terminal for as long as the dashboard is open, and it needs a terminal for input and output. The adapter is built and tested; its archive is not published yet.
+`oxidepm monit` is the terminal dashboard from the `ui-tui` adapter. It shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
 
 ```sh
-oxidepm adapter import ui-tui --enable
 oxidepm monit
 ```
 

@@ -2,7 +2,7 @@
 
 PM2 and OxidePM do the same everyday job: they start your apps, restart them when they crash, keep their logs, show a status table and bring the apps back after a reboot. PM2 is written in JavaScript, runs on Node.js and has been used for a long time, especially for Node.js apps. OxidePM is a process manager written in Rust, for Linux, that is young and smaller on purpose, and it adds limits for letting AI agents work with it.
 
-Neither is the right answer for everyone. This page says what each is for, where PM2 is the better choice, where OxidePM is, and what really differs. It describes OxidePM as documented on this site, including the code that is not in a published release yet (see the [release status](/docs/getting-started/install/#release-status)). For PM2, check [its own documentation](https://pm2.keymetrics.io/docs/usage/quick-start/), because this page is written from OxidePM's side and PM2 changes.
+For details about PM2, see the [PM2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 ## What each is for
 
@@ -12,10 +12,10 @@ Neither is the right answer for everyone. This page says what each is for, where
 ## Where PM2 is the better choice
 
 - **Zero-downtime reload for Node.js.** PM2's cluster mode can reload workers one after another so that the app keeps answering. OxidePM has no zero-downtime reload: `reload` is the same as `restart`.
-- **File watching.** PM2 can restart an app when its files change. In OxidePM file watching is not available: `--watch` is refused. A `watch-rebuild` adapter is planned, not built.
+- **Built-in file watching.** PM2 can restart an app when its files change. OxidePM provides file watching through the [`watch` adapter](/docs/commands/other-commands/#file-watching) on Linux.
 - **Windows.** PM2 runs on Windows. OxidePM does not support Windows.
-- **Age and community.** PM2 has been in use for years, and most questions about it have answers somewhere. OxidePM is new, and its next release is a release candidate.
-- **Deploy and hosted monitoring.** PM2 has its own deploy tooling and an optional hosted monitoring service. OxidePM's deploy commands are provided by an adapter that is planned and not built, and it has no hosted service.
+- **Age and community.** PM2 has been in use for years. OxidePM is new and its current release is a release candidate.
+- **Deploy and hosted monitoring.** PM2 has its own deploy tooling and an optional hosted monitoring service. OxidePM provides SSH deployments through the [`deploy` adapter](/docs/commands/other-commands/#deploy-and-diff).
 - **One shared port for a Node.js cluster.** PM2 cluster mode lets Node.js workers share one port. OxidePM clusters give instance `i` the port `port + i`, so you put a reverse proxy or load balancer in front.
 
 ## Where OxidePM is the better choice
@@ -33,11 +33,11 @@ Neither is the right answer for everyone. This page says what each is for, where
 | | PM2 | OxidePM |
 |---|---|---|
 | Written in | JavaScript, runs on Node.js | Rust, native programs |
-| Platforms | Linux, macOS and Windows | Linux. macOS is built but untested. Not Windows |
+| Platforms | Linux, macOS and Windows | Linux. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. |
 | Languages of the apps | Node.js first, other interpreters by script | Any program with `cmd`. Node.js, Python, Go and Rust through runtime adapters that a release carries |
 | Reload | Zero-downtime reload for cluster mode | `reload` is a restart |
 | Cluster | Node.js workers can share one port | Up to 256 instances, a port each |
-| Watch mode | Yes | Not available |
+| Watch mode | Built in | `watch` adapter |
 | Config file | A JavaScript ecosystem file, or JSON | TOML, YAML or JSON, checked strictly |
 | Restart policy | Restart on crash, with options | `on-crash`, `always` or `never`, backoff that doubles up to a cap, and a crash-loop breaker |
 | Health checks | None built in. An app can signal readiness during a reload | HTTP, TCP or a script, with a choice of action |

@@ -2,13 +2,17 @@
 
 `oxidepm start` takes a file, a directory or a config file. It starts the daemon if it is not running, and the daemon keeps your app running after you close the terminal.
 
+On Linux, use the bundled runtimes to start a script or project:
+
 ```sh
 oxidepm start app.py            # a script: the runtime comes from its extension
 oxidepm start ./my-project      # a directory: the runtime comes from the files in it
 oxidepm start oxidepm.config.toml
 ```
 
-The runtime of a script comes from its extension (`.js` is node, `.py` is python, `.go` is go, `.rs` is rust) and of a directory from the file that marks it (`package.json`, `Cargo.toml`, `go.mod`, `requirements.txt`). Use `--mode` to force one: `cmd`, `node`, `npm`, `pnpm`, `yarn`, `cargo`, `rust`, `python` or `go`. `cmd` runs any program and is the only runtime in the core. The others come from the runtime adapters that a release carries: if the adapter is missing or off, `start` fails and names the adapter and the command to import it. See [Runtimes](/docs/getting-started/install/#runtimes).
+OxidePM can pick a runtime from a script's extension (`.js`, `.py`, `.go`, `.rs`) or a project file (`package.json`, `Cargo.toml`, `go.mod`, `requirements.txt`). Use `--mode` to choose a runtime explicitly. See [Runtimes](/docs/getting-started/install/#runtimes) for the bundled adapters.
+
+macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. To run a script with an interpreter installed on your `PATH`, specify the interpreter explicitly, for example `oxidepm start --mode cmd python3 -- app.py`.
 
 A config file starts every app in it, as one batch. This one is the example used on these pages. It is the file the sample output below came from, with small stand-in programs for the real ones:
 

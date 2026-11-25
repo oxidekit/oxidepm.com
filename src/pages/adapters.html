@@ -16,9 +16,7 @@ nav: adapters
     </div>
   </div>
 
-  <div style="max-width:70ch;margin-top:28px">{{release_note}}</div>
-
-  <p class="small-note" style="max-width:70ch">Eight adapters are built and tested. The four runtime adapters (Node.js, Python, Go and Rust) come with each release, and the install script enables them. The notifier, the Prometheus exporter, the web API and the terminal dashboard have no published archive yet, and there is no signed index to search, so once an archive is published you import it and pin it with its SHA-256. The adapters for project checks, <code>init</code>, <code>start --git</code> and <code>deploy</code> are planned, and so are adapters for AI agents. <a href="/docs/adapters/import-and-enable/">How importing works</a>.</p>
+  <p class="small-note" style="max-width:70ch">On Linux, the install script enables the four bundled runtime adapters for Node.js, Python, Go and Rust. Build optional adapters from the <a href="https://github.com/oxidekit/oxidepm-adapters">adapter sources</a> and <a href="/docs/adapters/import-and-enable/#build-an-optional-adapter">import the archive by SHA-256</a>. This release has no configured network catalog.</p>
 
   <div class="toolbar">
     <label class="search">
@@ -41,7 +39,6 @@ nav: adapters
     <p>No adapter matches “<span data-query></span>”.</p>
     <p>If it doesn’t exist yet, you can write it. <button type="button" class="link-btn" data-clear>Clear the search</button></p>
   </div>
-  <p class="small-note">Names, and what an adapter that is not built will ask for, are plans and can change.</p>
 
   <section aria-labelledby="own-title" style="margin-top:clamp(72px,10vw,120px)">
     <span class="kicker">Write your own</span>
@@ -62,7 +59,7 @@ nav: adapters
         <pre class="term-body">{
   <span class="t-hi">"schema"</span>: 1,
   <span class="t-hi">"name"</span>: "exporter-prometheus",
-  <span class="t-hi">"version"</span>: "0.1.0",
+  <span class="t-hi">"version"</span>: "0.4.0-rc.1",
   <span class="t-hi">"kind"</span>: "service",
   <span class="t-hi">"summary"</span>: "Prometheus metrics for the apps OxidePM manages.",
   <span class="t-hi">"protocol"</span>: [1],

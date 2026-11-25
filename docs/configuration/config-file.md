@@ -60,7 +60,7 @@ A config file is checked when it is loaded, and nothing is started if it fails. 
 - a health check that is not exactly one of `http_url`, `tcp` or `script`,
 - an `env_file` that does not exist,
 - a `script` whose runtime cannot be inferred from its extension (set `mode`),
-- `watch = true`, because file watching is not available yet,
+- the legacy app keys `watch`, `ignore` and `ignore_patterns`, which moved to the `watch` adapter,
 - a dependency on an app that is not in the file or the registry, or a dependency cycle.
 
 *Terminal output of oxidepm start with a config file that has an unknown key*
@@ -71,7 +71,7 @@ Error: Config error: bad.toml: TOML parse error at line 5, column 1
   |
 5 | restart_mode = "always"
   | ^^^^^^^^^^^^
-unknown field `restart_mode`, expected one of `name`, `mode`, `runtime`, `script`, `bin`, `cwd`, `args`, `env`, `env_file`, `watch`, `ignore`, `restart_delay`, `max_restarts`, `max_restart_delay`, `stable_uptime`, `crash_window`, `kill_timeout`, `no_autorestart`, `instances`, `port`, `port_range`, `health_check`, `max_memory_mb`, `hooks`, `tags`, `max_uptime_secs`, `restart`, `binary`, `depends_on`, `depends_timeout`, `depends_fail_open`, `restart_cron`, `log_max_size`, `log_max_files`, `log_compress`, `adapters`, `protected`, `ai_control`
+unknown field `restart_mode`, expected one of `name`, `mode`, `runtime`, `script`, `bin`, `cwd`, `args`, `env`, `env_file`, `restart_delay`, `max_restarts`, `max_restart_delay`, `stable_uptime`, `crash_window`, `kill_timeout`, `no_autorestart`, `instances`, `port`, `port_range`, `health_check`, `max_memory_mb`, `hooks`, `tags`, `max_uptime_secs`, `restart`, `binary`, `depends_on`, `depends_timeout`, `depends_fail_open`, `restart_cron`, `log_max_size`, `log_max_files`, `log_compress`, `adapters`, `protected`, `ai_control`
 ```
 
 ## The daemon keeps its own copy
@@ -82,6 +82,6 @@ A config file has no key for the startup delay or for `env_inherit`. Those are `
 
 ## Reserved tables
 
-The top-level tables `adapters` and `policy` are reserved and must be empty, and so is a per-app `adapters` table (`[apps.adapters]`). A file that fills one is refused.
+The top-level tables `adapters` and `policy` are reserved and must be empty. Use `[apps.adapters.<name>]` for per-app adapter options. For example, `[apps.adapters.watch]` opts an app in to [file watching](https://oxidepm.com/docs/commands/other-commands/#file-watching).
 
 The keys of an app are on the next page.

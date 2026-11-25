@@ -25,7 +25,7 @@
 <meta name="twitter:description" content="Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.">
 <meta name="twitter:image" content="https://oxidepm.com/og-image.png">
 <meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/","description":"Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"],"isBasedOn":{"@id":"https://github.com/oxidekit/oxidepm#source"},"downloadUrl":"https://github.com/oxidekit/oxidepm/releases","image":"https://oxidepm.com/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/","description":"Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","softwareVersion":"0.4.0-rc.2","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"],"isBasedOn":{"@id":"https://github.com/oxidekit/oxidepm#source"},"downloadUrl":"https://github.com/oxidekit/oxidepm/releases","image":"https://oxidepm.com/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","@id":"https://github.com/oxidekit/oxidepm#source","name":"OxidePM source code","codeRepository":"https://github.com/oxidekit/oxidepm","programmingLanguage":"Rust","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/","description":"OxidePM is an open-source process manager written in Rust, for Linux.","inLanguage":"en"}</script>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -68,12 +68,6 @@
   <h1 id="hero-title" class="display display-hero">OxidePM is a process manager written in Rust.</h1>
   <p class="lede">OxidePM is a process manager written in Rust, for Linux servers. It keeps your apps running: it starts them, restarts them when they crash, keeps their logs and can bring them back after a reboot. You drive it from the command line. It is open source, under the MIT or Apache-2.0 licence, and it has limits for letting AI agents work with it. <a href="/docs/compare/oxidepm-and-pm2/">Compared with PM2</a> and <a href="/docs/compare/oxidepm-and-systemd/">with systemd</a>.</p>
 
-  <div style="max-width:70ch;margin-top:28px"><div class="blueprint note release-note" role="note">
-  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-  <span class="lbl">Not in the latest release (0.3.2)</span>
-  <p>The install command installs <strong>0.3.2</strong>, the latest published release. The agent socket, audit log, dry runs, policy markers and adapters described on this site are not in that release, and the code that has them is not published yet. These pages describe what is coming. <a href="/docs/getting-started/install/#release-status">What 0.3.2 has and does not have</a>.</p>
-</div></div>
-
   <div class="cta-row">
     <div class="blueprint install">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -89,12 +83,12 @@
       Read the docs first
     </a>
   </div>
-  <p class="small-note">Want to read the script before you run it? <a href="/install.sh">View install.sh</a>. It installs the latest published release, 0.3.2.</p>
+  <p class="small-note"><a href="/install.sh">Read the install script</a>. It installs 0.4.0-rc.2 and enables the bundled runtimes on Linux.</p>
 
 
   <dl class="platforms">
     <div><dt>Linux</dt><dd>the main platform</dd></div>
-    <div><dt>macOS</dt><dd>process manager only, untested; no adapters or sandbox</dd></div>
+    <div><dt>macOS</dt><dd>built-in <code>cmd</code> runtime</dd></div>
     <div><dt>Windows</dt><dd>not supported</dd></div>
   </dl>
 
@@ -125,7 +119,7 @@
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">Notifications, Prometheus metrics, the web API, the terminal dashboard and the Node.js, Python, Go and Rust runtimes are adapters, not part of the core. The core runs one runtime itself, <code>cmd</code>, which runs any program. Project checks, <code>init</code>, <code>start --git</code> and <code>deploy</code> are provided by adapters too, and those adapters are planned.</p>
+      <p class="muted">On Linux, the installer enables the bundled Node.js, Python, Go and Rust runtimes. Add optional adapters for project checks, config generation, starting from Git, SSH deployments, file watching, notifications, Prometheus metrics, the web API and the terminal dashboard. The built-in <code>cmd</code> runtime runs any executable.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -222,9 +216,9 @@
     </div>
     <dl class="facts">
       <div><dt>Windows</dt><dd>Not supported.</dd></div>
-      <div><dt>macOS</dt><dd>The process manager is built for it but not tested there. Adapters, the sandbox and recovery of orphaned apps are Linux only.</dd></div>
+      <div><dt>macOS</dt><dd>macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</dd></div>
       <div><dt>Reload</dt><dd>There is no zero-downtime reload. A reload is a restart.</dd></div>
-      <div><dt>File watching</dt><dd>Not available yet. <code>--watch</code> is refused.</dd></div>
+      <div><dt>File watching</dt><dd>The <a href="/docs/commands/other-commands/#file-watching">watch adapter</a> restarts opted-in apps when their files change.</dd></div>
       <div><dt>Sandbox</dt><dd>It limits the damage a buggy adapter can do. It does not fully contain a hostile one. That is why every adapter is hash-checked and shows what it asks for before you enable it. <a href="/security/#adapters">Details</a>.</dd></div>
     </dl>
   </div>
@@ -301,7 +295,7 @@ Enable notifier with this grant? [y/N] <span data-pending><button type="button" 
     </figure>
   </div>
   <noscript><style>[data-panel][hidden]{display:block!important}</style></noscript>
-  <p class="term-ink">Example output from a local build of the adapter. The hashes are those of that build, and the archive is not published yet.</p>
+  <p class="term-ink">Example output from a local build of the adapter. Use the SHA-256 from the archive you build.</p>
 
   <div class="lists">
     <div>
@@ -315,16 +309,16 @@ Enable notifier with this grant? [y/N] <span data-pending><button type="button" 
 <li class="tag tag-neutral chip">runtime-python</li>
 <li class="tag tag-neutral chip">runtime-go</li>
 <li class="tag tag-neutral chip">runtime-rust</li>
+<li class="tag tag-neutral chip">check</li>
+<li class="tag tag-neutral chip">init</li>
+<li class="tag tag-neutral chip">git-start</li>
+<li class="tag tag-neutral chip">deploy</li>
+<li class="tag tag-neutral chip">watch</li>
       </ul>
     </div>
     <div>
       <h3 class="h-sub">Coming later</h3>
       <ul class="chips">
-<li class="tag tag-outline chip">check</li>
-<li class="tag tag-outline chip">init</li>
-<li class="tag tag-outline chip">git-start</li>
-<li class="tag tag-outline chip">deploy</li>
-<li class="tag tag-outline chip">watch-rebuild</li>
 <li class="tag tag-outline chip">AI adapters</li>
       </ul>
     </div>
