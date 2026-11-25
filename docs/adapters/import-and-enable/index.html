@@ -27,7 +27,7 @@
 <meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
 <link rel="alternate" type="text/markdown" href="https://oxidepm.com/docs/adapters/import-and-enable.md">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://oxidepm.com/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://oxidepm.com/docs/"},{"@type":"ListItem","position":3,"name":"Adapters","item":"https://oxidepm.com/docs/adapters/how-adapters-work/"},{"@type":"ListItem","position":4,"name":"Import and enable"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Import and enable an OxidePM adapter","description":"Install an adapter from an archive you pin by SHA-256 or from a release bundle, read what it asks for and enable it.","url":"https://oxidepm.com/docs/adapters/import-and-enable/","mainEntityOfPage":"https://oxidepm.com/docs/adapters/import-and-enable/","inLanguage":"en","dateModified":"2026-11-24","articleSection":"Adapters","image":"https://oxidepm.com/og-image.png","about":{"@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/"},"isPartOf":{"@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Import and enable an OxidePM adapter","description":"Install an adapter from an archive you pin by SHA-256 or from a release bundle, read what it asks for and enable it.","url":"https://oxidepm.com/docs/adapters/import-and-enable/","mainEntityOfPage":"https://oxidepm.com/docs/adapters/import-and-enable/","inLanguage":"en","dateModified":"2026-11-25","articleSection":"Adapters","image":"https://oxidepm.com/og-image.png","about":{"@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/"},"isPartOf":{"@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/"}}</script>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
@@ -75,24 +75,24 @@ No adapters are installed. `oxidepm adapter list --available` shows what the ind
 <p>Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against <code>SHA256SUMS</code>. The installer runs <code>oxidepm adapter import --bundled --tag runtime --enable --yes</code> to enable only the four runtime adapters. To select groups, use <code>--tag dev</code> for <code>watch</code>, <code>check</code> and <code>init</code>, <code>--tag deploy</code> for <code>git-start</code> and <code>deploy</code>, <code>--tag ui</code> for <code>ui-web</code> and <code>ui-tui</code>, <code>--tag notifier</code> for <code>notifier</code>, or <code>--tag exporter</code> for <code>exporter-prometheus</code>.</p>
 <p>Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit <code>--enable</code>. The adapter stays disabled until you approve the grant.</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter import --bundled watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 cefdc9f384848afb3007d9e8eae8385b2f2f725d8d7cc154a1485c44a75c2222 verified. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Trust     bundled with this release. Archive sha256 7c5a25f804bf77b22ea5ca729db860a074a4dfbd5782d3c6f27aa6516d676dd1 verified. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept 80359c388911f8f1
+Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-<span class="t-hi">✓</span> Installed watch 0.4.0-rc.3 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept 80359c388911f8f1</pre></figure>
+<span class="t-hi">✓</span> Installed watch 0.4.0-rc.4 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept ee09adb6f6abb1c0</pre></figure>
 <p><code>Needs</code> lists the permissions. <code>Again, what it needs</code> repeats the list after the description. <code>[BROAD]</code> marks permissions such as access to all files the current user can read. <code>Enforced on this machine</code> shows what the operating system can enforce. <code>Trust</code> identifies the source of the archive.</p>
 <p><code>oxidepm adapter import &lt;name&gt;</code> uses a configured signed index. This release ships without a network catalog.</p>
 <h2 id="enable">Enable</h2>
@@ -100,17 +100,17 @@ Again, what it needs:
 <p>For broader grants such as <code>watch</code>, run the printed command after reviewing the permissions if approval was deferred or the import ran without an interactive terminal. Get the fingerprint from <code>adapter import</code> or <code>adapter info</code>. It ties your consent to that adapter release. <code>--yes</code> accepts without asking only for pure adapters such as the four runtimes.</p>
 <p>On a terminal, <code>oxidepm adapter enable watch</code> shows the permissions and asks for consent again.</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter enable watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-25T01:48:58Z
-Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Source    bundled installed 2026-11-25T19:37:08Z
+Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept 80359c388911f8f1
+Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -123,7 +123,7 @@ Enable watch with this grant? [y/N]</pre></figure>
 <span class="t-ox">Error:</span> Not enabled</pre></figure>
 <p>If you answer yes:</p>
 <figure class="blueprint term" role="img" aria-label="Terminal output when the answer is yes"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body">Enable watch with this grant? [y/N] yes
-<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.3 (level lifecycle, scope opted-in)
+<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.4 (level lifecycle, scope opted-in)
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn</pre></figure>
 <p>You can enable with less than the adapter asks for. <code>--level read</code> or <code>--level lifecycle</code> gives a lower host level, and <code>--scope opted-in</code> limits it to the apps that list the adapter. On Linux, <code>--allow-unenforced</code> accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</p>
 <h2 id="import-a-self-built-adapter">Import a self-built adapter</h2>
@@ -132,31 +132,31 @@ Enable watch with this grant? [y/N]</pre></figure>
 target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   --target x86_64-unknown-linux-gnu --url-base https://example.org/adapters --sequence 1 \
   watch:target/release/oxidepm-watch</code></pre></figure>
-<p>Use the filename and digest from your build&#x27;s <code>target/watch-bundle/SHA256SUMS</code>. This example uses an archive built from the 0.4.0-rc.3 sources.</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.3.tar.gz --sha256 &lt;digest&gt; --allow-reserved-name --enable</code></pre></figure>
+<p>Use the filename and digest from your build&#x27;s <code>target/watch-bundle/SHA256SUMS</code>. This example uses an archive built from the 0.4.0-rc.4 sources.</p>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.4.tar.gz --sha256 &lt;digest&gt; --allow-reserved-name --enable</code></pre></figure>
 <p>The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add <code>--allow-reserved-name</code> only if the adapter uses a reserved name, such as <code>watch</code> or <code>notifier</code>. A pinned archive appears as <code>pinned by you</code> with <code>No signature</code> in the preview.</p>
 <h2 id="look-at-it-and-manage-it">Look at it, and manage it</h2>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm adapter info watch"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body wrap"><span class="t-hi">$</span> oxidepm adapter info watch
-watch 0.4.0-rc.3 (service)  Restart an app when its files change.
+watch 0.4.0-rc.4 (service)  Restart an app when its files change.
 State:    ready
 Source:   bundled
-Trust:    bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
-Installed 2026-11-25T01:48:58Z
+Trust:    bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Installed 2026-11-25T19:37:08Z
 Grant:    level lifecycle, scope opted-in
 Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundled
-Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      fingerprint 80359c388911f8f1
+Next      fingerprint ee09adb6f6abb1c0
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)

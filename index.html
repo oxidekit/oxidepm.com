@@ -25,7 +25,7 @@
 <meta name="twitter:description" content="Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.">
 <meta name="twitter:image" content="https://oxidepm.com/og-image.png">
 <meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/","description":"Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","softwareVersion":"0.4.0-rc.3","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"],"isBasedOn":{"@id":"https://github.com/oxidekit/oxidepm#source"},"downloadUrl":"https://github.com/oxidekit/oxidepm/releases","image":"https://oxidepm.com/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/","description":"Open-source process manager written in Rust. Supervise processes on Linux, restart them on crash, keep logs, survive reboots. A PM2 alternative.","applicationCategory":"DeveloperApplication","operatingSystem":"Linux","softwareVersion":"0.4.0-rc.4","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"],"isBasedOn":{"@id":"https://github.com/oxidekit/oxidepm#source"},"downloadUrl":"https://github.com/oxidekit/oxidepm/releases","image":"https://oxidepm.com/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","@id":"https://github.com/oxidekit/oxidepm#source","name":"OxidePM source code","codeRepository":"https://github.com/oxidekit/oxidepm","programmingLanguage":"Rust","license":["https://opensource.org/license/mit","https://www.apache.org/licenses/LICENSE-2.0"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/","description":"OxidePM is an open-source process manager written in Rust, for Linux.","inLanguage":"en"}</script>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -83,7 +83,7 @@
       Read the docs first
     </a>
   </div>
-  <p class="small-note"><a href="/install.sh">Read the install script</a>. It installs 0.4.0-rc.3 and enables the bundled runtimes on Linux.</p>
+  <p class="small-note"><a href="/install.sh">Read the install script</a>. It fetches the latest release and enables the bundled runtimes on Linux. <a href="/docs/getting-started/install/#verify-a-release-download">Verify a 0.4.0-rc.4 download</a>.</p>
 
 
   <dl class="platforms">
@@ -147,8 +147,8 @@
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
       <pre class="term-body wrap"><span class="t-dim"># daemon and notifier, protocol 1 (version numbers are examples)</span>
-<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0-rc.3"},"adapter":{"name":"notifier","version":"0.4.0-rc.3"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
-<span class="t-dim">adapter:</span> {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.4.0-rc.3"}}
+<span class="t-hi">daemon:</span> {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0-rc.4"},"adapter":{"name":"notifier","version":"0.4.0-rc.4"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+<span class="t-dim">adapter:</span> {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.4.0-rc.4"}}
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"initialized","params":{}}
 <span class="t-hi">daemon:</span> {"jsonrpc":"2.0","method":"event","params":{"seq":17,"kind":"crashed","family":"lifecycle","at":"2026-10-30T10:00:00Z","app":{"id":3,"name":"web","tags":["prod"]},"data":{"exit_code":1,"restarts":2},"options":{"chat":"ops"},"dropped_before":4}}
 <span class="t-dim">If the adapter stops answering ping three times in a row, the daemon kills it and restarts it. The apps are not touched.</span></pre>
@@ -247,36 +247,36 @@ No adapters are installed. `oxidepm adapter list --available` shows what the ind
 <span class="t-hi">$</span> oxidepm adapter list --available
 <span class="t-ox">Error:</span> no index is configured in this build. Import by a pinned hash (`oxidepm adapter import &lt;file or url&gt; --sha256 &lt;hex&gt;`) or from the bundle of a release (`oxidepm adapter import --bundled`)</pre></div>
       <div data-panel="1" hidden><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 cefdc9f384848afb3007d9e8eae8385b2f2f725d8d7cc154a1485c44a75c2222 verified. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Trust     bundled with this release. Archive sha256 7c5a25f804bf77b22ea5ca729db860a074a4dfbd5782d3c6f27aa6516d676dd1 verified. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept 80359c388911f8f1
+Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-<span class="t-hi">✓</span> Installed watch 0.4.0-rc.3 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept 80359c388911f8f1</pre></div>
+<span class="t-hi">✓</span> Installed watch 0.4.0-rc.4 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept ee09adb6f6abb1c0</pre></div>
       <div data-panel="2" hidden><pre class="term-body"><span class="t-hi">$</span> oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.3 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-25T01:48:58Z
-Trust     bundled with this release. Program sha256 2af565298a0c404508a302babd460fa61ed7d6e37574939b46de1c509f3f2c91
+Source    bundled installed 2026-11-25T19:37:08Z
+Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  <span class="t-ox">[BROAD]</span>                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept 80359c388911f8f1
+Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -284,7 +284,7 @@ Again, what it needs:
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
 Enable watch with this grant? [y/N]<span data-pending><button type="button" class="term-btn yes" data-allow>y  allow</button> <button type="button" class="term-btn" data-deny>N  deny</button></span><span data-yes hidden>yes
-<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.3 (level lifecycle, scope opted-in)
+<span class="t-hi">✓</span> Enabled watch 0.4.0-rc.4 (level lifecycle, scope opted-in)
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn</span><span data-no hidden>no
 <span class="t-ox">Error:</span> Not enabled</span><span data-done hidden>
 <button type="button" class="term-link" data-reset>run it again</button></span></pre></div>

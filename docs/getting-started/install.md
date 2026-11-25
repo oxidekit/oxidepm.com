@@ -12,23 +12,28 @@ Source: https://oxidepm.com/docs/getting-started/install/
 
 ## The install script
 
+Install `minisign` before running the script to verify the release signature.
+
 *Install*
 
 ```sh
 curl -fsSL https://oxidepm.com/install.sh | sh
 ```
 
-The [install script](https://oxidepm.com/install.sh) installs the latest published release, 0.4.0-rc.3.
+The [install script](https://oxidepm.com/install.sh) installs the latest published release. Set `OXIDEPM_VERSION` to select a specific version or tag.
 
-- Detects the platform with `uname`, looks up the latest release on GitHub and downloads its platform archive and `checksums.txt`.
+- Detects the platform with `uname` and downloads its archive and `checksums.txt` from GitHub.
+- When `minisign` is on `PATH`, verifies `checksums.txt.minisig` against the [release signing keys](https://oxidepm.com/security/#release-signing) and requires the trusted comment to match the release tag. Without `minisign`, the script reports that it skipped signature verification.
 - Checks the archive's SHA-256 against the entry for that exact filename in `checksums.txt`.
 - Installs `oxidepm`, `oxidepmd` and `oxidepm-sandbox` into `/usr/local/bin`, using `sudo` when needed. Set `INSTALL_DIR` to install elsewhere.
 - Copies all 13 adapter archives into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
 - Attempts to import and enable only the four runtime adapters with `oxidepm adapter import --bundled --tag runtime --enable --yes`. On Linux, this works offline, and the CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
 
+With `minisign` installed, the script allows a missing signature only when you explicitly select a release older than 0.4.0-rc.4 and the signature URL returns HTTP 404. It still checks SHA-256.
+
 ## Other ways
 
-The [Releases page](https://github.com/oxidekit/oxidepm/releases) has the archives and Debian packages:
+The [0.4.0-rc.4 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.4) has archives for these platforms:
 
 | Platform | Architecture | Archive |
 |---|---|---|
@@ -37,18 +42,37 @@ The [Releases page](https://github.com/oxidekit/oxidepm/releases) has the archiv
 | macOS | Intel | `oxidepm-x86_64-apple-darwin.tar.gz` |
 | macOS | Apple Silicon | `oxidepm-aarch64-apple-darwin.tar.gz` |
 
-On Debian or Ubuntu, download the package for your architecture and install it with `dpkg`.
+[Verify your download](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download) before extracting an archive or installing a package. On Debian or Ubuntu, install the package for your architecture with `dpkg`.
 
 ```sh
 # x86_64
-sudo dpkg -i oxidepm_0.4.0.rc.3_amd64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.4_amd64.deb
 # ARM64
-sudo dpkg -i oxidepm_0.4.0.rc.3_arm64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.4_arm64.deb
 ```
 
 On Linux, run the runtime import below after installing manually.
 
 For Homebrew and Arch Linux instructions, see the [OxidePM README](https://github.com/oxidekit/oxidepm/blob/prod/README.md#installation).
+
+## Verify a release download
+
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.4`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.4`.
+
+```sh
+PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
+minisign -V -H -Q -P "$PUBLIC_KEY" -m checksums.txt -x checksums.txt.minisig
+```
+
+For another signed release, require the trusted comment to match its full tag, including the `v` prefix and any release candidate suffix. Set `ARCHIVE` to the exact filename you downloaded and compute its SHA-256.
+
+```sh
+ARCHIVE=oxidepm-x86_64-unknown-linux-gnu.tar.gz
+sha256sum "$ARCHIVE"       # Linux
+shasum -a 256 "$ARCHIVE"  # macOS
+```
+
+Compare the digest with the entry for that exact filename in the verified `checksums.txt` before extracting the archive or installing the package. For a verified archive, put `oxidepm`, `oxidepmd` and `oxidepm-sandbox` in your installation prefix's `bin` directory and copy `share/oxidepm/adapters` to the same path under that prefix.
 
 ## Runtimes
 
@@ -65,7 +89,7 @@ On Linux, serving a runtime request requires its adapter to be imported and enab
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.3 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0-rc.4 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```

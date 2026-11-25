@@ -72,7 +72,7 @@
 <p>Messages contain app names, ids, error text and health-check endpoints. Consider that before routing alerts to a shared channel.</p>
 <h2 id="configure-it">Configure it</h2>
 <p>The configuration is <code>config.toml</code> in the adapter&#x27;s own state directory. <code>oxidepm notify status</code> prints the path. It is not in the home directory, and <code>oxidepm backup</code> does not include it because it holds tokens.</p>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-49" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-49">events = [&quot;crash&quot;, &quot;restart&quot;]   # empty or absent: every event
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>config.toml</span><button type="button" class="btn btn-ghost" data-copy="code-51" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-51">events = [&quot;crash&quot;, &quot;restart&quot;]   # empty or absent: every event
 min_severity = &quot;warning&quot;        # info | warning | critical
 timeout_secs = 10               # per request, 1 to 60
 

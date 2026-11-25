@@ -17,7 +17,7 @@ A daemon plan uses the registry and files to report the intended operations. A r
 
 A request that the policy refuses is answered with the refusal as the plan (`E_POLICY_DENIED`, `E_PROTECTED`, `E_RATE_LIMITED`). A request that is invalid for a reason the daemon can see without side effects (a bad spec, a missing dependency, an unusable saved file) is answered with the real error.
 
-`update --dry-run` downloads the archive into a private temporary directory, checks it against `checksums.txt`, unpacks it there, shows what it would replace and deletes the directory.
+`oxidepm --dry-run update` [verifies the release signature](/docs/getting-started/upgrade/#update) before downloading the archive into a private temporary directory. It checks the archive's SHA-256, unpacks it there, shows what it would replace and deletes the directory.
 
 ## For agents
 

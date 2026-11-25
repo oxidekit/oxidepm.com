@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OxidePM security: limits for AI agents and adapters</title>
-<meta name="description" content="How OxidePM limits AI agents and adapters: who is asking, permission tiers, protected apps, dry runs, the audit log, and where the protections stop.">
+<title>OxidePM security and release signing</title>
+<meta name="description" content="Verify OxidePM releases with Minisign, find public keys and the rotation policy, and learn how OxidePM limits agents and adapters.">
 <link rel="canonical" href="https://oxidepm.com/security/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="color-scheme" content="light dark">
@@ -12,8 +12,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="OxidePM">
 <meta property="og:locale" content="en_US">
-<meta property="og:title" content="OxidePM security: limits for AI agents and adapters">
-<meta property="og:description" content="How OxidePM limits AI agents and adapters: who is asking, permission tiers, protected apps, dry runs, the audit log, and where the protections stop.">
+<meta property="og:title" content="OxidePM security and release signing">
+<meta property="og:description" content="Verify OxidePM releases with Minisign, find public keys and the rotation policy, and learn how OxidePM limits agents and adapters.">
 <meta property="og:url" content="https://oxidepm.com/security/">
 <meta property="og:image" content="https://oxidepm.com/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -21,8 +21,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OxidePM security: limits for AI agents and adapters">
-<meta name="twitter:description" content="How OxidePM limits AI agents and adapters: who is asking, permission tiers, protected apps, dry runs, the audit log, and where the protections stop.">
+<meta name="twitter:title" content="OxidePM security and release signing">
+<meta name="twitter:description" content="Verify OxidePM releases with Minisign, find public keys and the rotation policy, and learn how OxidePM limits agents and adapters.">
 <meta name="twitter:image" content="https://oxidepm.com/og-image.png">
 <meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://oxidepm.com/"},{"@type":"ListItem","position":2,"name":"Security"}]}</script>
@@ -62,11 +62,12 @@
 
 <main id="main" class="wrap page-top">
   <h1 class="display display-page" style="max-width:14ch">Security and AI safety</h1>
-  <p style="font-size:19px;line-height:1.55;max-width:58ch;margin:24px 0 0" class="muted">OxidePM runs your services, so it matters who can tell it what to do. This page explains what an AI agent or an adapter is allowed to do, what gets recorded, and where the protections stop.</p>
+  <p style="font-size:19px;line-height:1.55;max-width:58ch;margin:24px 0 0" class="muted">Find the keys used to verify OxidePM releases and learn what agents and adapters can do once OxidePM is running.</p>
 
 
   <nav class="sec-nav" aria-label="On this page">
     <ol>
+      <li><a href="#release-signing">Release signing</a></li>
       <li><a href="#connections">01 Who is asking</a></li>
       <li><a href="#tiers">02 Permission tiers</a></li>
       <li><a href="#protected">03 Protected apps and dry runs</a></li>
@@ -75,6 +76,23 @@
       <li><a href="#report">06 Reporting a problem</a></li>
     </ol>
   </nav>
+
+  <section id="release-signing" class="sec-block split split-start" aria-labelledby="h-release-signing">
+    <div>
+      <h2 id="h-release-signing" class="h-block">Release signing</h2>
+    </div>
+    <div class="max-60" style="overflow-wrap:anywhere">
+      <p>OxidePM 0.4.0-rc.4 is the first release with a Minisign signature for <code>checksums.txt</code>. The signature authenticates the checksum file and binds it to the exact release tag. The file covers release archives, standalone adapter archives and Debian packages.</p>
+      <p><a href="/docs/getting-started/install/#verify-a-release-download">Verify a release download</a> before installing it manually.</p>
+      <p><strong>Current key</strong> <code>04BF7D2A1951790C</code><br>
+        <code>RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC</code></p>
+      <p><strong>Next key, kept offline</strong> <code>63BC416033EA24EE</code><br>
+        <code>RWTuJOozYEG8Y1hYBqUF8CBncU1PUQgqfJ/hr6Zcwgt1cDwfeRrZh+q5</code></p>
+      <h3 class="h-sub">Key rotation</h3>
+      <p>Clients ship with both public keys while releases are signed with the current key. Once clients have both pins, OxidePM can switch to the next signing key. A later release ships that key's public key and a new spare.</p>
+      <p>Removing a compromised pin requires an updated client. OxidePM announces emergency rotations through a trusted project channel so users can verify and install the replacement manually.</p>
+    </div>
+  </section>
 
   <section id="connections" class="sec-block split" aria-labelledby="h-conn">
     <div>
