@@ -1,15 +1,15 @@
 $ oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-25T19:37:08Z
-Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Source    bundled installed 2026-11-25T21:34:47Z
+Trust     bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+Next      oxidepm adapter enable watch --accept aa264b261bedefb3
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)

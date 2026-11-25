@@ -2,7 +2,7 @@
 
 > OxidePM is an open-source process manager written in Rust, for Linux. It starts apps, restarts them when they crash, keeps their logs and brings them back after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are adapters. Licensed MIT or Apache-2.0.
 
-OxidePM 0.4.0-rc.4 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
+OxidePM 0.4.0-rc.5 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
 
 `oxidepm update` verifies the release signature before downloading the archive.
 

@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.4    # a specific version
+oxidepm update --version 0.4.0-rc.5    # a specific version
 ```
 
 Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before downloading the archive.
@@ -28,7 +28,7 @@ The CLI and the daemon must come from the same release. A config file is sent to
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4`. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
+From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install 0.4.0-rc.5. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
 
 From 0.3.x, use the manual verification and installation instructions.
 

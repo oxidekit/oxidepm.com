@@ -50,9 +50,9 @@ $ oxidepm status
 │  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
 ╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
 $ oxidepm logs mailer --lines 3
-[2026-10-31 04:11:47.153] cannot reach smtp
-[2026-10-31 04:11:47.559] cannot reach smtp
-[2026-10-31 04:11:48.362] cannot reach smtp
+[2026-11-25 21:35:25.123] cannot reach smtp
+[2026-11-25 21:35:25.527] cannot reach smtp
+[2026-11-25 21:35:26.330] cannot reach smtp
 ```
 
 Here the app was started with `max_restarts = 3` and `restart_delay = 200`. The `↺` column counts restarts. Read the logs before you restart an errored app: the cause is usually there.

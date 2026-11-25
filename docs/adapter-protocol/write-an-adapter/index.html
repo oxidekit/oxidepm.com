@@ -72,7 +72,7 @@
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>manifest.json</span><button type="button" class="btn btn-ghost" data-copy="code-62" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-62">{
   &quot;schema&quot;: 1,
   &quot;name&quot;: &quot;exporter-prometheus&quot;,
-  &quot;version&quot;: &quot;0.4.0-rc.4&quot;,
+  &quot;version&quot;: &quot;0.4.0-rc.5&quot;,
   &quot;kind&quot;: &quot;service&quot;,
   &quot;summary&quot;: &quot;Prometheus metrics for the apps OxidePM manages.&quot;,
   &quot;description&quot;: &quot;Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.&quot;,

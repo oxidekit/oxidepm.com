@@ -13,9 +13,9 @@ $ oxidepm status
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ 0.0% │ 2.5M  │ 5s     │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ 0.0% │ 22.2M │ 5s     │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ online │ 0.0% │ 2.3M  │ 5s     │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ online │ 0.0% │ 21.9M │ 5s     │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯
 ```
 
@@ -41,9 +41,9 @@ $ oxidepm status --more
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯
 ```
 

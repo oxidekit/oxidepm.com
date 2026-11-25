@@ -67,9 +67,9 @@
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 2.5M  │ 5s     │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 22.2M │ 5s     │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 0B    │ 0s     │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 2.3M  │ 5s     │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 21.9M │ 5s     │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ <span class="t-hi">online</span> │ 0.0% │ 0B    │ 0s     │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯</pre></figure>
 <p>The columns are:</p>
 <div class="table-wrap"><table><thead><tr><th>Column</th><th>Meaning</th></tr></thead><tbody><tr><td><code>id</code></td><td>The app&#x27;s id.</td></tr><tr><td><code>name</code></td><td>The name.</td></tr><tr><td><code>mode</code></td><td>The runtime.</td></tr><tr><td><code>pid</code></td><td>The process id, or <code>-</code> when it is not running.</td></tr><tr><td><code>↺</code></td><td>Restarts.</td></tr><tr><td><code>status</code></td><td>One of the <a href="/docs/configuration/restarts/">states</a>. The table calls a running app <code>online</code>.</td></tr><tr><td><code>cpu</code>, <code>mem</code></td><td>Sampled from the app&#x27;s first process.</td></tr><tr><td><code>uptime</code></td><td>Time since the launch.</td></tr></tbody></table></div>
@@ -78,9 +78,9 @@
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 5s     │ protected  │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 5s     │ ai-control │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 0s     │ ai-control │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 5s     │ protected  │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 5s     │ ai-control │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ <span class="t-hi">online</span> │ -    │ …/shopfront/current │ 0s     │ ai-control │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯</pre></figure>
 <p><code>--more</code> swaps <code>cpu</code> and <code>mem</code> for <code>port</code> and <code>cwd</code> and adds <code>policy</code>, which is <code>-</code>, <code>protected</code>, <code>ai-control</code>, or both. The working directory is shortened from the left.</p>
 <h2 id="status-daemon">status --daemon</h2>

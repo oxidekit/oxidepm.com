@@ -1,19 +1,19 @@
 $ oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 7c5a25f804bf77b22ea5ca729db860a074a4dfbd5782d3c6f27aa6516d676dd1 verified. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Trust     bundled with this release. Archive sha256 371f2cb27fdd00b167cc79dbeb3fc593d7bd5b9bb93e3afb12c41fb3f99e9f3a verified. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+Next      oxidepm adapter enable watch --accept aa264b261bedefb3
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-✓ Installed watch 0.4.0-rc.4 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+✓ Installed watch 0.4.0-rc.5 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept aa264b261bedefb3

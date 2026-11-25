@@ -1,8 +1,8 @@
 $ oxidepm audit --tail 7
-2026-10-31T04:21:24.161Z #3      ai:assistant stop [caution] allow web (dry run)
-2026-10-31T04:21:24.162Z #4      result r2 ok changed=0 failed=0 0ms
-2026-10-31T04:21:24.168Z #5      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
-2026-10-31T04:21:24.173Z #6      ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
-2026-10-31T04:21:24.177Z #7      ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
-2026-10-31T04:21:24.183Z #8      human:cli set_policy [dangerous] allow web
-2026-10-31T04:21:24.183Z #9      result r6 ok changed=1 failed=0 0ms
+2026-11-25T21:35:24.039Z #7      ai:assistant stop [caution] allow web (dry run)
+2026-11-25T21:35:24.046Z #8      result r102 ok changed=0 failed=0 0ms
+2026-11-25T21:35:24.051Z #9      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
+2026-11-25T21:35:24.057Z #10     ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
+2026-11-25T21:35:24.062Z #11     ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
+2026-11-25T21:35:24.065Z #12     human:cli set_policy [dangerous] allow web
+2026-11-25T21:35:24.067Z #13     result r106 ok changed=1 failed=0 1ms

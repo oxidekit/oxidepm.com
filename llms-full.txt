@@ -2,7 +2,7 @@
 
 > OxidePM is an open-source process manager written in Rust, for Linux. It starts apps, restarts them when they crash, keeps their logs and brings them back after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and Prometheus metrics are adapters. Licensed MIT or Apache-2.0.
 
-OxidePM 0.4.0-rc.4 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
+OxidePM 0.4.0-rc.5 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
 
 `oxidepm update` verifies the release signature before downloading the archive.
 
@@ -22,7 +22,7 @@ Source: https://oxidepm.com/docs/getting-started/install/
 
 - Linux on x86_64 or ARM64, or macOS on Intel or Apple Silicon. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 - Install the programs your apps need, such as Node.js, Python, Go or Rust.
-- A Rust toolchain is required to build from source.
+- Building from source requires Rust 1.85 or newer.
 
 ## The install script
 
@@ -47,7 +47,7 @@ With `minisign` installed, the script allows a missing signature only when you e
 
 ## Other ways
 
-The [0.4.0-rc.4 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.4) has archives for these platforms:
+The [0.4.0-rc.5 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.5) has archives for these platforms:
 
 | Platform | Architecture | Archive |
 |---|---|---|
@@ -60,9 +60,9 @@ The [0.4.0-rc.4 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0
 
 ```sh
 # x86_64
-sudo dpkg -i oxidepm_0.4.0.rc.4_amd64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.5_amd64.deb
 # ARM64
-sudo dpkg -i oxidepm_0.4.0.rc.4_arm64.deb
+sudo dpkg -i oxidepm_0.4.0.rc.5_arm64.deb
 ```
 
 On Linux, run the runtime import below after installing manually.
@@ -71,7 +71,7 @@ For Homebrew and Arch Linux instructions, see the [OxidePM README](https://githu
 
 ## Verify a release download
 
-0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.4`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.4`.
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.5`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.5`.
 
 ```sh
 PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
@@ -103,7 +103,7 @@ On Linux, serving a runtime request requires its adapter to be imported and enab
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.4 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0-rc.5 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```
@@ -197,8 +197,8 @@ $ oxidepm status
 ╭────┬──────┬──────┬─────────┬───┬──────────┬──────┬─────┬────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status   │ cpu  │ mem │ uptime │
 ├────┼──────┼──────┼─────────┼───┼──────────┼──────┼─────┼────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ online   │ 0.0% │ 0B  │ 1s     │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ starting │ 0.0% │ 0B  │ 1s     │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ online   │ 0.0% │ 0B  │ 0s     │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ starting │ 0.0% │ 0B  │ 0s     │
 │  3 │ web  │ cmd  │ -       │ 0 │ waiting  │ 0.0% │ 0B  │ 0s     │
 ╰────┴──────┴──────┴─────────┴───┴──────────┴──────┴─────┴────────╯
 ```
@@ -297,7 +297,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.4    # a specific version
+oxidepm update --version 0.4.0-rc.5    # a specific version
 ```
 
 Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before downloading the archive.
@@ -317,7 +317,7 @@ The CLI and the daemon must come from the same release. A config file is sent to
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4`. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
+From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install 0.4.0-rc.5. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
 
 From 0.3.x, use the manual verification and installation instructions.
 
@@ -538,9 +538,9 @@ $ oxidepm status
 │  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
 ╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
 $ oxidepm logs mailer --lines 3
-[2026-10-31 04:11:47.153] cannot reach smtp
-[2026-10-31 04:11:47.559] cannot reach smtp
-[2026-10-31 04:11:48.362] cannot reach smtp
+[2026-11-25 21:35:25.123] cannot reach smtp
+[2026-11-25 21:35:25.527] cannot reach smtp
+[2026-11-25 21:35:26.330] cannot reach smtp
 ```
 
 Here the app was started with `max_restarts = 3` and `restart_delay = 200`. The `↺` column counts restarts. Read the logs before you restart an errored app: the cause is usually there.
@@ -1128,9 +1128,9 @@ $ oxidepm status
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ 0.0% │ 2.5M  │ 5s     │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ 0.0% │ 22.2M │ 5s     │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ online │ 0.0% │ 2.3M  │ 5s     │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ online │ 0.0% │ 21.9M │ 5s     │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯
 ```
 
@@ -1156,9 +1156,9 @@ $ oxidepm status --more
 ╭────┬──────┬──────┬─────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
 │ id │ name │ mode │ pid     │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
 ├────┼──────┼──────┼─────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
-│  1 │ db   │ cmd  │ 1484325 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
-│  2 │ api  │ cmd  │ 1484326 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
-│  3 │ web  │ cmd  │ 1485319 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
+│  1 │ db   │ cmd  │ 3847547 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
+│  2 │ api  │ cmd  │ 3847553 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
+│  3 │ web  │ cmd  │ 3864110 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
 ╰────┴──────┴──────┴─────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯
 ```
 
@@ -1223,9 +1223,9 @@ $ oxidepm status
 │  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
 ╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
 $ oxidepm logs mailer --lines 3
-[2026-10-31 04:11:47.153] cannot reach smtp
-[2026-10-31 04:11:47.559] cannot reach smtp
-[2026-10-31 04:11:48.362] cannot reach smtp
+[2026-11-25 21:35:25.123] cannot reach smtp
+[2026-11-25 21:35:25.527] cannot reach smtp
+[2026-11-25 21:35:26.330] cannot reach smtp
 ```
 
 ## flush
@@ -1636,24 +1636,24 @@ Review the permissions and confirm the grant at the terminal prompt. To review b
 
 ```text
 $ oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 7c5a25f804bf77b22ea5ca729db860a074a4dfbd5782d3c6f27aa6516d676dd1 verified. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Trust     bundled with this release. Archive sha256 371f2cb27fdd00b167cc79dbeb3fc593d7bd5b9bb93e3afb12c41fb3f99e9f3a verified. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+Next      oxidepm adapter enable watch --accept aa264b261bedefb3
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-✓ Installed watch 0.4.0-rc.4 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+✓ Installed watch 0.4.0-rc.5 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept aa264b261bedefb3
 ```
 
 `Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
@@ -1674,17 +1674,17 @@ On a terminal, `oxidepm adapter enable watch` shows the permissions and asks for
 
 ```text
 $ oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-25T19:37:08Z
-Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Source    bundled installed 2026-11-25T21:34:47Z
+Trust     bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept ee09adb6f6abb1c0
+Next      oxidepm adapter enable watch --accept aa264b261bedefb3
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -1709,7 +1709,7 @@ If you answer yes:
 
 ```text
 Enable watch with this grant? [y/N] yes
-✓ Enabled watch 0.4.0-rc.4 (level lifecycle, scope opted-in)
+✓ Enabled watch 0.4.0-rc.5 (level lifecycle, scope opted-in)
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
@@ -1726,10 +1726,10 @@ target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   watch:target/release/oxidepm-watch
 ```
 
-Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0-rc.4 sources.
+Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0-rc.5 sources.
 
 ```sh
-oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.4.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.5.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
 The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
@@ -1740,26 +1740,26 @@ The bundle builder requires a catalog URL. A pinned import reads the file or HTT
 
 ```text
 $ oxidepm adapter info watch
-watch 0.4.0-rc.4 (service)  Restart an app when its files change.
+watch 0.4.0-rc.5 (service)  Restart an app when its files change.
 State:    ready
 Source:   bundled
-Trust:    bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
-Installed 2026-11-25T19:37:08Z
+Trust:    bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
+Installed 2026-11-25T21:34:47Z
 Grant:    level lifecycle, scope opted-in
 Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   watch 0.4.0-rc.4 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.5 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundled
-Trust     bundled with this release. Program sha256 93c970b743fa0e0035dffcefd05b9614e144e069f55d90949f61ef6da5528f72
+Trust     bundled with this release. Program sha256 d2eacb2534f7b315d0598ebc32e0285332ea00b11812daf5d1d61c17d5ce8536
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      fingerprint ee09adb6f6abb1c0
+Next      fingerprint aa264b261bedefb3
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -2227,9 +2227,9 @@ Each request leaves a `decision` line (who asked, the operation and its tier, th
 *Lines of audit-security.jsonl*
 
 ```text
-{"v":1,"seq":5,"ts":"2026-10-31T04:21:24.168Z","phase":"decision","req":"r3","client_req":"188ea6-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609382,"uid":1001},"op":"restart","tier":"caution","selector":"db","decision":"deny","deny":{"code":"E_PROTECTED","why":"ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person"},"dry_run":false}
-{"v":1,"seq":6,"ts":"2026-10-31T04:21:24.173Z","phase":"decision","req":"r4","client_req":"188ec7-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609415,"uid":1001},"op":"delete","tier":"dangerous","selector":"api","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it"},"dry_run":false}
-{"v":1,"seq":7,"ts":"2026-10-31T04:21:24.177Z","phase":"decision","req":"r5","client_req":"188ee9-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":1609449,"uid":1001},"op":"stop","tier":"caution","selector":"all","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not use 'all' or a tag with 'stop': name the apps"},"dry_run":false}
+{"v":1,"seq":5,"ts":"2026-11-25T21:35:24.051Z","phase":"decision","req":"r103","client_req":"3af779-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":3864441,"uid":1001},"op":"restart","tier":"caution","selector":"db","decision":"deny","deny":{"code":"E_PROTECTED","why":"ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person"},"dry_run":false}
+{"v":1,"seq":6,"ts":"2026-11-25T21:35:24.057Z","phase":"decision","req":"r104","client_req":"3af7a3-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":3864483,"uid":1001},"op":"delete","tier":"dangerous","selector":"api","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it"},"dry_run":false}
+{"v":1,"seq":7,"ts":"2026-11-25T21:35:24.062Z","phase":"decision","req":"r105","client_req":"3af7cc-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":3864524,"uid":1001},"op":"stop","tier":"caution","selector":"all","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not use 'all' or a tag with 'stop': name the apps"},"dry_run":false}
 ```
 
 ## What is recorded
@@ -2252,13 +2252,13 @@ A non-human actor's caution or dangerous request is written to disk before it ru
 
 ```text
 $ oxidepm audit --tail 7
-2026-10-31T04:21:24.161Z #3      ai:assistant stop [caution] allow web (dry run)
-2026-10-31T04:21:24.162Z #4      result r2 ok changed=0 failed=0 0ms
-2026-10-31T04:21:24.168Z #5      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
-2026-10-31T04:21:24.173Z #6      ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
-2026-10-31T04:21:24.177Z #7      ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
-2026-10-31T04:21:24.183Z #8      human:cli set_policy [dangerous] allow web
-2026-10-31T04:21:24.183Z #9      result r6 ok changed=1 failed=0 0ms
+2026-11-25T21:35:24.039Z #7      ai:assistant stop [caution] allow web (dry run)
+2026-11-25T21:35:24.046Z #8      result r102 ok changed=0 failed=0 0ms
+2026-11-25T21:35:24.051Z #9      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
+2026-11-25T21:35:24.057Z #10     ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
+2026-11-25T21:35:24.062Z #11     ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
+2026-11-25T21:35:24.065Z #12     human:cli set_policy [dangerous] allow web
+2026-11-25T21:35:24.067Z #13     result r106 ok changed=1 failed=0 1ms
 ```
 
 ```sh
@@ -2456,8 +2456,8 @@ The daemon speaks first. The adapter stays silent until it receives `initialize`
 *initialize and its reply*
 
 ```text
-daemon:  {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0-rc.4"},"adapter":{"name":"notifier","version":"0.4.0-rc.4"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
-adapter: {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.4.0-rc.4"}}
+daemon:  {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocols":[1],"host":{"name":"oxidepmd","version":"0.4.0-rc.5"},"adapter":{"name":"notifier","version":"0.4.0-rc.5"},"kind":"service","grant":{"level":"read","scope":"all"},"paths":{"state":"/home/u/.oxidepm/adapters/state/notifier"},"limits":{"max_line":262144,"max_in_flight":32,"event_queue":1024}}}
+adapter: {"jsonrpc":"2.0","id":1,"result":{"protocol":1,"name":"notifier","version":"0.4.0-rc.5"}}
 daemon:  {"jsonrpc":"2.0","method":"initialized","params":{}}
 ```
 
@@ -2700,7 +2700,7 @@ notifier.tar.gz
 {
   "schema": 1,
   "name": "exporter-prometheus",
-  "version": "0.4.0-rc.4",
+  "version": "0.4.0-rc.5",
   "kind": "service",
   "summary": "Prometheus metrics for the apps OxidePM manages.",
   "description": "Serves /metrics in the Prometheus text format on 127.0.0.1:9616. On each scrape it asks the daemon for the status of the apps (read access only) and never touches them. It listens on loopback unless its config.toml says otherwise, and any other address needs an access key in that file. If the daemon cannot be reached the answer is HTTP 503 and oxidepm_up 0.",

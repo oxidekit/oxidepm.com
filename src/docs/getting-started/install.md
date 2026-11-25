@@ -2,7 +2,7 @@
 
 - Linux on x86_64 or ARM64, or macOS on Intel or Apple Silicon. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 - Install the programs your apps need, such as Node.js, Python, Go or Rust.
-- A Rust toolchain is required to build from source.
+- Building from source requires Rust 1.85 or newer.
 
 ## The install script
 
@@ -49,7 +49,7 @@ For Homebrew and Arch Linux instructions, see the [OxidePM README](https://githu
 
 ## Verify a release download
 
-0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](/security/#release-signing). For `v0.4.0-rc.4`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.4`.
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](/security/#release-signing). For `v{{release_version}}`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v{{release_version}}`.
 
 ```sh
 PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
