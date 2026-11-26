@@ -11,6 +11,7 @@
 | `status [--more\|--daemon]` | The status table. `--more` adds port, working directory and policy markers. `--daemon` shows the daemon itself. |
 | `show <name> [--reveal]` | One app in detail. `--reveal` also prints environment values and hook scripts. |
 | `logs <name> [-f]` | Read or follow logs. |
+| `top` | A live resource monitor, refreshed every 2 seconds. Press Ctrl+C to exit. |
 | `flush <selector>` | Truncate the active log files. |
 | `describe <name>` | Show the command that would run for an app that is already registered, without starting anything. |
 | `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
@@ -21,7 +22,7 @@
 | `kill` | Stop the daemon and every app. |
 | `env list` | The keys of an app's environment. |
 | `update [--version X] [--force]` | Update to a release. |
-| `backup`, `restore <file>` | Export and restore the config and process list. |
+| `backup`, `restore <file>` | Back up and restore the saved process list, the state database and the adapter registry. |
 | `adapter` | Find, import, enable and manage adapters. |
 | `completions <shell>`, `man` | Shell completions and the man page. |
 
@@ -77,8 +78,6 @@ On Linux, the install script runs `oxidepm adapter import --bundled --tag runtim
 ```
 
 The import hint uses the signed online catalogue. For an offline import, use `oxidepm adapter import --bundled runtime-node --enable`. If the adapter is already installed, run `oxidepm adapter enable runtime-node`. The error code is `E_ADAPTER_MISSING`.
-
-Still in the core: `top`, a live resource monitor.
 
 ## Selectors
 

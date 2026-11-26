@@ -1,6 +1,6 @@
 # Import and enable
 
-Install an adapter from an archive you pin, read what it asks for, and enable it.
+Install an adapter from the signed catalogue, the release bundle or an archive you pin, read what it asks for, and enable it.
 
 Source: https://oxidepm.com/docs/adapters/import-and-enable/
 

@@ -20,7 +20,7 @@ For details about PM2, see the [PM2 documentation](https://pm2.keymetrics.io/doc
 - **Zero-downtime reload for Node.js.** PM2's cluster mode can reload workers one after another so that the app keeps answering. OxidePM has no zero-downtime reload: `reload` is the same as `restart`.
 - **Built-in file watching.** PM2 can restart an app when its files change. OxidePM provides file watching through the [`watch` adapter](https://oxidepm.com/docs/commands/other-commands/#file-watching) on Linux.
 - **Windows.** PM2 runs on Windows. OxidePM does not support Windows.
-- **Age and community.** PM2 has been in use for years. OxidePM is new and its current release is a release candidate.
+- **Age and community.** PM2 has been in use for years. OxidePM is new.
 - **Deploy and hosted monitoring.** PM2 has its own deploy tooling and an optional hosted monitoring service. OxidePM provides SSH deployments through the [`deploy` adapter](https://oxidepm.com/docs/commands/other-commands/#deploy-and-diff).
 - **One shared port for a Node.js cluster.** PM2 cluster mode lets Node.js workers share one port. OxidePM clusters give instance `i` the port `port + i`, so you put a reverse proxy or load balancer in front.
 

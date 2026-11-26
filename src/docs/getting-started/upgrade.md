@@ -23,7 +23,7 @@ On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter u
 ```term cap="adapter-update" wrap="yes" label="Excerpt from oxidepm adapter update --all"
 ```
 
-When you run `oxidepm update` with 0.4.0-rc.6 or later, it lists installed bundled adapters that are older than the new bundle and suggests `oxidepm adapter update --all`. When upgrading from an older CLI, run the adapter update command yourself after restarting the daemon.
+`oxidepm update` lists the bundled adapters you imported that have a newer version in the new release, and suggests `oxidepm adapter update --all`.
 
 To update one adapter, run `oxidepm adapter update <name>`. If an update needs a broader grant, review the permissions and update that adapter with `--accept <fingerprint>`. See [Update bundled adapters](/docs/adapters/import-and-enable/#update-bundled-adapters).
 
@@ -44,9 +44,7 @@ The CLI and the daemon must come from the same release. A config file is sent to
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4` first. Those clients check SHA-256 during the upgrade. Then run `oxidepm update` to install {{release_version}} with signature verification. To verify the initial download yourself, follow the [manual verification and installation instructions](/docs/getting-started/install/#verify-a-release-download).
-
-From 0.3.x, use the manual verification and installation instructions.
+Releases before 0.4.0-rc.4 are unsigned. To upgrade from 0.3.x or from an earlier 0.4.0 release candidate, use the [manual verification and installation instructions](/docs/getting-started/install/#verify-a-release-download).
 
 ### State from older releases
 

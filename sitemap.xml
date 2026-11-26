@@ -8,20 +8,20 @@
   <url><loc>https://oxidepm.com/docs/adapter-protocol/host-api/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapter-protocol/lifecycle/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapter-protocol/limits/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapter-protocol/messages/</loc><lastmod>2026-11-24</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapter-protocol/overview/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapter-protocol/messages/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapter-protocol/overview/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapter-protocol/write-an-adapter/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/exporter-prometheus/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/how-adapters-work/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/import-and-enable/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/notifier/</loc><lastmod>2026-11-25</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapters/permissions/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapters/sandbox/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapters/permissions/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapters/sandbox/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/agent-connections/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/audit-log/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/permission-tiers/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/protected-apps/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/ai-safety/safe-use/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/ai-safety/safe-use/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/dry-run/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/error-codes/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/json-output/</loc><lastmod>2026-10-30</lastmod></url>
@@ -31,12 +31,12 @@
   <url><loc>https://oxidepm.com/docs/commands/save-and-resurrect/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/start-stop-restart/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/status/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/compare/oxidepm-and-pm2/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/compare/oxidepm-and-pm2/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/compare/oxidepm-and-systemd/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/apps/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/clusters/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/config-file/</loc><lastmod>2026-11-24</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/configuration/daemon-settings/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/configuration/daemon-settings/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/dependencies/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/environment-and-hooks/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/health-checks/</loc><lastmod>2026-10-30</lastmod></url>

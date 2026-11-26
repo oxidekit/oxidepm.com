@@ -10,7 +10,7 @@ scp my-server-backup.tar.gz user@newserver:~
 ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect"
 ```
 
-`backup` exports the config and the process list to a tarball. `restore` restores it, and the daemon must not be running. `-y` overwrites existing files without asking. A backup does not include the notifier's configuration, because it holds tokens.
+`backup` writes the saved process list, the state database and the adapter registry to a tarball. It does not include `daemon.toml` or your app config files. `restore` restores them, and the daemon must not be running. `-y` overwrites existing files without asking. A backup does not include the notifier's configuration, because it holds tokens.
 
 ## env
 

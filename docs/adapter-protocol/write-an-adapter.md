@@ -58,10 +58,13 @@ notifier.tar.gz
 - `exec` (string): The executable, relative to the archive.
 - `provides` (object, default: empty): `runtimes`, `verbs`, `serves`, `programs`, `capture_programs` and `env_set`.
 - `permissions` (object): What it asks for. See [Permissions](/docs/adapters/permissions/).
+- `ai_driven` (boolean, default: false): The adapter acts on behalf of an AI. Only then can an AI actor open its session verbs, and only while the adapter's grant is `read`. See [Session verbs](/docs/adapter-protocol/lifecycle/#session-verbs).
 
 ## Verbs and runtimes
 
 `provides.verbs` adds commands to the CLI. Each has a `name` (2 to 24 characters), a `summary`, a `tier` (`safe`, `caution` or `dangerous`), a `mode` (`relayed` or `session`), whether it `writes`, whether it supports `dry_run`, `max_runtime_secs` (1 to 3600, 600 by default) and an `args_summary`. A verb must not collide with a built-in command or another adapter's verb. A verb that writes cannot be `safe`, and an adapter that may spawn programs or use the network cannot declare a `safe` verb.
+
+A `relayed` verb has its output streamed through the daemon. A `session` verb gets the terminal, or the pipes of the program that started `oxidepm`, and only a `tool` can run one. See [Session verbs](https://oxidepm.com/docs/adapter-protocol/lifecycle/#session-verbs).
 
 `provides.runtimes` names runtimes the adapter provides (a tool only, and never `cmd`), and then must list `provides.programs`, the bare program names it runs.
 
@@ -69,9 +72,9 @@ A `service` may list events, and provides no runtimes. A `tool` receives no even
 
 ## What you write
 
-The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. The frames on these pages are the reference.
+The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. A session verb is the exception: its standard input and output are the terminal, or the pipes of the program that started `oxidepm`, and the protocol runs over the session socket. The frames on these pages are the reference.
 
-The [adapter sources](https://github.com/oxidekit/oxidepm-adapters) include `oxidepm-adapter-sdk`, a Rust crate that handles the handshake, `ping`, events, relayed verbs and `shutdown`.
+The [adapter sources](https://github.com/oxidekit/oxidepm-adapters) include `oxidepm-adapter-sdk`, a Rust crate that handles the handshake, `ping`, events, relayed verbs and `shutdown`, and with `run_session` the connection of a session verb.
 
 ## Try it
 

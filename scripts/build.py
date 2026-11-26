@@ -580,8 +580,7 @@ def llms_files(nav, flat, adapters):
         "Source: %s." % (RELEASE_VERSION, REPO), "",
         "`oxidepm update` verifies the release signature before downloading the archive. "
         "On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` "
-        "to refresh installed bundled adapters. The updater suggests this command starting with "
-        "0.4.0-rc.6. If you upgrade from an older CLI, run it yourself.", "",
+        "to refresh installed bundled adapters.", "",
         "On Linux, discover adapters with `oxidepm adapter search watch` or `oxidepm adapter list --available`. "
         "Run `oxidepm adapter info watch` for details, `oxidepm adapter import watch --enable` to install from "
         "the signed catalogue, and `oxidepm adapter update watch` to update it. "

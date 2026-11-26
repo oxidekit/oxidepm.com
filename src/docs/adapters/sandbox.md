@@ -22,7 +22,7 @@ It limits the damage a buggy adapter can do: it keeps it out of the rest of the 
 
 - Network access is not enforced per host. The manifest names the hosts, and the consent screen says `Not enforceable per host`.
 - It does not take back what you approved.
-- Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. `adapter info` prints `AF_UNIX services reachable:` with the ones its self-test could connect to. On a kernel with Landlock ABI 10, which `status --daemon` shows as `restricts unix connect`, this can be closed.
+- Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. `adapter info` prints `AF_UNIX services reachable:` with the ones its self-test could connect to. On a kernel with Landlock ABI 9 or later, which `status --daemon` shows as `restricts unix connect`, this can be closed.
 - macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
 That is why an adapter is also checked against a hash, why you see what it asks for first, and why the daemon enforces the host level on its own. Only install adapters you trust.

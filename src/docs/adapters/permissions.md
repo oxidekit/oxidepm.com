@@ -9,10 +9,12 @@ events | list | default: none
 : The event families a service receives: `lifecycle` and `adapter`. A tool receives no events.
 env_pass | list | default: none
 : Names of environment variables the adapter receives from the daemon's environment. Nothing else is passed.
+connect_env_socket | list | default: none
+: Names from `env_pass` whose values are Unix sockets the adapter may connect to, such as an ssh agent. On each launch, a variable that is set must name a socket owned by the daemon's user and outside its data directory, or the adapter is not started. An unset variable adds nothing.
 network | object
 : `mode` is `none` or `outbound`. `hosts` lists the hosts it says it uses, and `listen` the addresses it listens on.
 fs | object
-: `read` and `write` are lists of paths. `$STATE` is the adapter's own state directory. `any` means any path.
+: `read` and `write` are lists of paths. `$STATE` is the adapter's own state directory. `$CWD` is the directory you run one of a `tool`'s commands from. `any` means any path.
 spawn | object
 : `mode` is `none`, `named` (with `names`) or `any`.
 memory_mb | number | default: 128

@@ -18,7 +18,7 @@ The adapter answers each with a `result` or an `error`.
 {dim:adapter:} {"jsonrpc":"2.0","id":4,"result":{"steps":[{"id":"install","argv":["npm","ci"],"cwd":"/srv/web","env_add":{"CI":"1"},"timeout_secs":600,"capture":"none","capture_max":65536,"optional":true,"description":"Install dependencies"}],"notes":["lockfile found"]}}
 ```
 
-`command.invoke` runs a command that an adapter added to the CLI. The `actor` is the class and label of whoever asked. The `init` adapter supports dry runs and returns the generated configuration.
+`command.invoke` runs a command that an adapter added to the CLI. The `actor` is the class and label of whoever asked. The `init` adapter supports dry runs and returns the generated configuration. For a verb in `session` mode, the request travels over the connection of the session instead. See [Session verbs](/docs/adapter-protocol/lifecycle/#session-verbs).
 
 ```term wrap="yes" label="command.invoke and its reply"
 {hi:daemon:}  {"jsonrpc":"2.0","id":6,"method":"command.invoke","params":{"verb":"init","argv":[],"cwd":"/srv/web","dry_run":true,"actor":{"class":"human","label":"cli"},"tty":false}}

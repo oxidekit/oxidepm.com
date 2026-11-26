@@ -4,7 +4,7 @@
 
 OxidePM 0.4.0-rc.8 bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. Source: https://github.com/oxidekit/oxidepm.
 
-`oxidepm update` verifies the release signature before downloading the archive. On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` to refresh installed bundled adapters. The updater suggests this command starting with 0.4.0-rc.6. If you upgrade from an older CLI, run it yourself.
+`oxidepm update` verifies the release signature before downloading the archive. On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` to refresh installed bundled adapters.
 
 On Linux, discover adapters with `oxidepm adapter search watch` or `oxidepm adapter list --available`. Run `oxidepm adapter info watch` for details, `oxidepm adapter import watch --enable` to install from the signed catalogue, and `oxidepm adapter update watch` to update it. For offline installation, run `oxidepm adapter import --bundled watch --enable`. Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed `oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. For a self-built adapter, import the archive with `oxidepm adapter import ./my-adapter.tar.gz --sha256 <digest> --enable`. Add `--allow-reserved-name` if it uses a reserved name. Building `ui-tui` from source requires Rust 1.88 or newer.
 
@@ -335,7 +335,7 @@ $ oxidepm adapter update --all
 ✓ Updated watch 0.4.0-rc.7 to 0.4.0-rc.8 (it passed its probation)
 ```
 
-When you run `oxidepm update` with 0.4.0-rc.6 or later, it lists installed bundled adapters that are older than the new bundle and suggests `oxidepm adapter update --all`. When upgrading from an older CLI, run the adapter update command yourself after restarting the daemon.
+`oxidepm update` lists the bundled adapters you imported that have a newer version in the new release, and suggests `oxidepm adapter update --all`.
 
 To update one adapter, run `oxidepm adapter update <name>`. If an update needs a broader grant, review the permissions and update that adapter with `--accept <fingerprint>`. See [Update bundled adapters](https://oxidepm.com/docs/adapters/import-and-enable/#update-bundled-adapters).
 
@@ -356,9 +356,7 @@ The CLI and the daemon must come from the same release. A config file is sent to
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4` first. Those clients check SHA-256 during the upgrade. Then run `oxidepm update` to install 0.4.0-rc.8 with signature verification. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
-
-From 0.3.x, use the manual verification and installation instructions.
+Releases before 0.4.0-rc.4 are unsigned. To upgrade from 0.3.x or from an earlier 0.4.0 release candidate, use the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
 
 ### State from older releases
 
@@ -957,7 +955,6 @@ Everything is in `~/.oxidepm`. The `OXIDEPM_HOME` environment variable names ano
 ├── adapters.db     # SQLite: installed adapters, grants and consent (with -wal and -shm files while it is open)
 ├── adapter-pids.json # live adapter processes
 ├── adapters/       # installed adapters and their state (index, installed, staging, state, trash, verbs.json)
-├── repos/          # git clones, created when first used
 └── logs/           # app logs
 ```
 
@@ -988,6 +985,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 | `status [--more\|--daemon]` | The status table. `--more` adds port, working directory and policy markers. `--daemon` shows the daemon itself. |
 | `show <name> [--reveal]` | One app in detail. `--reveal` also prints environment values and hook scripts. |
 | `logs <name> [-f]` | Read or follow logs. |
+| `top` | A live resource monitor, refreshed every 2 seconds. Press Ctrl+C to exit. |
 | `flush <selector>` | Truncate the active log files. |
 | `describe <name>` | Show the command that would run for an app that is already registered, without starting anything. |
 | `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
@@ -998,7 +996,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 | `kill` | Stop the daemon and every app. |
 | `env list` | The keys of an app's environment. |
 | `update [--version X] [--force]` | Update to a release. |
-| `backup`, `restore <file>` | Export and restore the config and process list. |
+| `backup`, `restore <file>` | Back up and restore the saved process list, the state database and the adapter registry. |
 | `adapter` | Find, import, enable and manage adapters. |
 | `completions <shell>`, `man` | Shell completions and the man page. |
 
@@ -1058,8 +1056,6 @@ Error: runtime 'node' is provided by the adapter 'runtime-node', which is not en
 ```
 
 The import hint uses the signed online catalogue. For an offline import, use `oxidepm adapter import --bundled runtime-node --enable`. If the adapter is already installed, run `oxidepm adapter enable runtime-node`. The error code is `E_ADAPTER_MISSING`.
-
-Still in the core: `top`, a live resource monitor.
 
 ## Selectors
 
@@ -1484,7 +1480,7 @@ scp my-server-backup.tar.gz user@newserver:~
 ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect"
 ```
 
-`backup` exports the config and the process list to a tarball. `restore` restores it, and the daemon must not be running. `-y` overwrites existing files without asking. A backup does not include the notifier's configuration, because it holds tokens.
+`backup` writes the saved process list, the state database and the adapter registry to a tarball. It does not include `daemon.toml` or your app config files. `restore` restores them, and the daemon must not be running. `-y` overwrites existing files without asking. A backup does not include the notifier's configuration, because it holds tokens.
 
 ## env
 
@@ -1644,7 +1640,7 @@ If approval is deferred, run the printed `oxidepm adapter enable <name> --accept
 
 # Import and enable
 
-Install an adapter from an archive you pin, read what it asks for, and enable it.
+Install an adapter from the signed catalogue, the release bundle or an archive you pin, read what it asks for, and enable it.
 
 Source: https://oxidepm.com/docs/adapters/import-and-enable/
 
@@ -1865,8 +1861,9 @@ An adapter declares what it needs in the `permissions` object of its manifest. S
 - `host` (object): `level` is `read`, `lifecycle` or `admin`. `scope` is `all` or `opted-in`. Optionally `max_in_flight`, up to 128.
 - `events` (list, default: none): The event families a service receives: `lifecycle` and `adapter`. A tool receives no events.
 - `env_pass` (list, default: none): Names of environment variables the adapter receives from the daemon's environment. Nothing else is passed.
+- `connect_env_socket` (list, default: none): Names from `env_pass` whose values are Unix sockets the adapter may connect to, such as an ssh agent. On each launch, a variable that is set must name a socket owned by the daemon's user and outside its data directory, or the adapter is not started. An unset variable adds nothing.
 - `network` (object): `mode` is `none` or `outbound`. `hosts` lists the hosts it says it uses, and `listen` the addresses it listens on.
-- `fs` (object): `read` and `write` are lists of paths. `$STATE` is the adapter's own state directory. `any` means any path.
+- `fs` (object): `read` and `write` are lists of paths. `$STATE` is the adapter's own state directory. `$CWD` is the directory you run one of a `tool`'s commands from. `any` means any path.
 - `spawn` (object): `mode` is `none`, `named` (with `names`) or `any`.
 - `memory_mb` (number, default: 128): A memory ceiling, at most 512.
 - `requires_enforcement` (list, default: none): Things the OS must enforce, or the adapter is not enabled: `network`, `fs_write`, `fs_read`, `spawn`.
@@ -1929,7 +1926,7 @@ It limits the damage a buggy adapter can do: it keeps it out of the rest of the 
 
 - Network access is not enforced per host. The manifest names the hosts, and the consent screen says `Not enforceable per host`.
 - It does not take back what you approved.
-- Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. `adapter info` prints `AF_UNIX services reachable:` with the ones its self-test could connect to. On a kernel with Landlock ABI 10, which `status --daemon` shows as `restricts unix connect`, this can be closed.
+- Local Unix sockets may stay reachable: the session bus, an ssh agent or the display server. `adapter info` prints `AF_UNIX services reachable:` with the ones its self-test could connect to. On a kernel with Landlock ABI 9 or later, which `status --daemon` shows as `restricts unix connect`, this can be closed.
 - macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 
 That is why an adapter is also checked against a hash, why you see what it asks for first, and why the daemon enforces the host level on its own. Only install adapters you trust.
@@ -2380,7 +2377,10 @@ This is a runbook for letting an AI assistant manage processes through OxidePM. 
 | `startup` | Generates an autostart script. |
 | `resurrect` | Starts everything the registry says should run. Verify the saved state first. |
 | `check` | The adapter command is caution-tier. `--fix` can install Node dependencies and create `.env`, and `--set-env` can edit `.env`. |
+| `init` | The adapter command is caution-tier. It writes a starter `oxidepm.config.toml` into the project and leaves an existing one alone. |
+| `git-start` | The adapter command is caution-tier. It clones or updates a repository into its own state directory and starts the app, which runs project code. `--install` opts into installing Node dependencies. |
 | `deploy` | Pulls code and restarts processes on a remote host. |
+| `diff` | Reads recent commits, working-tree status and a diff summary on a remote host. |
 | `update` | Replaces the installed binaries and stops a running daemon. |
 
 **Dangerous:** `kill` (stops the daemon and every app), `delete`, `flush` (the log contents are lost), `restore`, `policy set`, and `show --reveal` (its output ends up in the conversation).
@@ -2450,12 +2450,12 @@ The adapter is started with a cleared environment: a short base (`PATH`, `LANG`,
 
 ## Kinds
 
-`service` is resident and receives events. `tool` is started on demand and exits when idle. The kind is set in the manifest and sent in `initialize`.
+`service` is resident and receives events. `tool` is started on demand and exits when idle. The kind is set in the manifest and sent in `initialize`. Only a `tool` can run a session verb, a command that owns the terminal, so its standard input and output are not the protocol channel. See [Session verbs](https://oxidepm.com/docs/adapter-protocol/lifecycle/#session-verbs).
 
 ## Where to read on
 
 - [Messages](https://oxidepm.com/docs/adapter-protocol/messages/): every method.
-- [Handshake and lifecycle](https://oxidepm.com/docs/adapter-protocol/lifecycle/): starting, checking and stopping.
+- [Handshake and lifecycle](https://oxidepm.com/docs/adapter-protocol/lifecycle/): starting, checking, stopping and session verbs.
 - [The host API](https://oxidepm.com/docs/adapter-protocol/host-api/): how an adapter asks the daemon to act.
 - [Events](https://oxidepm.com/docs/adapter-protocol/events/): what a service is told.
 - [Limits and timeouts](https://oxidepm.com/docs/adapter-protocol/limits/) and [Errors](https://oxidepm.com/docs/adapter-protocol/errors/).
@@ -2491,7 +2491,7 @@ daemon:  {"jsonrpc":"2.0","id":4,"method":"runtime.prepare","params":{"spec":{"n
 adapter: {"jsonrpc":"2.0","id":4,"result":{"steps":[{"id":"install","argv":["npm","ci"],"cwd":"/srv/web","env_add":{"CI":"1"},"timeout_secs":600,"capture":"none","capture_max":65536,"optional":true,"description":"Install dependencies"}],"notes":["lockfile found"]}}
 ```
 
-`command.invoke` runs a command that an adapter added to the CLI. The `actor` is the class and label of whoever asked. The `init` adapter supports dry runs and returns the generated configuration.
+`command.invoke` runs a command that an adapter added to the CLI. The `actor` is the class and label of whoever asked. The `init` adapter supports dry runs and returns the generated configuration. For a verb in `session` mode, the request travels over the connection of the session instead. See [Session verbs](https://oxidepm.com/docs/adapter-protocol/lifecycle/#session-verbs).
 
 *command.invoke and its reply*
 
@@ -2575,6 +2575,26 @@ adapter: {"jsonrpc":"2.0","id":2,"result":{}}
 ## Shutdown
 
 When the adapter is stopped, the daemon sends `shutdown` and waits up to 2 seconds. It then closes the adapter's standard input (the adapter must also exit when its input closes), waits until 2 seconds are over, sends SIGTERM to the adapter's process group, waits until 5 seconds are over in all, and then sends SIGKILL. The total is fixed. Queued events are written first, for up to a second.
+
+## Session verbs
+
+A verb whose manifest entry says `"mode": "session"` needs the terminal (a dashboard) or the pipes of the program that started `oxidepm` (an MCP server over stdio). Only a `tool` can run one. Its standard input and output then belong to the terminal or the pipes, so they cannot carry the protocol. A session verb has no `--dry-run`.
+
+1. `oxidepm <verb>` asks the daemon for a session. The daemon applies the policy and answers with the path of a fresh socket and a token. The CLI connects only if that socket belongs to the same user and sits in a directory only that user can write to. With its first line it hands over its own standard input and output as open descriptors, then it waits.
+2. The daemon starts the adapter as for any other call: the same launcher and profile, and the executable checked against the digest recorded at import. The adapter's standard input and output are the descriptors the CLI handed over. Standard error is still its log and never reaches the terminal.
+3. The adapter finds `OXIDEPM_SESSION_SOCKET` (a path under 100 bytes) and `OXIDEPM_SESSION_TOKEN` in its environment. The token works for 60 seconds from the moment the session was opened. In that time the adapter connects to the socket and sends one line: `{"session":"adapter","token":"<token>"}`. Nothing else may come first. The token works once, and the socket is removed as soon as the adapter is connected.
+4. From then on the protocol runs over that connection instead of standard input and output. The daemon sends `initialize`, then `initialized`, then `command.invoke` with `tty` set when the CLI's standard input is a terminal. The adapter's `host.request` calls are handled as `adapter:<name>` and recorded in the audit log with the channel `adapter_session`.
+5. The answer to `command.invoke` ends the session. Its `exit_code` is the exit code of `oxidepm <verb>`, and the daemon then stops the adapter as it does after any call. An error ends the session too, and the CLI prints it with its code.
+
+The session also ends when the CLI goes away (the adapter's process group is killed), when the adapter is disabled or the daemon stops, and after 12 hours at most. At most 4 sessions exist at once, pending ones included. A fifth request fails with `E_ADAPTER_BUSY`.
+
+### The terminal
+
+The adapter runs in the daemon's session, not in the terminal's, so it cannot count on `/dev/tty`: it reads and writes its standard input and output. A Ctrl-C typed at a terminal that is not in raw mode reaches the CLI, which ends the session and exits with 130. A terminal in raw mode delivers Ctrl-C as a key. When the window changes size, the CLI tells the daemon, which sends `SIGWINCH` to the adapter's process group. The size is read with `TIOCGWINSZ` on descriptor 1. The CLI puts back the terminal settings it found when the session ends, whatever the adapter left.
+
+### Who may open one
+
+A person may open any session verb. An AI actor may open one only for a verb of an adapter whose manifest says `ai_driven`, and only while that adapter's grant is `read`. What such a session writes is limited to the adapter's state directory. An adapter can never open one.
 
 ---
 
@@ -2814,10 +2834,13 @@ notifier.tar.gz
 - `exec` (string): The executable, relative to the archive.
 - `provides` (object, default: empty): `runtimes`, `verbs`, `serves`, `programs`, `capture_programs` and `env_set`.
 - `permissions` (object): What it asks for. See [Permissions](/docs/adapters/permissions/).
+- `ai_driven` (boolean, default: false): The adapter acts on behalf of an AI. Only then can an AI actor open its session verbs, and only while the adapter's grant is `read`. See [Session verbs](/docs/adapter-protocol/lifecycle/#session-verbs).
 
 ## Verbs and runtimes
 
 `provides.verbs` adds commands to the CLI. Each has a `name` (2 to 24 characters), a `summary`, a `tier` (`safe`, `caution` or `dangerous`), a `mode` (`relayed` or `session`), whether it `writes`, whether it supports `dry_run`, `max_runtime_secs` (1 to 3600, 600 by default) and an `args_summary`. A verb must not collide with a built-in command or another adapter's verb. A verb that writes cannot be `safe`, and an adapter that may spawn programs or use the network cannot declare a `safe` verb.
+
+A `relayed` verb has its output streamed through the daemon. A `session` verb gets the terminal, or the pipes of the program that started `oxidepm`, and only a `tool` can run one. See [Session verbs](https://oxidepm.com/docs/adapter-protocol/lifecycle/#session-verbs).
 
 `provides.runtimes` names runtimes the adapter provides (a tool only, and never `cmd`), and then must list `provides.programs`, the bare program names it runs.
 
@@ -2825,9 +2848,9 @@ A `service` may list events, and provides no runtimes. A `tool` receives no even
 
 ## What you write
 
-The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. The frames on these pages are the reference.
+The program reads one JSON object per line on standard input, and writes protocol on standard output and logs on standard error. It waits for `initialize`, answers it, handles `ping`, and exits on `shutdown` or when standard input closes. A service then handles `event` notifications, and may call `host.request` within its grant. A session verb is the exception: its standard input and output are the terminal, or the pipes of the program that started `oxidepm`, and the protocol runs over the session socket. The frames on these pages are the reference.
 
-The [adapter sources](https://github.com/oxidekit/oxidepm-adapters) include `oxidepm-adapter-sdk`, a Rust crate that handles the handshake, `ping`, events, relayed verbs and `shutdown`.
+The [adapter sources](https://github.com/oxidekit/oxidepm-adapters) include `oxidepm-adapter-sdk`, a Rust crate that handles the handshake, `ping`, events, relayed verbs and `shutdown`, and with `run_session` the connection of a session verb.
 
 ## Try it
 
@@ -2863,7 +2886,7 @@ For details about PM2, see the [PM2 documentation](https://pm2.keymetrics.io/doc
 - **Zero-downtime reload for Node.js.** PM2's cluster mode can reload workers one after another so that the app keeps answering. OxidePM has no zero-downtime reload: `reload` is the same as `restart`.
 - **Built-in file watching.** PM2 can restart an app when its files change. OxidePM provides file watching through the [`watch` adapter](https://oxidepm.com/docs/commands/other-commands/#file-watching) on Linux.
 - **Windows.** PM2 runs on Windows. OxidePM does not support Windows.
-- **Age and community.** PM2 has been in use for years. OxidePM is new and its current release is a release candidate.
+- **Age and community.** PM2 has been in use for years. OxidePM is new.
 - **Deploy and hosted monitoring.** PM2 has its own deploy tooling and an optional hosted monitoring service. OxidePM provides SSH deployments through the [`deploy` adapter](https://oxidepm.com/docs/commands/other-commands/#deploy-and-diff).
 - **One shared port for a Node.js cluster.** PM2 cluster mode lets Node.js workers share one port. OxidePM clusters give instance `i` the port `port + i`, so you put a reverse proxy or load balancer in front.
 

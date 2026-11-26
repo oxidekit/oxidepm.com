@@ -232,7 +232,7 @@ ai_control = true    # AI actors may stop, restart and reload it</code></pre>
         <ul>
           <li>It does not fully contain a hostile adapter. Only install adapters you trust.</li>
           <li>macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</li>
-          <li>It does not block every local socket. Unix sockets such as the session bus, an ssh agent or the display server may stay reachable, and <code>adapter info</code> lists the ones its self-test could connect to. Newer kernels (Landlock ABI 10, shown as <code>restricts unix connect</code> in <code>status --daemon</code>) can restrict connecting to Unix sockets as well.</li>
+          <li>It does not block every local socket. Unix sockets such as the session bus, an ssh agent or the display server may stay reachable, and <code>adapter info</code> lists the ones its self-test could connect to. Newer kernels (Landlock ABI 9 or later, shown as <code>restricts unix connect</code> in <code>status --daemon</code>) can restrict connecting to Unix sockets as well.</li>
           <li>It can’t enforce which hosts an adapter connects to. The manifest names them, and the consent screen says “Not enforceable per host”.</li>
           <li>It can’t take back permissions you approved on the consent screen.</li>
         </ul>

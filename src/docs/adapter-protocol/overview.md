@@ -19,12 +19,12 @@ The adapter is started with a cleared environment: a short base (`PATH`, `LANG`,
 
 ## Kinds
 
-`service` is resident and receives events. `tool` is started on demand and exits when idle. The kind is set in the manifest and sent in `initialize`.
+`service` is resident and receives events. `tool` is started on demand and exits when idle. The kind is set in the manifest and sent in `initialize`. Only a `tool` can run a session verb, a command that owns the terminal, so its standard input and output are not the protocol channel. See [Session verbs](/docs/adapter-protocol/lifecycle/#session-verbs).
 
 ## Where to read on
 
 - [Messages](/docs/adapter-protocol/messages/): every method.
-- [Handshake and lifecycle](/docs/adapter-protocol/lifecycle/): starting, checking and stopping.
+- [Handshake and lifecycle](/docs/adapter-protocol/lifecycle/): starting, checking, stopping and session verbs.
 - [The host API](/docs/adapter-protocol/host-api/): how an adapter asks the daemon to act.
 - [Events](/docs/adapter-protocol/events/): what a service is told.
 - [Limits and timeouts](/docs/adapter-protocol/limits/) and [Errors](/docs/adapter-protocol/errors/).

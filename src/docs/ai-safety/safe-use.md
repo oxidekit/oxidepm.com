@@ -14,7 +14,10 @@ This is a runbook for letting an AI assistant manage processes through OxidePM. 
 | `startup` | Generates an autostart script. |
 | `resurrect` | Starts everything the registry says should run. Verify the saved state first. |
 | `check` | The adapter command is caution-tier. `--fix` can install Node dependencies and create `.env`, and `--set-env` can edit `.env`. |
+| `init` | The adapter command is caution-tier. It writes a starter `oxidepm.config.toml` into the project and leaves an existing one alone. |
+| `git-start` | The adapter command is caution-tier. It clones or updates a repository into its own state directory and starts the app, which runs project code. `--install` opts into installing Node dependencies. |
 | `deploy` | Pulls code and restarts processes on a remote host. |
+| `diff` | Reads recent commits, working-tree status and a diff summary on a remote host. |
 | `update` | Replaces the installed binaries and stops a running daemon. |
 
 **Dangerous:** `kill` (stops the daemon and every app), `delete`, `flush` (the log contents are lost), `restore`, `policy set`, and `show --reveal` (its output ends up in the conversation).
