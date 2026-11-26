@@ -68,7 +68,7 @@
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm backup --output my-server-backup.tar.gz
 scp my-server-backup.tar.gz user@newserver:~
 ssh user@newserver &quot;oxidepm restore my-server-backup.tar.gz &amp;&amp; oxidepm resurrect&quot;</code></pre></figure>
-<p><code>backup</code> writes the saved process list, the state database and the adapter registry to a tarball. It does not include <code>daemon.toml</code> or your app config files. <code>restore</code> restores them, and the daemon must not be running. <code>-y</code> overwrites existing files without asking. A backup does not include the notifier&#x27;s configuration, because it holds tokens.</p>
+<p><code>backup</code> writes the saved process list, the state database and the adapter registry to a tarball. It does not include <code>daemon.toml</code> or your app config files. <code>restore</code> restores them, and the daemon must not be running. <code>-y</code> overwrites existing files without asking. A backup does not include the notifier&#x27;s configuration, because it holds tokens. It holds the adapter registry but not the adapter programs: after a restore every adapter is disabled and has no rights until you enable it again.</p>
 <h2 id="env">env</h2>
 <p><code>oxidepm env list &lt;name&gt;</code> lists the keys of an app&#x27;s environment. <code>env set</code> and <code>env unset</code> are refused. See <a href="/docs/configuration/environment-and-hooks/">Environment and hooks</a>.</p>
 <h2 id="adapter">adapter</h2>

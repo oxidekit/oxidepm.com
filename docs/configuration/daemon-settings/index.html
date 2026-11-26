@@ -81,6 +81,7 @@
 ├── adapters.db     # SQLite: installed adapters, grants and consent (with -wal and -shm files while it is open)
 ├── adapter-pids.json # live adapter processes
 ├── adapters/       # installed adapters and their state (index, installed, staging, state, trash, verbs.json)
+├── adapter-logs/   # each adapter&#x27;s stderr log
 └── logs/           # app logs</code></pre></figure>
 <h2 id="the-sockets">The sockets</h2>
 <p>The CLI and the daemon talk over <code>daemon.sock</code>, with mode 0600. The daemon drops connections from any other user. <code>OXIDEPM_SOCKET</code> names another socket for the CLI. A request is one line of JSON in an envelope that carries the protocol version (2) and a request id, and the answer is one line. A line may be up to 10 MiB, and a connection that sends nothing for 5 minutes is closed.</p>
