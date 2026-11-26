@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.8    # a specific version
+oxidepm update --version 0.4.0    # a specific version
 ```
 
 Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before downloading the archive.
@@ -30,7 +30,7 @@ On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter u
 
 ```text
 $ oxidepm adapter update --all
-✓ Updated watch 0.4.0-rc.7 to 0.4.0-rc.8 (it passed its probation)
+✓ Updated watch 0.4.0-rc.8 to 0.4.0 (it passed its probation)
 ```
 
 `oxidepm update` lists the bundled adapters you imported that have a newer version in the new release, and suggests `oxidepm adapter update --all`.

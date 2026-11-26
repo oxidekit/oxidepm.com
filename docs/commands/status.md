@@ -10,13 +10,13 @@ Source: https://oxidepm.com/docs/commands/status/
 
 ```text
 $ oxidepm status
-╭────┬──────┬──────┬────────┬───┬────────┬──────┬───────┬────────╮
-│ id │ name │ mode │ pid    │ ↺ │ status │ cpu  │ mem   │ uptime │
-├────┼──────┼──────┼────────┼───┼────────┼──────┼───────┼────────┤
-│  1 │ db   │ cmd  │ 696113 │ 0 │ online │ 0.0% │ 2.3M  │ 5s     │
-│  2 │ api  │ cmd  │ 696116 │ 0 │ online │ 0.0% │ 22.0M │ 5s     │
-│  3 │ web  │ cmd  │ 703021 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
-╰────┴──────┴──────┴────────┴───┴────────┴──────┴───────┴────────╯
+╭────┬──────┬──────┬─────────┬───┬────────┬──────┬───────┬────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status │ cpu  │ mem   │ uptime │
+├────┼──────┼──────┼─────────┼───┼────────┼──────┼───────┼────────┤
+│  1 │ db   │ cmd  │ 3400065 │ 0 │ online │ 0.0% │ 2.3M  │ 5s     │
+│  2 │ api  │ cmd  │ 3400066 │ 0 │ online │ 0.0% │ 22.0M │ 5s     │
+│  3 │ web  │ cmd  │ 3404361 │ 0 │ online │ 0.0% │ 0B    │ 0s     │
+╰────┴──────┴──────┴─────────┴───┴────────┴──────┴───────┴────────╯
 ```
 
 The columns are:
@@ -38,13 +38,13 @@ The columns are:
 
 ```text
 $ oxidepm status --more
-╭────┬──────┬──────┬────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
-│ id │ name │ mode │ pid    │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
-├────┼──────┼──────┼────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
-│  1 │ db   │ cmd  │ 696113 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
-│  2 │ api  │ cmd  │ 696116 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
-│  3 │ web  │ cmd  │ 703021 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
-╰────┴──────┴──────┴────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯
+╭────┬──────┬──────┬─────────┬───┬────────┬──────┬─────────────────────┬────────┬────────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status │ port │ cwd                 │ uptime │ policy     │
+├────┼──────┼──────┼─────────┼───┼────────┼──────┼─────────────────────┼────────┼────────────┤
+│  1 │ db   │ cmd  │ 3400065 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ protected  │
+│  2 │ api  │ cmd  │ 3400066 │ 0 │ online │ -    │ …/shopfront/current │ 5s     │ ai-control │
+│  3 │ web  │ cmd  │ 3404361 │ 0 │ online │ -    │ …/shopfront/current │ 0s     │ ai-control │
+╰────┴──────┴──────┴─────────┴───┴────────┴──────┴─────────────────────┴────────┴────────────╯
 ```
 
 `--more` swaps `cpu` and `mem` for `port` and `cwd` and adds `policy`, which is `-`, `protected`, `ai-control`, or both. The working directory is shortened from the left.

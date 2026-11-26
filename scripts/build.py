@@ -30,7 +30,7 @@ IMAGE = SITE + "/og-image.png"
 IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of four apps that are online."
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
-RELEASE_VERSION = "0.4.0-rc.8"
+RELEASE_VERSION = "0.4.0"
 INSTALL_COMMAND = f"curl -fsSL {SITE}/install.sh | sh"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",

@@ -15,9 +15,9 @@ On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it
 ```text
 $ oxidepm adapter search watch
 NAME   KIND     VERSION   SUMMARY
-watch  service  0.4.0-rc.8  Restart an app when its files change.
+watch  service  0.4.0     Restart an app when its files change.
 
-Index https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json (sequence 2), signed by key 04BF7D2A1951790C (official)
+Index https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json (sequence 3), signed by key 04BF7D2A1951790C (official)
 ```
 
 ## Import from the catalogue
@@ -47,24 +47,24 @@ Review the permissions and confirm the grant at the terminal prompt. To review b
 
 ```text
 $ oxidepm adapter import --bundled watch
-Adapter   watch 0.4.0-rc.8 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundle /usr/local/share/oxidepm/adapters
-Trust     bundled with this release. Archive sha256 956477e53806368e2c9255cbd873e60ffe160d90276c853cf46d4a518b2c7734 verified. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
+Trust     bundled with this release. Archive sha256 bd98b2e85e29528fde6e1b26e541b1c74197e58e0dd23b7751eb623bb61a0154 verified. Program sha256 134b3ed3a3f39847d5e86f368d8e51d9f8c8be18d0e2b67824a69fcb7187f0df
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept b1eb7d70ca681149
+Next      oxidepm adapter enable watch --accept 1f417029ecd44400
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
   files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
   programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
   memory    64 MiB.
-✓ Installed watch 0.4.0-rc.8 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept b1eb7d70ca681149
+✓ Installed watch 0.4.0 (disabled, nothing runs). Enable it with: oxidepm adapter enable watch --accept 1f417029ecd44400
 ```
 
 `Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
@@ -83,17 +83,17 @@ On a terminal, `oxidepm adapter enable watch` shows the permissions and asks for
 
 ```text
 $ oxidepm adapter enable watch
-Adapter   watch 0.4.0-rc.8 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
-Source    bundled installed 2026-11-26T03:23:59Z
-Trust     bundled with this release. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
+Source    bundled installed 2026-11-26T07:30:32Z
+Trust     bundled with this release. Program sha256 134b3ed3a3f39847d5e86f368d8e51d9f8c8be18d0e2b67824a69fcb7187f0df
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      oxidepm adapter enable watch --accept b1eb7d70ca681149
+Next      oxidepm adapter enable watch --accept 1f417029ecd44400
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)
@@ -118,7 +118,7 @@ If you answer yes:
 
 ```text
 Enable watch with this grant? [y/N] yes
-✓ Enabled watch 0.4.0-rc.8 (level lifecycle, scope opted-in)
+✓ Enabled watch 0.4.0 (level lifecycle, scope opted-in)
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
@@ -132,7 +132,7 @@ After `oxidepm update`, restart the daemon and run `oxidepm adapter update --all
 
 ```text
 $ oxidepm adapter update --all
-✓ Updated watch 0.4.0-rc.7 to 0.4.0-rc.8 (it passed its probation)
+✓ Updated watch 0.4.0-rc.8 to 0.4.0 (it passed its probation)
 ```
 
 The update uses the bundle installed with the new release and follows the same verification and consent checks as import. If it needs a broader grant, review the permissions and run `oxidepm adapter update <name> --accept <fingerprint>` with the fingerprint from the preview. See [Upgrade](https://oxidepm.com/docs/getting-started/upgrade/#update-bundled-adapters) for when the updater prints the reminder.
@@ -148,10 +148,10 @@ target/release/oxidepm-adapter-bundle --out target/watch-bundle \
   watch:target/release/oxidepm-watch
 ```
 
-Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0-rc.8 sources.
+Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. This example uses an archive built from the 0.4.0 sources.
 
 ```sh
-oxidepm adapter import ./target/watch-bundle/watch-0.4.0-rc.8.tar.gz --sha256 <digest> --allow-reserved-name --enable
+oxidepm adapter import ./target/watch-bundle/watch-0.4.0.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
 The bundle builder requires a catalogue URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
@@ -162,26 +162,26 @@ The bundle builder requires a catalogue URL. A pinned import reads the file or H
 
 ```text
 $ oxidepm adapter info watch
-watch 0.4.0-rc.8 (service)  Restart an app when its files change.
+watch 0.4.0 (service)  Restart an app when its files change.
 State:    ready
 Source:   bundled
-Trust:    bundled with this release. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
-Installed 2026-11-26T03:23:59Z
+Trust:    bundled with this release. Program sha256 134b3ed3a3f39847d5e86f368d8e51d9f8c8be18d0e2b67824a69fcb7187f0df
+Installed 2026-11-26T07:30:32Z
 Grant:    level lifecycle, scope opted-in
 Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   watch 0.4.0-rc.8 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundled
-Trust     bundled with this release. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
+Trust     bundled with this release. Program sha256 134b3ed3a3f39847d5e86f368d8e51d9f8c8be18d0e2b67824a69fcb7187f0df
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      fingerprint b1eb7d70ca681149
+Next      fingerprint 1f417029ecd44400
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)

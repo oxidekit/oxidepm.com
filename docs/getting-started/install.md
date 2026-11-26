@@ -33,7 +33,7 @@ With `minisign` installed, the script allows a missing signature only when you e
 
 ## Other ways
 
-The [0.4.0-rc.8 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0-rc.8) has archives for these platforms:
+The [0.4.0 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0) has archives for these platforms:
 
 | Platform | Architecture | Archive |
 |---|---|---|
@@ -46,9 +46,9 @@ The [0.4.0-rc.8 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0
 
 ```sh
 # x86_64
-sudo dpkg -i oxidepm_0.4.0.rc.8_amd64.deb
+sudo dpkg -i oxidepm_0.4.0_amd64.deb
 # ARM64
-sudo dpkg -i oxidepm_0.4.0.rc.8_arm64.deb
+sudo dpkg -i oxidepm_0.4.0_arm64.deb
 ```
 
 On Linux, run the runtime import below after installing manually.
@@ -57,7 +57,7 @@ For Homebrew and Arch Linux instructions, see the [OxidePM README](https://githu
 
 ## Verify a release download
 
-0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. The checksums also cover the standalone `oxidepm-adapter-<name>-<target>.tar.gz` archives published for each platform. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0-rc.8`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0-rc.8`.
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. The checksums also cover the standalone `oxidepm-adapter-<name>-<target>.tar.gz` archives published for each platform. Get the public key from the [release signing policy](https://oxidepm.com/security/#release-signing). For `v0.4.0`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v0.4.0`.
 
 ```sh
 PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
@@ -100,7 +100,7 @@ For an offline install, run `oxidepm adapter import --bundled watch --enable`. R
 *Build*
 
 ```sh
-git clone --branch v0.4.0-rc.8 https://github.com/oxidekit/oxidepm
+git clone --branch v0.4.0 https://github.com/oxidekit/oxidepm
 cd oxidepm
 cargo build --workspace --release
 ```

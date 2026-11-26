@@ -105,13 +105,13 @@ Started 3 apps</pre></figure>
 <p>An app that waits for its dependencies shows as <code>waiting</code>, and the start returns at once. <code>api</code> has a health check, so it stays <code>starting</code> until its first probe passes.</p>
 <h2 id="look-at-it">Look at it</h2>
 <figure class="blueprint term" role="img" aria-label="Terminal output of oxidepm status while apps are starting"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre class="term-body tight"><span class="t-hi">$</span> oxidepm status
-╭────┬──────┬──────┬────────┬───┬──────────┬──────┬─────┬────────╮
-│ id │ name │ mode │ pid    │ ↺ │ status   │ cpu  │ mem │ uptime │
-├────┼──────┼──────┼────────┼───┼──────────┼──────┼─────┼────────┤
-│  1 │ db   │ cmd  │ 696113 │ 0 │ <span class="t-hi">online</span>   │ 0.0% │ 0B  │ 0s     │
-│  2 │ api  │ cmd  │ 696116 │ 0 │ <span class="t-dim">starting</span> │ 0.0% │ 0B  │ 0s     │
-│  3 │ web  │ cmd  │ -      │ 0 │ <span class="t-dim">waiting</span>  │ 0.0% │ 0B  │ 0s     │
-╰────┴──────┴──────┴────────┴───┴──────────┴──────┴─────┴────────╯</pre></figure>
+╭────┬──────┬──────┬─────────┬───┬──────────┬──────┬─────┬────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status   │ cpu  │ mem │ uptime │
+├────┼──────┼──────┼─────────┼───┼──────────┼──────┼─────┼────────┤
+│  1 │ db   │ cmd  │ 3400065 │ 0 │ <span class="t-hi">online</span>   │ 0.0% │ 0B  │ 0s     │
+│  2 │ api  │ cmd  │ 3400066 │ 0 │ <span class="t-dim">starting</span> │ 0.0% │ 0B  │ 0s     │
+│  3 │ web  │ cmd  │ -       │ 0 │ <span class="t-dim">waiting</span>  │ 0.0% │ 0B  │ 0s     │
+╰────┴──────┴──────┴─────────┴───┴──────────┴──────┴─────┴────────╯</pre></figure>
 <p>The columns are <code>id</code>, <code>name</code>, <code>mode</code> (the runtime), <code>pid</code>, <code>↺</code> (restarts), <code>status</code>, <code>cpu</code>, <code>mem</code> and <code>uptime</code>. <code>online</code> is the status the table shows for an app that is running; <code>--json</code> calls it <code>running</code>. <a href="/docs/configuration/restarts/">All statuses</a>.</p>
 <p><code>oxidepm status --more</code> adds the port, the working directory and the policy markers. <code>oxidepm show &lt;name&gt;</code> prints one app in detail. <code>oxidepm status --json</code> prints the table as JSON.</p>
 <h2 id="read-its-logs">Read its logs</h2>

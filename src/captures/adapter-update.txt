@@ -1,2 +1,2 @@
 $ oxidepm adapter update --all
-✓ Updated watch 0.4.0-rc.7 to 0.4.0-rc.8 (it passed its probation)
+✓ Updated watch 0.4.0-rc.8 to 0.4.0 (it passed its probation)

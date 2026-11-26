@@ -31,9 +31,9 @@ $ oxidepm status
 │  1 │ mailer │ cmd  │ -   │ 3 │ errored │ 0.0% │ 0B  │ 0s     │
 ╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
 $ oxidepm logs mailer --lines 3
-[2026-11-26 03:23:55.970] cannot reach smtp
-[2026-11-26 03:23:56.379] cannot reach smtp
-[2026-11-26 03:23:57.182] cannot reach smtp
+[2026-11-26 07:30:30.816] cannot reach smtp
+[2026-11-26 07:30:31.219] cannot reach smtp
+[2026-11-26 07:30:32.021] cannot reach smtp
 ```
 
 ## flush

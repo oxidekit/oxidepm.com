@@ -71,13 +71,13 @@ An app that waits for its dependencies shows as `waiting`, and the start returns
 
 ```text
 $ oxidepm status
-╭────┬──────┬──────┬────────┬───┬──────────┬──────┬─────┬────────╮
-│ id │ name │ mode │ pid    │ ↺ │ status   │ cpu  │ mem │ uptime │
-├────┼──────┼──────┼────────┼───┼──────────┼──────┼─────┼────────┤
-│  1 │ db   │ cmd  │ 696113 │ 0 │ online   │ 0.0% │ 0B  │ 0s     │
-│  2 │ api  │ cmd  │ 696116 │ 0 │ starting │ 0.0% │ 0B  │ 0s     │
-│  3 │ web  │ cmd  │ -      │ 0 │ waiting  │ 0.0% │ 0B  │ 0s     │
-╰────┴──────┴──────┴────────┴───┴──────────┴──────┴─────┴────────╯
+╭────┬──────┬──────┬─────────┬───┬──────────┬──────┬─────┬────────╮
+│ id │ name │ mode │ pid     │ ↺ │ status   │ cpu  │ mem │ uptime │
+├────┼──────┼──────┼─────────┼───┼──────────┼──────┼─────┼────────┤
+│  1 │ db   │ cmd  │ 3400065 │ 0 │ online   │ 0.0% │ 0B  │ 0s     │
+│  2 │ api  │ cmd  │ 3400066 │ 0 │ starting │ 0.0% │ 0B  │ 0s     │
+│  3 │ web  │ cmd  │ -       │ 0 │ waiting  │ 0.0% │ 0B  │ 0s     │
+╰────┴──────┴──────┴─────────┴───┴──────────┴──────┴─────┴────────╯
 ```
 
 The columns are `id`, `name`, `mode` (the runtime), `pid`, `↺` (restarts), `status`, `cpu`, `mem` and `uptime`. `online` is the status the table shows for an app that is running; `--json` calls it `running`. [All statuses](https://oxidepm.com/docs/configuration/restarts/).
