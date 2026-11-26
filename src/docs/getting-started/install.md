@@ -2,7 +2,7 @@
 
 - Linux on x86_64 or ARM64, or macOS on Intel or Apple Silicon. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 - Install the programs your apps need, such as Node.js, Python, Go or Rust.
-- Building from source requires Rust 1.85 or newer.
+- Building OxidePM from source requires Rust 1.85 or newer. Building the `ui-tui` adapter from source requires Rust 1.88 or newer.
 
 ## The install script
 
@@ -49,7 +49,7 @@ For Homebrew and Arch Linux instructions, see the [OxidePM README](https://githu
 
 ## Verify a release download
 
-0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. Get the public key from the [release signing policy](/security/#release-signing). For `v{{release_version}}`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v{{release_version}}`.
+0.4.0-rc.4 is the first signed release. Download the exact archive or Debian package for your platform, `checksums.txt` and `checksums.txt.minisig` from the same release tag. The checksums also cover the standalone `oxidepm-adapter-<name>-<target>.tar.gz` archives published for each platform. Get the public key from the [release signing policy](/security/#release-signing). For `v{{release_version}}`, use the current key below and require the command to succeed and print exactly `oxidepm release checksums tag=v{{release_version}}`.
 
 ```sh
 PUBLIC_KEY='RWQMeVEZKn2/BHzgJLldWbECE2BqKV4a0rmNXEzn5N0lxrSi/dDuFjHC'
@@ -74,7 +74,18 @@ The built-in `cmd` runtime runs an executable. The `runtime-node`, `runtime-pyth
 oxidepm adapter import --bundled --tag runtime --enable --yes
 ```
 
-On Linux, serving a runtime request requires its adapter to be imported and enabled. To use any of the other nine adapters, [import and enable it from the release bundle](/docs/adapters/import-and-enable/#import-from-the-release).
+On Linux, serving a runtime request requires its adapter to be imported and enabled.
+
+## Add optional adapters
+
+On Linux, use the signed online catalogue to find and install an adapter by name.
+
+```sh
+oxidepm adapter search watch
+oxidepm adapter import watch --enable
+```
+
+For an offline install, run `oxidepm adapter import --bundled watch --enable`. Review the permissions and approve the grant at the prompt. See [Import and enable](/docs/adapters/import-and-enable/) for more commands.
 
 ## From source
 

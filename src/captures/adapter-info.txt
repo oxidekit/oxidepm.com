@@ -1,24 +1,24 @@
 $ oxidepm adapter info watch
-watch 0.4.0-rc.6 (service)  Restart an app when its files change.
+watch 0.4.0-rc.8 (service)  Restart an app when its files change.
 State:    ready
 Source:   bundled
-Trust:    bundled with this release. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
-Installed 2026-11-25T22:24:39Z
+Trust:    bundled with this release. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
+Installed 2026-11-26T03:23:59Z
 Grant:    level lifecycle, scope opted-in
 Enforced: network, fs_write, fs_read, spawn
 Health:   0 crash(es), 0 protocol strike(s)
 
-Adapter   watch 0.4.0-rc.6 (service)   Restart an app when its files change.
+Adapter   watch 0.4.0-rc.8 (service)   Restart an app when its files change.
           Watches the directories an app lists under adapters.watch (paths, ignore, debounce_ms) and restarts that app, and only that app, after a trailing debounce window. It has no network, spawns no programs and writes nothing.
 Source    bundled
-Trust     bundled with this release. Program sha256 d21fdb36cdebc8c61d295c7972a2a43cea1d8b0e30cd918e59091e34034719f4
+Trust     bundled with this release. Program sha256 06de6c225f4a7adbcbb291d4d8cb37d7b2f204aa648737a499a16e49fc6fca78
 Needs     host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
           network   none.                                                                   Enforced on this machine: yes (seccomp)
           files     writes nothing, reads any file you can read.  [BROAD]                   Enforced on this machine: yes (Landlock 10)
           programs  none.                                                                   Enforced on this machine: yes (Landlock 10)
           memory    64 MiB.
 Adds      no commands
-Next      fingerprint c154e886d2394a5b
+Next      fingerprint b1eb7d70ca681149
 Again, what it needs:
   host      may stop, restart and reload apps. Only the apps that list it. Events: lifecycle.
   network   none.                                                                   Enforced on this machine: yes (seccomp)

@@ -11,6 +11,7 @@ nav: security
   <nav class="sec-nav" aria-label="On this page">
     <ol>
       <li><a href="#release-signing">Release signing</a></li>
+      <li><a href="#adapter-catalogue">Adapter catalogue</a></li>
       <li><a href="#connections">01 Who is asking</a></li>
       <li><a href="#tiers">02 Permission tiers</a></li>
       <li><a href="#protected">03 Protected apps and dry runs</a></li>
@@ -34,6 +35,17 @@ nav: security
       <h3 class="h-sub">Key rotation</h3>
       <p>Clients ship with both public keys while releases are signed with the current key. Once clients have both pins, OxidePM can switch to the next signing key. A later release ships that key's public key and a new spare.</p>
       <p>Removing a compromised pin requires an updated client. OxidePM announces emergency rotations through a trusted project channel so users can verify and install the replacement manually.</p>
+    </div>
+  </section>
+
+  <section id="adapter-catalogue" class="sec-block split split-start" aria-labelledby="h-catalogue">
+    <div>
+      <h2 id="h-catalogue" class="h-block">Adapter catalogue</h2>
+    </div>
+    <div class="max-60" style="overflow-wrap:anywhere">
+      <p>OxidePM publishes <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json"><code>catalogue/index.json</code></a> and its Minisign signature, <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json.minisig"><code>index.json.minisig</code></a>. The catalogue is signed with the release key <code>04BF7D2A1951790C</code>, carries a sequence number and expires after 90 days. It is published with each release and renewed weekly.</p>
+      <p>The CLI and daemon refuse an unsigned or expired catalogue, a sequence older than one they have already accepted, or a mismatch with the signature. The archive must match the SHA-256 listed in the verified catalogue before unpacking.</p>
+      <p><a href="/docs/adapters/import-and-enable/#import-from-the-catalogue">Import by name</a> from the signed catalogue or <a href="/docs/adapters/import-and-enable/#import-from-the-release">use the release bundle offline</a>.</p>
     </div>
   </section>
 
@@ -135,7 +147,7 @@ ai_control = true    # AI actors may stop, restart and reload it</code></pre>
       <p class="max-60" style="margin:0;align-self:end">Adapters run as separate programs. Four checks stand between an adapter and your server. None of them is enough on its own.</p>
     </div>
     <ol class="checks">
-      <li><span class="n">01</span><h3>Hash check</h3><p>An archive must match the SHA-256 you provide, the signed index lists or the release bundle records in <code>SHA256SUMS</code>. The daemon checks the executable's recorded hash before starting it.</p></li>
+      <li><span class="n">01</span><h3>Hash check</h3><p>An archive must match the SHA-256 you provide, the signed catalogue lists or the release bundle records in <code>SHA256SUMS</code>. The daemon checks the executable's recorded hash before starting it.</p></li>
       <li><span class="n">02</span><h3>Consent</h3><p>Enabling an adapter shows what it asks for, and asks. Nothing runs until you approve. An update that asks for more needs a new approval.</p></li>
       <li><span class="n">03</span><h3>A grant</h3><p>What an adapter may ask the daemon to do is limited by the grant you accepted, enforced by the daemon through the same policy, audit log and rate limits as everyone else.</p></li>
       <li><span class="n">04</span><h3>Sandbox</h3><p>Linux uses Landlock and seccomp where the kernel supports them. The consent screen shows which restrictions this machine can enforce.</p></li>

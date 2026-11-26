@@ -8,7 +8,7 @@ Source: https://oxidepm.com/docs/getting-started/upgrade/
 
 ```sh
 oxidepm update                      # the latest release
-oxidepm update --version 0.4.0-rc.6    # a specific version
+oxidepm update --version 0.4.0-rc.8    # a specific version
 ```
 
 Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before downloading the archive.
@@ -30,7 +30,7 @@ On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter u
 
 ```text
 $ oxidepm adapter update --all
-✓ Updated watch 0.4.0-rc.5 to 0.4.0-rc.6 (it passed its probation)
+✓ Updated watch 0.4.0-rc.7 to 0.4.0-rc.8 (it passed its probation)
 ```
 
 When you run `oxidepm update` with 0.4.0-rc.6 or later, it lists installed bundled adapters that are older than the new bundle and suggests `oxidepm adapter update --all`. When upgrading from an older CLI, run the adapter update command yourself after restarting the daemon.
@@ -39,13 +39,22 @@ To update one adapter, run `oxidepm adapter update <name>`. If an update needs a
 
 To add runtimes for the first time, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable all four. See [Import from the release](https://oxidepm.com/docs/adapters/import-and-enable/#import-from-the-release) for the other adapters.
 
+## Update adapters from the catalogue
+
+An adapter imported by name from the [signed online catalogue](https://oxidepm.com/security/#adapter-catalogue) gets its updates from that catalogue. For example, if you installed `watch` with `oxidepm adapter import watch --enable`, run:
+
+```sh
+oxidepm adapter update watch
+oxidepm adapter info watch
+```
+
 ## Keep the CLI and daemon together
 
 The CLI and the daemon must come from the same release. A config file is sent to the daemon as one `StartBatch` request, so `oxidepm start <config file>` needs a daemon of the same release.
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install 0.4.0-rc.6. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
+From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4` first. Those clients check SHA-256 during the upgrade. Then run `oxidepm update` to install 0.4.0-rc.8 with signature verification. To verify the initial download yourself, follow the [manual verification and installation instructions](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download).
 
 From 0.3.x, use the manual verification and installation instructions.
 

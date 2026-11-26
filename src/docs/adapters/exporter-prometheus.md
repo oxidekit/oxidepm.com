@@ -2,7 +2,13 @@ The exporter is a service adapter with read access only. On each scrape it asks 
 
 ## Install it
 
-On Linux, import the exporter from the release bundle.
+On Linux, import the exporter from the signed online catalogue.
+
+```sh
+oxidepm adapter import exporter-prometheus --enable
+```
+
+To install offline, use the release bundle.
 
 ```sh
 oxidepm adapter import --bundled exporter-prometheus --enable

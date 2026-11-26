@@ -10,13 +10,14 @@ nav: adapters
       <p style="font-size:18px;max-width:52ch;margin:20px 0 0" class="muted">The core supervises processes. Features that are not part of that job are adapters you choose to install. Each adapter is a separate program, and you approve what it asks for before it runs.</p>
     </div>
     <div class="cmds">
-      <div><span class="p">$</span> oxidepm adapter import --bundled &lt;name&gt; --enable</div>
-      <div><span class="p">$</span> oxidepm adapter enable &lt;name&gt; --accept &lt;fingerprint&gt;</div>
-      <div><span class="p">$</span> oxidepm adapter list</div>
+      <div><span class="p">$</span> oxidepm adapter search watch</div>
+      <div><span class="p">$</span> oxidepm adapter info watch</div>
+      <div><span class="p">$</span> oxidepm adapter import watch --enable</div>
     </div>
   </div>
 
-  <p class="small-note" style="max-width:70ch">OxidePM {{release_version}} bundles all 13 adapters. On Linux, the install script enables only the four runtimes for Node.js, Python, Go and Rust. Review each additional adapter’s permissions and confirm the grant at the prompt. If approval is deferred, use the fingerprint printed by the import. For an adapter you build yourself, <a href="/docs/adapters/import-and-enable/#import-a-self-built-adapter">import the archive by SHA-256</a>.</p>
+  <p class="small-note" style="max-width:70ch">On Linux, import by name from the <a href="/security/#adapter-catalogue">signed online catalogue</a>. OxidePM {{release_version}} also bundles all 13 adapters for offline use. For example, run <code>oxidepm adapter import --bundled watch --enable</code>. The installer enables only the four runtimes for Node.js, Python, Go and Rust.</p>
+  <p class="small-note" style="max-width:70ch">Review each additional adapter’s permissions and confirm the grant at the prompt. If approval is deferred, use the fingerprint printed by the import. For an adapter you build yourself, <a href="/docs/adapters/import-and-enable/#import-a-self-built-adapter">import the archive by SHA-256</a>.</p>
 
   <div class="toolbar">
     <label class="search">

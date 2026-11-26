@@ -1,0 +1,5 @@
+$ oxidepm adapter search watch
+NAME   KIND     VERSION   SUMMARY
+watch  service  0.4.0-rc.8  Restart an app when its files change.
+
+Index https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json (sequence 2), signed by key 04BF7D2A1951790C (official)

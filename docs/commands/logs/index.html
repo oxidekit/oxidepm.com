@@ -76,9 +76,9 @@ oxidepm logs api --grep &quot;timeout|refused&quot;</code></pre></figure>
 │  1 │ mailer │ cmd  │ -   │ 3 │ <span class="t-ox">errored</span> │ 0.0% │ 0B  │ 0s     │
 ╰────┴────────┴──────┴─────┴───┴─────────┴──────┴─────┴────────╯
 <span class="t-hi">$</span> oxidepm logs mailer --lines 3
-[2026-11-25 22:23:21.137] cannot reach smtp
-[2026-11-25 22:23:21.543] cannot reach smtp
-[2026-11-25 22:23:22.347] cannot reach smtp</pre></figure>
+[2026-11-26 03:23:55.970] cannot reach smtp
+[2026-11-26 03:23:56.379] cannot reach smtp
+[2026-11-26 03:23:57.182] cannot reach smtp</pre></figure>
 <h2 id="flush">flush</h2>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm flush api</code></pre></figure>
 <p><code>flush</code> truncates the active log files of an app. Rotated files stay. The log contents are lost, so read them first. Log rotation is automatic (<a href="/docs/configuration/log-files/">Log files</a>), so flushing to save space is rarely needed. <code>flush</code> is a dangerous request: an AI actor cannot make it.</p></div><p class="small-note"><a href="/docs/commands/logs.md" type="text/markdown">This page as Markdown</a></p><div class="pager"><a href="/docs/commands/status/" rel="prev"><small>Previous</small><span>status and show</span></a><a href="/docs/commands/save-and-resurrect/" rel="next"><small>Next</small><span>save and resurrect</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#logs">logs</a></li><li><a href="#flush">flush</a></li></ul></nav></div>

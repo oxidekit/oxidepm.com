@@ -28,8 +28,10 @@ An adapter never starts, stops or changes an app on its own authority. When it a
 
 ## Which adapters exist
 
-The release bundles all 13 adapters. On Linux, the install script enables the four runtimes (`runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`). To add `check`, `init`, `git-start`, `deploy`, `watch`, `ui-web`, `ui-tui`, [notifier](https://oxidepm.com/docs/adapters/notifier/) or [exporter-prometheus](https://oxidepm.com/docs/adapters/exporter-prometheus/), run `oxidepm adapter import --bundled <name> --enable`. See the [adapter list](https://oxidepm.com/adapters/) for what each one provides and the permissions it asks for. AI adapters are unavailable in this release.
+The release bundles all 13 adapters. On Linux, the install script enables the four runtimes (`runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust`). The [adapter list](https://oxidepm.com/adapters/) shows what the other adapters provide and the permissions they ask for. AI adapters are unavailable in this release.
 
 ## Where they come from
 
-If the adapter is installed but still disabled after you review its permissions, run the printed `oxidepm adapter enable <name> --accept <fingerprint>` command. For a self-built archive, [import the file by SHA-256](https://oxidepm.com/docs/adapters/import-and-enable/#import-a-self-built-adapter). Import by name with `oxidepm adapter import <name>` requires a configured signed index. This release ships without a network catalog.
+On Linux, run `oxidepm adapter import watch --enable` to import by name from the [signed online catalogue](https://oxidepm.com/security/#adapter-catalogue). For an offline import, run `oxidepm adapter import --bundled watch --enable`.
+
+If approval is deferred, run the printed `oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the permissions. For a self-built archive, [import the file by SHA-256](https://oxidepm.com/docs/adapters/import-and-enable/#import-a-self-built-adapter).

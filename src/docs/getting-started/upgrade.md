@@ -29,13 +29,22 @@ To update one adapter, run `oxidepm adapter update <name>`. If an update needs a
 
 To add runtimes for the first time, run `oxidepm adapter import --bundled --tag runtime --enable --yes` to import and enable all four. See [Import from the release](/docs/adapters/import-and-enable/#import-from-the-release) for the other adapters.
 
+## Update adapters from the catalogue
+
+An adapter imported by name from the [signed online catalogue](/security/#adapter-catalogue) gets its updates from that catalogue. For example, if you installed `watch` with `oxidepm adapter import watch --enable`, run:
+
+```sh
+oxidepm adapter update watch
+oxidepm adapter info watch
+```
+
 ## Keep the CLI and daemon together
 
 The CLI and the daemon must come from the same release. A config file is sent to the daemon as one `StartBatch` request, so `oxidepm start <config file>` needs a daemon of the same release.
 
 ## Upgrade from older releases
 
-From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update` to install {{release_version}}. Those clients check SHA-256 for that upgrade. The new CLI verifies signatures on subsequent updates. To verify the initial download yourself, follow the [manual verification and installation instructions](/docs/getting-started/install/#verify-a-release-download).
+From 0.4.0-rc.1 through 0.4.0-rc.3, run `oxidepm update --version 0.4.0-rc.4` first. Those clients check SHA-256 during the upgrade. Then run `oxidepm update` to install {{release_version}} with signature verification. To verify the initial download yourself, follow the [manual verification and installation instructions](/docs/getting-started/install/#verify-a-release-download).
 
 From 0.3.x, use the manual verification and installation instructions.
 

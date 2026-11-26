@@ -2,7 +2,13 @@ The notifier is a service adapter. It listens to the lifecycle events of the dae
 
 ## Install it
 
-On Linux, import the notifier from the release bundle.
+On Linux, import the notifier from the signed online catalogue.
+
+```sh
+oxidepm adapter import notifier --enable
+```
+
+To install offline, use the release bundle.
 
 ```sh
 oxidepm adapter import --bundled notifier --enable

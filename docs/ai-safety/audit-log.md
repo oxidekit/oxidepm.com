@@ -18,9 +18,9 @@ Each request leaves a `decision` line (who asked, the operation and its tier, th
 *Lines of audit-security.jsonl*
 
 ```text
-{"v":1,"seq":5,"ts":"2026-11-25T22:23:20.111Z","phase":"decision","req":"r103","client_req":"206430-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":2122800,"uid":1001},"op":"restart","tier":"caution","selector":"db","decision":"deny","deny":{"code":"E_PROTECTED","why":"ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person"},"dry_run":false}
-{"v":1,"seq":6,"ts":"2026-11-25T22:23:20.113Z","phase":"decision","req":"r104","client_req":"206455-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":2122837,"uid":1001},"op":"delete","tier":"dangerous","selector":"api","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it"},"dry_run":false}
-{"v":1,"seq":7,"ts":"2026-11-25T22:23:20.115Z","phase":"decision","req":"r105","client_req":"206478-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":2122872,"uid":1001},"op":"stop","tier":"caution","selector":"all","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not use 'all' or a tag with 'stop': name the apps"},"dry_run":false}
+{"v":1,"seq":5,"ts":"2026-11-26T03:23:54.877Z","phase":"decision","req":"r91","client_req":"abb40-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":703296,"uid":1001},"op":"restart","tier":"caution","selector":"db","decision":"deny","deny":{"code":"E_PROTECTED","why":"ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person"},"dry_run":false}
+{"v":1,"seq":6,"ts":"2026-11-26T03:23:54.886Z","phase":"decision","req":"r92","client_req":"abb66-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":703334,"uid":1001},"op":"delete","tier":"dangerous","selector":"api","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it"},"dry_run":false}
+{"v":1,"seq":7,"ts":"2026-11-26T03:23:54.898Z","phase":"decision","req":"r93","client_req":"abb8c-1","actor":{"class":"ai","label":"assistant","via":"agent","pid":703372,"uid":1001},"op":"stop","tier":"caution","selector":"all","decision":"deny","deny":{"code":"E_POLICY_DENIED","why":"ai:assistant may not use 'all' or a tag with 'stop': name the apps"},"dry_run":false}
 ```
 
 ## What is recorded
@@ -43,13 +43,13 @@ A non-human actor's caution or dangerous request is written to disk before it ru
 
 ```text
 $ oxidepm audit --tail 7
-2026-11-25T22:23:20.104Z #7      ai:assistant stop [caution] allow web (dry run)
-2026-11-25T22:23:20.108Z #8      result r102 ok changed=0 failed=0 0ms
-2026-11-25T22:23:20.111Z #9      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
-2026-11-25T22:23:20.113Z #10     ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
-2026-11-25T22:23:20.115Z #11     ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
-2026-11-25T22:23:20.117Z #12     human:cli set_policy [dangerous] allow web
-2026-11-25T22:23:20.117Z #13     result r106 ok changed=1 failed=0 0ms
+2026-11-26T03:23:54.853Z #7      ai:assistant stop [caution] allow web (dry run)
+2026-11-26T03:23:54.862Z #8      result r90 ok changed=0 failed=0 0ms
+2026-11-26T03:23:54.877Z #9      ai:assistant restart [caution] DENIED E_PROTECTED: ai:assistant may not restart protected app(s): db. A protected app is read-only for anything but a person db
+2026-11-26T03:23:54.886Z #10     ai:assistant delete [dangerous] DENIED E_POLICY_DENIED: ai:assistant may not make the request 'delete': it is a dangerous request. Ask a person to run it api
+2026-11-26T03:23:54.898Z #11     ai:assistant stop [caution] DENIED E_POLICY_DENIED: ai:assistant may not use 'all' or a tag with 'stop': name the apps all
+2026-11-26T03:23:54.908Z #12     human:cli set_policy [dangerous] allow web
+2026-11-26T03:23:54.908Z #13     result r94 ok changed=1 failed=0 0ms
 ```
 
 ```sh

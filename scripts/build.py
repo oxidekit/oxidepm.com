@@ -30,7 +30,7 @@ IMAGE = SITE + "/og-image.png"
 IMAGE_ALT = "OxidePM, a process manager written in Rust: the status table of four apps that are online."
 TAGLINE = "OxidePM is an open-source process manager written in Rust, for Linux."
 REPO = "https://github.com/oxidekit/oxidepm"
-RELEASE_VERSION = "0.4.0-rc.6"
+RELEASE_VERSION = "0.4.0-rc.8"
 INSTALL_COMMAND = f"curl -fsSL {SITE}/install.sh | sh"
 AI_CRAWLERS = [
     "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "Claude-User", "Claude-SearchBot",
@@ -473,7 +473,7 @@ def adapter_cards(adapters):
         search = " ".join([a["name"], a["kind"], a["summary"]] + a["perms"]).lower()
         cmd = ""
         if not later:
-            cmd = '<p class="acard-cmd"><code>oxidepm adapter import --bundled %s --enable</code></p>' % esc(a["name"])
+            cmd = '<p class="acard-cmd"><code>oxidepm adapter import %s --enable</code></p>' % esc(a["name"])
         items.append(
             '<li class="blueprint acard" data-card data-status="%s" data-text="%s">%s'
             '<div class="acard-top"><span class="acard-kind">%s</span>%s</div>'
@@ -582,11 +582,16 @@ def llms_files(nav, flat, adapters):
         "On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` "
         "to refresh installed bundled adapters. The updater suggests this command starting with "
         "0.4.0-rc.6. If you upgrade from an older CLI, run it yourself.", "",
-        "On Linux, install any adapter from the release with `oxidepm adapter import --bundled <name> --enable`. "
+        "On Linux, discover adapters with `oxidepm adapter search watch` or `oxidepm adapter list --available`. "
+        "Run `oxidepm adapter info watch` for details, `oxidepm adapter import watch --enable` to install from "
+        "the signed catalogue, and `oxidepm adapter update watch` to update it. "
+        "For offline installation, run `oxidepm adapter import --bundled watch --enable`. "
         "Review its permissions and confirm the grant at the prompt. If approval is deferred, use the printed "
         "`oxidepm adapter enable <name> --accept <fingerprint>` command after reviewing the grant. "
         "For a self-built adapter, import the archive with `oxidepm adapter import ./my-adapter.tar.gz --sha256 <digest> --enable`. "
-        "Add `--allow-reserved-name` if it uses a reserved name.", "",
+        "Add `--allow-reserved-name` if it uses a reserved name. Building `ui-tui` from source requires Rust 1.88 or newer.", "",
+        "The adapter catalogue uses the release signing key and lists the archive hashes. "
+        "[Catalogue verification](%s/security/#adapter-catalogue)" % SITE, "",
     ]
     short = ["# OxidePM"] + head[1:]
     lines = list(head)

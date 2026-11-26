@@ -22,7 +22,7 @@ ssh user@newserver "oxidepm restore my-server-backup.tar.gz && oxidepm resurrect
 
 ## Commands that come from adapters
 
-On Linux, run `oxidepm adapter import --bundled <name> --enable` before using an adapter's commands. Review the grant and [confirm any requested permissions](/docs/adapters/import-and-enable/#enable). See [Provided by adapters](/docs/commands/overview/#provided-by-adapters) for adapter names.
+On Linux, run `oxidepm adapter import <name> --enable` to install from the signed online catalogue. The examples below use `--bundled` for offline installation. Review the grant and [confirm any requested permissions](/docs/adapters/import-and-enable/#enable). See [Provided by adapters](/docs/commands/overview/#provided-by-adapters) for adapter names.
 
 ## init and check
 
@@ -108,6 +108,8 @@ With the default `lifecycle` grant, it shows every app and can restart or stop t
 ## monit and top
 
 Run `oxidepm adapter import --bundled ui-tui --enable` to add `oxidepm monit`. The terminal dashboard shows app state, CPU and memory, details and logs. It asks for `y` or `n` before stopping or restarting an app. The session needs a terminal for input and output and takes no arguments.
+
+The dashboard uses Ratatui 0.30. Building `ui-tui` from source requires Rust 1.88 or newer.
 
 ```sh
 oxidepm monit

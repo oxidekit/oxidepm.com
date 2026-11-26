@@ -51,7 +51,7 @@ path: /
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">The release bundles all 13 adapters. On Linux, the installer enables the Node.js, Python, Go and Rust runtimes. Add the others as needed with <code>oxidepm adapter import --bundled &lt;name&gt; --enable</code>. The built-in <code>cmd</code> runtime runs any executable.</p>
+      <p class="muted">The release bundles all 13 adapters. On Linux, the installer enables the Node.js, Python, Go and Rust runtimes. Add others from the <a href="/docs/adapters/import-and-enable/#import-from-the-catalogue">signed catalogue</a> or the offline bundle. The built-in <code>cmd</code> runtime runs any executable.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -147,7 +147,7 @@ path: /
 
   <div class="flow" data-flow>
     <ol class="flow-steps" aria-label="Adapter workflow">
-      <li><button type="button" class="flow-step" data-step="0" aria-pressed="true"><span class="step-no">1</span><span class="step-text"><span class="step-title">List</span><code class="step-cmd">oxidepm adapter list</code><span class="step-note">See what is installed. Searching an index needs a published one, and there is none yet.</span></span></button></li>
+      <li><button type="button" class="flow-step" data-step="0" aria-pressed="true"><span class="step-no">1</span><span class="step-text"><span class="step-title">Search</span><code class="step-cmd">oxidepm adapter search watch</code><span class="step-note">Find the file watching adapter in the signed online catalogue.</span></span></button></li>
       <li><button type="button" class="flow-step" data-step="1" aria-pressed="false"><span class="step-no">2</span><span class="step-text"><span class="step-title">Import</span><code class="step-cmd">oxidepm adapter import --bundled watch</code><span class="step-note">Verifies the bundled archive and shows the permissions. The adapter stays disabled while you review them.</span></span></button></li>
       <li><button type="button" class="flow-step" data-step="2" aria-pressed="false"><span class="step-no">3</span><span class="step-text"><span class="step-title">Enable and approve</span><code class="step-cmd">oxidepm adapter enable watch</code><span class="step-note">Shows the permissions again and asks for approval at the terminal.</span></span></button></li>
     </ol>
@@ -155,7 +155,7 @@ path: /
     <figure class="blueprint term flow-term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
       <div class="term-bar"><span>deploy@srv-01:~</span><span data-step-label>1 of 3</span></div>
-      <div data-panel="0"><pre class="term-body">{{cap:adapter-list}}</pre></div>
+      <div data-panel="0"><pre class="term-body wrap">{{cap:adapter-search}}</pre></div>
       <div data-panel="1" hidden><pre class="term-body">{{cap:adapter-import}}</pre></div>
       <div data-panel="2" hidden><pre class="term-body">{{cap:adapter-enable}}<span data-pending><button type="button" class="term-btn yes" data-allow>y  allow</button> <button type="button" class="term-btn" data-deny>N  deny</button></span><span data-yes hidden>yes
 <span class="t-hi">✓</span> Enabled watch {{release_version}} (level lifecycle, scope opted-in)
@@ -165,7 +165,7 @@ path: /
     </figure>
   </div>
   <noscript><style>[data-panel][hidden]{display:block!important}</style></noscript>
-  <p class="term-ink">This example uses the Linux release bundle. To approve the grant without a prompt, use the fingerprint from your import. <a href="/docs/adapters/import-and-enable/#enable">See how to enable an adapter</a>.</p>
+  <p class="term-ink">The example imports from the Linux release bundle, which works offline. To use the catalogue, run <code>oxidepm adapter import watch</code>. <a href="/docs/adapters/import-and-enable/#enable">See how to enable an adapter</a>.</p>
 
   <div class="lists">
     <div>

@@ -1,2 +1,3 @@
-$ oxidepm adapter list --available
-Error: no index is configured in this build. Import by a pinned hash (`oxidepm adapter import <file or url> --sha256 <hex>`) or from the bundle of a release (`oxidepm adapter import --bundled`)
+$ oxidepm adapter list
+NAME      KIND     VERSION    STATE            TRUST
+notifier  service  0.4.0-rc.8  ready            bundled with this release

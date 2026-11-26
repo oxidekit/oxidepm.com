@@ -11,10 +11,10 @@
   <url><loc>https://oxidepm.com/docs/adapter-protocol/messages/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapter-protocol/overview/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapter-protocol/write-an-adapter/</loc><lastmod>2026-11-25</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapters/exporter-prometheus/</loc><lastmod>2026-11-24</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapters/how-adapters-work/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapters/exporter-prometheus/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapters/how-adapters-work/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/import-and-enable/</loc><lastmod>2026-11-25</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/adapters/notifier/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/adapters/notifier/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/permissions/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/sandbox/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/agent-connections/</loc><lastmod>2026-10-30</lastmod></url>
@@ -26,8 +26,8 @@
   <url><loc>https://oxidepm.com/docs/commands/error-codes/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/json-output/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/logs/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/commands/other-commands/</loc><lastmod>2026-11-24</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/commands/overview/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/commands/other-commands/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/commands/overview/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/save-and-resurrect/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/start-stop-restart/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/status/</loc><lastmod>2026-10-30</lastmod></url>

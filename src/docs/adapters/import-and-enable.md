@@ -2,10 +2,21 @@ On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it
 
 ## List
 
-```term cap="adapter-list" label="Terminal output of oxidepm adapter list and list --available"
+`oxidepm adapter list` shows installed adapters. `oxidepm adapter list --available` lists the offers from the [signed online catalogue](/security/#adapter-catalogue).
+
+```term cap="adapter-search" wrap="yes" label="Terminal output of oxidepm adapter search watch"
 ```
 
-`list` shows the installed adapters. `list --available` and `search` require a configured signed index. This release ships without a network catalog.
+## Import from the catalogue
+
+Use `info` to read the catalogue entry before importing. Once installed, `info` shows the local adapter and its grant.
+
+```sh
+oxidepm adapter info watch
+oxidepm adapter import watch --enable
+```
+
+The CLI verifies the catalogue signature and the archive hash. Review the permissions and approve the grant when prompted. To get a newer version from the catalogue later, run `oxidepm adapter update watch`.
 
 ## Import from the release
 
@@ -15,7 +26,7 @@ The release ships all 13 adapters under `share/oxidepm/adapters`. On Linux, run 
 oxidepm adapter import --bundled watch --enable
 ```
 
-Bundled imports work offline. The CLI and daemon verify the catalog and selected archives against `SHA256SUMS`. The installer runs `oxidepm adapter import --bundled --tag runtime --enable --yes` to enable only the four runtime adapters. To select groups, use `--tag dev` for `watch`, `check` and `init`, `--tag deploy` for `git-start` and `deploy`, `--tag ui` for `ui-web` and `ui-tui`, `--tag notifier` for `notifier`, or `--tag exporter` for `exporter-prometheus`.
+Bundled imports work offline. The CLI and daemon verify the bundle index and selected archives against `SHA256SUMS`. The installer runs `oxidepm adapter import --bundled --tag runtime --enable --yes` to enable only the four runtime adapters. To select groups, use `--tag dev` for `watch`, `check` and `init`, `--tag deploy` for `git-start` and `deploy`, `--tag ui` for `ui-web` and `ui-tui`, `--tag notifier` for `notifier`, or `--tag exporter` for `exporter-prometheus`.
 
 Review the permissions and confirm the grant at the terminal prompt. To review before enabling, omit `--enable`. The adapter stays disabled until you approve the grant.
 
@@ -23,8 +34,6 @@ Review the permissions and confirm the grant at the terminal prompt. To review b
 ```
 
 `Needs` lists the permissions. `Again, what it needs` repeats the list after the description. `[BROAD]` marks permissions such as access to all files the current user can read. `Enforced on this machine` shows what the operating system can enforce. `Trust` identifies the source of the archive.
-
-`oxidepm adapter import <name>` uses a configured signed index. This release ships without a network catalog.
 
 ## Enable
 
@@ -67,7 +76,7 @@ The update uses the bundle installed with the new release and follows the same v
 
 ## Import a self-built adapter
 
-An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. For example, build and package `watch` for x86_64 Linux from the adapters checkout.
+An adapter archive is a gzip tarball containing `manifest.json` and the executable named in `exec`. To package a local build from the [adapter sources](https://github.com/oxidekit/oxidepm-adapters), keep the core checkout in `../oxidepm` so Cargo can find the shared crates. The `ui-tui` adapter needs Rust 1.88 or newer to build from source. To build and package `watch` for x86_64 Linux, run these commands from the adapters checkout.
 
 ```sh
 cargo build --release -p oxidepm-adapter-watch -p oxidepm-adapter-bundle
@@ -82,7 +91,7 @@ Use the filename and digest from your build's `target/watch-bundle/SHA256SUMS`. 
 oxidepm adapter import ./target/watch-bundle/watch-{{release_version}}.tar.gz --sha256 <digest> --allow-reserved-name --enable
 ```
 
-The bundle builder requires a catalog URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
+The bundle builder requires a catalogue URL. A pinned import reads the file or HTTPS URL you pass it. Add `--allow-reserved-name` only if the adapter uses a reserved name, such as `watch` or `notifier`. A pinned archive appears as `pinned by you` with `No signature` in the preview.
 
 ## Look at it, and manage it
 
@@ -91,11 +100,13 @@ The bundle builder requires a catalog URL. A pinned import reads the file or HTT
 
 | Command | Meaning |
 |---|---|
-| `adapter list` | The installed adapters, with state and trust. |
-| `adapter info <name>` | Everything about one: state, source, grant, what is enforced, crashes and protocol strikes, and the last lines it wrote to stderr. |
+| `adapter list` | Installed adapters, with state and trust. |
+| `adapter list --available` | Adapters offered by the signed catalogue. |
+| `adapter search <word>` | Find offers by name, summary, description or tag. |
+| `adapter info <name>` | Installed adapter details, including state, source, grant, enforcement and health. For an adapter you have yet to install, shows the catalogue entry. |
 | `adapter disable <name>` | Stop it and take its rights away. |
 | `adapter remove <name> [--purge]` | Remove its files. Its state directory is kept unless you pass `--purge`, because it may hold tokens and keys. |
-| `adapter update <name>` or `--all` | Update to a newer version. Bundled adapters use the installed release bundle. `--rollback` goes back to the previous version without the network. |
+| `adapter update <name>` or `--all` | Update to a newer version. Catalogue imports use the signed catalogue, and bundled imports use the installed release bundle. `--rollback` goes back to the previous version without the network. |
 
 `import`, `update`, `enable`, `disable` and `remove` take [`--dry-run`](/docs/commands/dry-run/). Enabling, disabling and removing are dangerous requests, so an AI actor cannot make them.
 
