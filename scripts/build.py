@@ -133,6 +133,19 @@ def resolve_captures(text):
     return re.sub(r"\{\{cap:([a-z0-9-]+)\}\}", lambda m: capture(m.group(1)), text)
 
 
+def captures_used(text):
+    """The capture files that a source shows: one per {{cap:..}} placeholder and one per cap
+    option of a terminal block."""
+    names = re.findall(r"\{\{cap:([a-z0-9-]+)\}\}", text)
+    for line in text.split("\n"):
+        m = re.match(r"^```(\S*)\s*(.*)$", line)
+        if m and m.group(1) == "term":
+            opts = dict(re.findall(r'(\w+)="([^"]*)"', m.group(2)))
+            if opts.get("cap"):
+                names.append(opts["cap"])
+    return [SRC / "captures" / (name + ".txt") for name in dict.fromkeys(names)]
+
+
 def corners():
     return '<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>'
 
@@ -695,6 +708,7 @@ def build_docs(site):
         toc = []
         source = read(src)
         sources = [src, Path(__file__)] if any("{{" + key + "}}" in source for key in versions) else [src]
+        sources += captures_used(source)
         modified = lastmod(*sources)
         source = fill(source, versions)
         body_html = markdown(source, toc)
@@ -790,11 +804,13 @@ def main():
     site = Site()
     for page_file in sorted((SRC / "pages").glob("*.html")):
         meta, body = split_front(read(page_file))
+        captures = captures_used(body)
         body = fill(resolve_captures(body), values) if "{{" in body else body
         path = meta["path"]
         sources = [page_file] + ([SRC / "adapters.json"] if path in ("/", "/adapters/") else [])
         if path in ("/", "/adapters/"):
             sources.append(Path(__file__))
+        sources += captures
         if path == "/":
             ld = home_ld(meta["description"])
         elif meta.get("robots") == "noindex":

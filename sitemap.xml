@@ -18,19 +18,19 @@
   <url><loc>https://oxidepm.com/docs/adapters/permissions/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/adapters/sandbox/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/agent-connections/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/ai-safety/audit-log/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/ai-safety/audit-log/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/permission-tiers/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/protected-apps/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/ai-safety/safe-use/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/dry-run/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/error-codes/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/json-output/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/commands/logs/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/commands/logs/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/other-commands/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/overview/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/save-and-resurrect/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/commands/start-stop-restart/</loc><lastmod>2026-11-24</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/commands/status/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/commands/status/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/compare/oxidepm-and-pm2/</loc><lastmod>2026-11-25</lastmod></url>
   <url><loc>https://oxidepm.com/docs/compare/oxidepm-and-systemd/</loc><lastmod>2026-11-24</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/apps/</loc><lastmod>2026-11-24</lastmod></url>
@@ -42,10 +42,10 @@
   <url><loc>https://oxidepm.com/docs/configuration/health-checks/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/limits-and-cron/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/configuration/log-files/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/configuration/restarts/</loc><lastmod>2026-10-30</lastmod></url>
-  <url><loc>https://oxidepm.com/docs/getting-started/first-app/</loc><lastmod>2026-11-24</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/configuration/restarts/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://oxidepm.com/docs/getting-started/first-app/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/getting-started/install/</loc><lastmod>2026-11-26</lastmod></url>
   <url><loc>https://oxidepm.com/docs/getting-started/reboot/</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://oxidepm.com/docs/getting-started/upgrade/</loc><lastmod>2026-11-26</lastmod></url>
-  <url><loc>https://oxidepm.com/security/</loc><lastmod>2026-11-25</lastmod></url>
+  <url><loc>https://oxidepm.com/security/</loc><lastmod>2026-11-26</lastmod></url>
 </urlset>
