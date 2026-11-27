@@ -43,7 +43,7 @@ nav: security
       <h2 id="h-catalogue" class="h-block">Adapter catalogue</h2>
     </div>
     <div class="max-60" style="overflow-wrap:anywhere">
-      <p>OxidePM publishes <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json"><code>catalogue/index.json</code></a> and its Minisign signature, <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json.minisig"><code>index.json.minisig</code></a>. The catalogue is signed with the release key <code>04BF7D2A1951790C</code>, carries a sequence number and expires after 90 days. It is published with each release and renewed weekly.</p>
+      <p>OxidePM publishes <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json"><code>catalogue/index.json</code></a> and its Minisign signature, <a href="https://raw.githubusercontent.com/oxidekit/oxidepm/catalogue/index.json.minisig"><code>index.json.minisig</code></a>. The catalogue is signed with the release key <code>04BF7D2A1951790C</code>, carries a sequence number and expires after 90 days. It is published with each final release and renewed weekly.</p>
       <p>The CLI and daemon refuse an unsigned or expired catalogue, a sequence older than one they have already accepted, or a mismatch with the signature. The archive must match the SHA-256 listed in the verified catalogue before unpacking.</p>
       <p><a href="/docs/adapters/import-and-enable/#import-from-the-catalogue">Import by name</a> from the signed catalogue or <a href="/docs/adapters/import-and-enable/#import-from-the-release">use the release bundle offline</a>.</p>
     </div>
