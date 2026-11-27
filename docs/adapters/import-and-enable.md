@@ -4,7 +4,7 @@ Install an adapter from the signed catalogue, the release bundle or an archive y
 
 Source: https://oxidepm.com/docs/adapters/import-and-enable/
 
-On Linux, `adapter import` verifies and installs an adapter. With `--enable`, it also asks you to approve the grant. Services start when enabled, and tools start when called.
+`adapter import` verifies and installs an adapter. With `--enable`, it also asks you to approve the grant. Services start when enabled, and tools start when called.
 
 ## List
 
@@ -33,7 +33,7 @@ The CLI verifies the catalogue signature and the archive hash. Review the permis
 
 ## Import from the release
 
-The release ships all 13 adapters under `share/oxidepm/adapters`. On Linux, run `oxidepm adapter import --bundled <name> --enable` for any adapter you want to use. This command adds file watching.
+The release ships all 13 adapters under `share/oxidepm/adapters`. Run `oxidepm adapter import --bundled <name> --enable` for any adapter you want to use. This command adds file watching.
 
 ```sh
 oxidepm adapter import --bundled watch --enable
@@ -122,7 +122,7 @@ Enable watch with this grant? [y/N] yes
   Enforced by the OS on this machine: network, fs_write, fs_read, spawn
 ```
 
-You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. On Linux, `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+You can enable with less than the adapter asks for. `--level read` or `--level lifecycle` gives a lower host level, and `--scope opted-in` limits it to the apps that list the adapter. `--allow-unenforced` accepts missing sandbox restrictions that the adapter requires.
 
 ## Update bundled adapters
 

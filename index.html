@@ -83,13 +83,11 @@
       Read the docs first
     </a>
   </div>
-  <p class="small-note"><a href="/install.sh">Read the install script</a>. This command installs 0.4.0 and enables the bundled runtimes on Linux. <a href="/docs/getting-started/install/#verify-a-release-download">Verify the download</a>.</p>
+  <p class="small-note"><a href="/install.sh">Read the install script</a>. This command installs 0.4.0 and enables the bundled runtimes. <a href="/docs/getting-started/install/#verify-a-release-download">Verify the download</a>.</p>
 
 
   <dl class="platforms">
-    <div><dt>Linux</dt><dd>the main platform</dd></div>
-    <div><dt>macOS</dt><dd>built-in <code>cmd</code> runtime</dd></div>
-    <div><dt>Windows</dt><dd>not supported</dd></div>
+    <div><dt>Platform</dt><dd>Linux only (x86_64 and aarch64, glibc)</dd></div>
   </dl>
 
   <figure class="blueprint term" style="margin-top:56px" role="img" aria-label="Terminal output of oxidepm status: four apps, db, api, web and worker, all online. The worker has restarted twice.">
@@ -119,7 +117,7 @@
       <span class="num">01</span>
       <h3 class="h-idea">A small core that does one job</h3>
       <p>The daemon supervises processes. It starts your apps, restarts them with a growing delay, and stops restarting an app that is stuck in a crash loop.</p>
-      <p class="muted">The release bundles all 13 adapters. On Linux, the installer enables the Node.js, Python, Go and Rust runtimes. Add others from the <a href="/docs/adapters/import-and-enable/#import-from-the-catalogue">signed catalogue</a> or the offline bundle. The built-in <code>cmd</code> runtime runs any executable.</p>
+      <p class="muted">The release bundles all 13 adapters. The installer enables the Node.js, Python, Go and Rust runtimes. Add others from the <a href="/docs/adapters/import-and-enable/#import-from-the-catalogue">signed catalogue</a> or the offline bundle. The built-in <code>cmd</code> runtime runs any executable.</p>
     </div>
     <figure class="blueprint term">
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
@@ -190,7 +188,7 @@
   <div class="blueprint">
     <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
     <div class="sheet-head"><span>OxidePM core: features</span><span>Sheet 01</span></div>
-    <div class="feature"><div><span class="n">01</span><h3>Daemon</h3></div><p>Apps keep running after you close the terminal. <code>save</code> writes the list, <code>resurrect</code> starts it again, and <code>startup</code> writes a systemd or launchd unit for boot.</p></div>
+    <div class="feature"><div><span class="n">01</span><h3>Daemon</h3></div><p>Apps keep running after you close the terminal. <code>save</code> writes the list, <code>resurrect</code> starts it again, and <code>startup</code> writes a systemd unit for boot.</p></div>
     <div class="feature"><div><span class="n">02</span><h3>Crash restarts</h3></div><p>A crashed app waits, then restarts with a delay that doubles up to a cap. More than 15 restarts in 10 minutes end it as <code>errored</code>, until a person starts it.</p></div>
     <div class="feature"><div><span class="n">03</span><h3>depends_on</h3></div><p>An app waits until the apps it names are running, and fails closed if they never are (60 seconds by default). <code>stop all</code> stops dependents first.</p></div>
     <div class="feature"><div><span class="n">04</span><h3>Process groups</h3></div><p>Each app runs in its own process group, and stopping the app signals the whole group. A child that starts its own session or detaches itself is not in it.</p></div>
@@ -201,7 +199,7 @@
     <div class="feature"><div><span class="n">09</span><h3>Clusters</h3></div><p>Run up to 256 instances of one app. Instance <code>i</code> gets port <code>port + i</code>.</p></div>
     <div class="feature"><div><span class="n">10</span><h3>Logs</h3></div><p>Captured per app and rotated by size (10 MB and 5 files by default). Gzip compression of rotated files is optional.</p></div>
     <div class="feature"><div><span class="n">11</span><h3>Scripting</h3></div><p><code>--json</code> output, and <code>--dry-run</code> on most commands that change something.</p></div>
-    <div class="feature"><div><span class="n">12</span><h3>Adapter checks</h3></div><p>An adapter is checked against a SHA-256 before it is installed, shows what it asks for before it can be enabled, and on Linux runs under Landlock and seccomp.</p></div>
+    <div class="feature"><div><span class="n">12</span><h3>Adapter checks</h3></div><p>An adapter is checked against a SHA-256 before it is installed, shows what it asks for before it can be enabled, and runs under Landlock and seccomp.</p></div>
     <p class="sheet-foot">Errors carry stable <code>E_…</code> codes on the daemon socket, in the audit log and in the adapter protocol.</p>
   </div>
 </section>
@@ -215,8 +213,7 @@
       <p class="muted" style="max-width:40ch;margin:0">You should know these before you install it.</p>
     </div>
     <dl class="facts">
-      <div><dt>Windows</dt><dd>Not supported.</dd></div>
-      <div><dt>macOS</dt><dd>macOS supports the built-in <code>cmd</code> runtime. The adapter launcher and sandbox are Linux-only in this release.</dd></div>
+      <div><dt>Platforms</dt><dd>OxidePM runs on Linux (x86_64 and aarch64, glibc).</dd></div>
       <div><dt>Reload</dt><dd>There is no zero-downtime reload. A reload is a restart.</dd></div>
       <div><dt>File watching</dt><dd>The <a href="/docs/commands/other-commands/#file-watching">watch adapter</a> restarts opted-in apps when their files change.</dd></div>
       <div><dt>Sandbox</dt><dd>It limits the damage a buggy adapter can do. It does not fully contain a hostile one. That is why every adapter is hash-checked and shows what it asks for before you enable it. <a href="/security/#adapters">Details</a>.</dd></div>

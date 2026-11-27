@@ -30,7 +30,6 @@ systemd alone is often enough to supervise apps. A dedicated process manager can
 - **A status table and a config file for a group of apps.** `oxidepm status` shows every app with its state, restarts, CPU, memory and uptime, and one TOML, YAML or JSON file describes the group.
 - **Health checks that act.** An app can be probed over HTTP, over TCP or with a script, and the daemon can restart it when the probe fails. systemd has no HTTP probe of its own.
 - **Backoff, a breaker and a dependency wait that fails closed.** Restart delays that double up to a cap, an app that ends as `errored` instead of looping, and `depends_on` that fails if the dependency never comes up.
-- **The same tool on a developer's Mac.** macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
 - **Limits for AI agents.** An agent on the agent socket is held to what you allow, `protected` apps cannot be changed by it, and the audit log records what it asked for. See [Safe use with AI agents](https://oxidepm.com/docs/ai-safety/safe-use/).
 - **Rehearsals and JSON.** `--dry-run` on most commands that change something, and `--json` for scripts.
 

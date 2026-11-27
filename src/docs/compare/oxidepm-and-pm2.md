@@ -33,7 +33,7 @@ For details about PM2, see the [PM2 documentation](https://pm2.keymetrics.io/doc
 | | PM2 | OxidePM |
 |---|---|---|
 | Written in | JavaScript, runs on Node.js | Rust, native programs |
-| Platforms | Linux, macOS and Windows | Linux. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. |
+| Platforms | Linux, macOS and Windows | Linux (x86_64 and aarch64, glibc) |
 | Languages of the apps | Node.js first, other interpreters by script | Any program with `cmd`. Node.js, Python, Go and Rust through runtime adapters that a release carries |
 | Reload | Zero-downtime reload for cluster mode | `reload` is a restart |
 | Cluster | Node.js workers can share one port | Up to 256 instances, a port each |

@@ -6,7 +6,7 @@ Source: https://oxidepm.com/docs/getting-started/install/
 
 ## Requirements
 
-- Linux on x86_64 or ARM64, or macOS on Intel or Apple Silicon. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+- Linux only (x86_64 and aarch64, glibc).
 - Install the programs your apps need, such as Node.js, Python, Go or Rust.
 - Building OxidePM from source requires Rust 1.85 or newer. Building the `ui-tui` adapter from source requires Rust 1.88 or newer.
 
@@ -27,7 +27,7 @@ The [install script](https://oxidepm.com/install.sh) uses `OXIDEPM_VERSION` to s
 - Checks the archive's SHA-256 against the entry for that exact filename in `checksums.txt`.
 - Installs `oxidepm`, `oxidepmd` and `oxidepm-sandbox` into `/usr/local/bin`, using `sudo` when needed. Set `INSTALL_DIR` to install elsewhere.
 - Copies all 13 adapter archives into `share/oxidepm/adapters` under the installation prefix and checks the CLI version if `oxidepm` is on `PATH`.
-- Attempts to import and enable only the four runtime adapters with `oxidepm adapter import --bundled --tag runtime --enable --yes`. On Linux, this works offline, and the CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
+- Attempts to import and enable only the four runtime adapters with `oxidepm adapter import --bundled --tag runtime --enable --yes`. This works offline, and the CLI and daemon verify the catalog and the selected archives against the bundle's `SHA256SUMS`. If the import fails, the binaries stay installed and the script prints the command to retry.
 
 With `minisign` installed, the script allows a missing signature only when you explicitly select a release older than 0.4.0-rc.4 and the signature URL returns HTTP 404. It still checks SHA-256.
 
@@ -39,8 +39,6 @@ The [0.4.0 release](https://github.com/oxidekit/oxidepm/releases/tag/v0.4.0) has
 |---|---|---|
 | Linux | x86_64 | `oxidepm-x86_64-unknown-linux-gnu.tar.gz` |
 | Linux | ARM64 | `oxidepm-aarch64-unknown-linux-gnu.tar.gz` |
-| macOS | Intel | `oxidepm-x86_64-apple-darwin.tar.gz` |
-| macOS | Apple Silicon | `oxidepm-aarch64-apple-darwin.tar.gz` |
 
 [Verify your download](https://oxidepm.com/docs/getting-started/install/#verify-a-release-download) before extracting an archive or installing a package. On Debian or Ubuntu, install the package for your architecture with `dpkg`.
 
@@ -51,9 +49,9 @@ sudo dpkg -i oxidepm_0.4.0_amd64.deb
 sudo dpkg -i oxidepm_0.4.0_arm64.deb
 ```
 
-On Linux, run the runtime import below after installing manually.
+Run the runtime import below after installing manually.
 
-For Homebrew and Arch Linux instructions, see the [OxidePM README](https://github.com/oxidekit/oxidepm/blob/prod/README.md#installation).
+For Arch Linux instructions, see the [OxidePM README](https://github.com/oxidekit/oxidepm/blob/prod/README.md#installation).
 
 ## Verify a release download
 
@@ -68,25 +66,24 @@ For another signed release, require the trusted comment to match its full tag, i
 
 ```sh
 ARCHIVE=oxidepm-x86_64-unknown-linux-gnu.tar.gz
-sha256sum "$ARCHIVE"       # Linux
-shasum -a 256 "$ARCHIVE"  # macOS
+sha256sum "$ARCHIVE"
 ```
 
 Compare the digest with the entry for that exact filename in the verified `checksums.txt` before extracting the archive or installing the package. For a verified archive, put `oxidepm`, `oxidepmd` and `oxidepm-sandbox` in your installation prefix's `bin` directory and copy `share/oxidepm/adapters` to the same path under that prefix.
 
 ## Runtimes
 
-The built-in `cmd` runtime runs an executable. The `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust` adapters provide `node`, `npm`, `pnpm`, `yarn`, `python`, `go`, `rust` and `cargo`. The release archive carries them under `share/oxidepm/adapters`. On Linux, import and enable them offline with:
+The built-in `cmd` runtime runs an executable. The `runtime-node`, `runtime-python`, `runtime-go` and `runtime-rust` adapters provide `node`, `npm`, `pnpm`, `yarn`, `python`, `go`, `rust` and `cargo`. The release archive carries them under `share/oxidepm/adapters`. Import and enable them offline with:
 
 ```sh
 oxidepm adapter import --bundled --tag runtime --enable --yes
 ```
 
-On Linux, serving a runtime request requires its adapter to be imported and enabled.
+Serving a runtime request requires its adapter to be imported and enabled.
 
 ## Add optional adapters
 
-On Linux, use the signed online catalogue to find and install an adapter by name.
+Use the signed online catalogue to find and install an adapter by name.
 
 ```sh
 oxidepm adapter search watch
@@ -105,7 +102,7 @@ cd oxidepm
 cargo build --workspace --release
 ```
 
-The binaries are in `target/release`. Install `oxidepm` and `oxidepmd` in the same directory on `PATH`. On Linux, place `oxidepm-sandbox` beside them. To add the bundled runtimes to a Linux source build, copy `share/oxidepm/adapters` from the release archive to the same path under your installation prefix and run the import command above.
+The binaries are in `target/release`. Install `oxidepm`, `oxidepmd` and `oxidepm-sandbox` in the same directory on `PATH`. To add the bundled runtimes to a source build, copy `share/oxidepm/adapters` from the release archive to the same path under your installation prefix and run the import command above.
 
 ## Check it
 

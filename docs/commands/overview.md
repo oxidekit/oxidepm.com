@@ -23,7 +23,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 | `policy set <selector>` | Change the `protected` and `ai_control` markers of running apps. |
 | `audit` | Read the audit log. |
 | `save [--force]`, `resurrect` | Write and restore the list of apps that should run. |
-| `startup [systemd\|launchd]` | Generate an autostart script. |
+| `startup [systemd]` | Generate an autostart script. |
 | `ping` | Check that the daemon is alive. |
 | `kill` | Stop the daemon and every app. |
 | `env list` | The keys of an app's environment. |
@@ -34,7 +34,7 @@ Source: https://oxidepm.com/docs/commands/overview/
 
 ## Provided by adapters
 
-On Linux, [import and enable the adapter](https://oxidepm.com/docs/adapters/import-and-enable/) to use its commands.
+[Import and enable the adapter](https://oxidepm.com/docs/adapters/import-and-enable/) to use its commands.
 
 | Command | Adapter | What it is |
 |---|---|---|

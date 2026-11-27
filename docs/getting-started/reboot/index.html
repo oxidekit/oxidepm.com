@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Keep apps running after a reboot with OxidePM</title>
-<meta name="description" content="Save the list of apps, generate a systemd or launchd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
+<meta name="description" content="Save the list of apps, generate a systemd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
 <link rel="canonical" href="https://oxidepm.com/docs/getting-started/reboot/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="color-scheme" content="light dark">
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="OxidePM">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Keep apps running after a reboot with OxidePM">
-<meta property="og:description" content="Save the list of apps, generate a systemd or launchd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
+<meta property="og:description" content="Save the list of apps, generate a systemd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
 <meta property="og:url" content="https://oxidepm.com/docs/getting-started/reboot/">
 <meta property="og:image" content="https://oxidepm.com/og-image.png">
 <meta property="og:image:type" content="image/png">
@@ -22,12 +22,12 @@
 <meta property="og:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Keep apps running after a reboot with OxidePM">
-<meta name="twitter:description" content="Save the list of apps, generate a systemd or launchd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
+<meta name="twitter:description" content="Save the list of apps, generate a systemd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.">
 <meta name="twitter:image" content="https://oxidepm.com/og-image.png">
 <meta name="twitter:image:alt" content="OxidePM, a process manager written in Rust: the status table of four apps that are online.">
 <link rel="alternate" type="text/markdown" href="https://oxidepm.com/docs/getting-started/reboot.md">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://oxidepm.com/"},{"@type":"ListItem","position":2,"name":"Docs","item":"https://oxidepm.com/docs/"},{"@type":"ListItem","position":3,"name":"Getting started","item":"https://oxidepm.com/docs/getting-started/install/"},{"@type":"ListItem","position":4,"name":"Survive a reboot"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Keep apps running after a reboot with OxidePM","description":"Save the list of apps, generate a systemd or launchd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.","url":"https://oxidepm.com/docs/getting-started/reboot/","mainEntityOfPage":"https://oxidepm.com/docs/getting-started/reboot/","inLanguage":"en","dateModified":"2026-10-30","articleSection":"Getting started","image":"https://oxidepm.com/og-image.png","about":{"@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/"},"isPartOf":{"@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Keep apps running after a reboot with OxidePM","description":"Save the list of apps, generate a systemd boot unit and start your apps again after a reboot with oxidepm save, startup and resurrect.","url":"https://oxidepm.com/docs/getting-started/reboot/","mainEntityOfPage":"https://oxidepm.com/docs/getting-started/reboot/","inLanguage":"en","dateModified":"2026-11-27","articleSection":"Getting started","image":"https://oxidepm.com/og-image.png","about":{"@type":"SoftwareApplication","name":"OxidePM","url":"https://oxidepm.com/"},"isPartOf":{"@type":"WebSite","name":"OxidePM","url":"https://oxidepm.com/"}}</script>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var d=document.documentElement,t=null;d.className+=' js';try{t=localStorage.getItem('oxidepm-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t='light';try{if(matchMedia('(prefers-color-scheme: dark)').matches)t='dark'}catch(e){}}d.setAttribute('data-theme',t)})();</script>
@@ -69,7 +69,7 @@
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm resurrect</code></pre></figure>
 <p><code>resurrect</code> starts every app that should be running and is not up, and adds apps from <code>saved.json</code> that were deleted since. An app you stopped stays stopped. Apps are started in dependency order, and at most four build and spawn at once (the <code>launch_concurrency</code> setting), so a reboot does not run twenty builds together.</p>
 <h2 id="start-the-daemon-at-boot">Start the daemon at boot</h2>
-<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm startup systemd     # or: launchd</code></pre></figure>
+<figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><pre><code>oxidepm startup systemd</code></pre></figure>
 <p>This generates an autostart script for your init system. <code>oxidepm --dry-run startup</code> shows what would be written and writes nothing. The generated systemd unit has this shape (your user and paths will differ):</p>
 <figure class="blueprint codefig"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i><div class="bar"><span>oxidepmd.service</span><button type="button" class="btn btn-ghost" data-copy="code-16" data-copy-message="Copied to clipboard"><span data-copy-label>Copy</span></button></div><pre><code id="code-16">[Unit]
 Description=OxidePM Process Manager
@@ -88,7 +88,7 @@ Environment=&quot;HOME=/home/deploy&quot;
 [Install]
 WantedBy=multi-user.target</code></pre></figure>
 <p><code>TimeoutStopSec</code> is the daemon&#x27;s shutdown budget (<code>shutdown_budget_secs</code>, 120 seconds by default) plus 40 seconds, and <code>KillMode=mixed</code> makes systemd send the stop signal to the daemon alone and leave it time to stop the apps in order. Run <code>startup</code> again after you change the budget, to get the new value.</p>
-<p>The daemon starts the apps that should be running when it starts at boot. On Linux, <code>pids.json</code> in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything. On macOS that recovery is not available, and the daemon logs a warning instead.</p></div><p class="small-note"><a href="/docs/getting-started/reboot.md" type="text/markdown">This page as Markdown</a></p><div class="pager"><a href="/docs/getting-started/first-app/" rel="prev"><small>Previous</small><span>Your first app</span></a><a href="/docs/getting-started/upgrade/" rel="next"><small>Next</small><span>Upgrade</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#save-the-list">Save the list</a></li><li><a href="#bring-the-apps-back">Bring the apps back</a></li><li><a href="#start-the-daemon-at-boot">Start the daemon at boot</a></li></ul></nav></div>
+<p>The daemon starts the apps that should be running when it starts at boot. <code>pids.json</code> in the data directory lists the live app processes: if the daemon dies by SIGKILL, the next daemon kills what is still listed there before it starts anything.</p></div><p class="small-note"><a href="/docs/getting-started/reboot.md" type="text/markdown">This page as Markdown</a></p><div class="pager"><a href="/docs/getting-started/first-app/" rel="prev"><small>Previous</small><span>Your first app</span></a><a href="/docs/getting-started/upgrade/" rel="next"><small>Next</small><span>Upgrade</span></a></div></article></main><nav class="docs-toc" aria-label="On this page"><h2>On this page</h2><ul><li><a href="#save-the-list">Save the list</a></li><li><a href="#bring-the-apps-back">Bring the apps back</a></li><li><a href="#start-the-daemon-at-boot">Start the daemon at boot</a></li></ul></nav></div>
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">

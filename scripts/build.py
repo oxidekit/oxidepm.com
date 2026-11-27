@@ -588,13 +588,12 @@ def llms_files(nav, flat, adapters):
         "> %s It starts apps, restarts them when they crash, keeps their logs and brings them back "
         "after a reboot. The language runtimes, notifications, the web API, the terminal dashboard and "
         "Prometheus metrics are adapters. Licensed MIT or Apache-2.0." % TAGLINE, "",
-        "OxidePM %s bundles all 13 release adapters. On Linux, the install script enables only the four runtimes. "
-        "macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release. "
+        "OxidePM runs on Linux (x86_64 and aarch64, glibc). OxidePM %s bundles all 13 release adapters, and the install script enables only the four runtimes. "
         "Source: %s." % (RELEASE_VERSION, REPO), "",
         "`oxidepm update` verifies the release signature before downloading the archive. "
-        "On Linux, restart the daemon after the upgrade and run `oxidepm adapter update --all` "
+        "Restart the daemon after the upgrade and run `oxidepm adapter update --all` "
         "to refresh installed bundled adapters.", "",
-        "On Linux, discover adapters with `oxidepm adapter search watch` or `oxidepm adapter list --available`. "
+        "Discover adapters with `oxidepm adapter search watch` or `oxidepm adapter list --available`. "
         "Run `oxidepm adapter info watch` for details, `oxidepm adapter import watch --enable` to install from "
         "the signed catalogue, and `oxidepm adapter update watch` to update it. "
         "For offline installation, run `oxidepm adapter import --bundled watch --enable`. "

@@ -20,11 +20,11 @@ Starting with 0.4.0-rc.4, `oxidepm update` authenticates the release before down
 
 `oxidepm --dry-run update` performs the same verification, downloads and unpacks the archive in a private temporary directory, shows what it would replace and deletes the directory. Nothing is installed and no daemon is stopped.
 
-The update installs the release bundle with all 13 adapters alongside the executables. macOS supports the built-in `cmd` runtime. The adapter launcher and sandbox are Linux-only in this release.
+The update installs the release bundle with all 13 adapters alongside the executables.
 
 ## Update bundled adapters
 
-On Linux, restart the daemon after `oxidepm update`, then run `oxidepm adapter update --all` to update the adapters you imported from the release bundle.
+Restart the daemon after `oxidepm update`, then run `oxidepm adapter update --all` to update the adapters you imported from the release bundle.
 
 *Excerpt from oxidepm adapter update --all*
 
