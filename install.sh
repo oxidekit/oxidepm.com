@@ -19,29 +19,14 @@ success() { printf "${GREEN}[OK]${NC} %s\n" "$1"; }
 warn() { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
 error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; exit 1; }
 
-# Detect OS and architecture
+# Detect architecture
 detect_platform() {
-    OS="$(uname -s)"
     ARCH="$(uname -m)"
 
-    case "$OS" in
-        Linux)
-            case "$ARCH" in
-                x86_64)  TARGET="x86_64-unknown-linux-gnu" ;;
-                aarch64) TARGET="aarch64-unknown-linux-gnu" ;;
-                *)       error "Unsupported architecture: $ARCH" ;;
-            esac
-            ;;
-        Darwin)
-            case "$ARCH" in
-                x86_64)  TARGET="x86_64-apple-darwin" ;;
-                arm64)   TARGET="aarch64-apple-darwin" ;;
-                *)       error "Unsupported architecture: $ARCH" ;;
-            esac
-            ;;
-        *)
-            error "Unsupported OS: $OS"
-            ;;
+    case "$ARCH" in
+        x86_64)  TARGET="x86_64-unknown-linux-gnu" ;;
+        aarch64) TARGET="aarch64-unknown-linux-gnu" ;;
+        *)       error "Unsupported architecture: $ARCH" ;;
     esac
 
     info "Detected platform: $TARGET"
@@ -191,26 +176,24 @@ install() {
     verify_checksum "$TEMP_DIR/oxidepm.tar.gz"
 
     info "Extracting..."
-    tar -xzf "$TEMP_DIR/oxidepm.tar.gz" -C "$TEMP_DIR"
+    tar --no-same-owner -xzf "$TEMP_DIR/oxidepm.tar.gz" -C "$TEMP_DIR"
 
     info "Installing to $INSTALL_DIR"
 
-    # Check if we need sudo
-    if [ -w "$INSTALL_DIR" ]; then
-        mv "$TEMP_DIR/oxidepm" "$INSTALL_DIR/"
-        mv "$TEMP_DIR/oxidepmd" "$INSTALL_DIR/"
-        # releases before the sandbox launcher do not have it
-        if [ -f "$TEMP_DIR/oxidepm-sandbox" ]; then mv "$TEMP_DIR/oxidepm-sandbox" "$INSTALL_DIR/"; fi
+    if [ "$(id -u)" -eq 0 ]; then
+        set -- install -m 0755 -o root -g root
+    elif [ -w "$INSTALL_DIR" ]; then
+        set -- install -m 0755
     else
         warn "Need sudo to install to $INSTALL_DIR"
-        sudo mv "$TEMP_DIR/oxidepm" "$INSTALL_DIR/"
-        sudo mv "$TEMP_DIR/oxidepmd" "$INSTALL_DIR/"
-        if [ -f "$TEMP_DIR/oxidepm-sandbox" ]; then sudo mv "$TEMP_DIR/oxidepm-sandbox" "$INSTALL_DIR/"; fi
+        set -- sudo install -m 0755 -o root -g root
     fi
 
-    chmod +x "$INSTALL_DIR/oxidepm"
-    chmod +x "$INSTALL_DIR/oxidepmd"
-    if [ -f "$INSTALL_DIR/oxidepm-sandbox" ]; then chmod +x "$INSTALL_DIR/oxidepm-sandbox"; fi
+    command "$@" -- "$TEMP_DIR/oxidepm" "$TEMP_DIR/oxidepmd" "$INSTALL_DIR/"
+    # releases before the sandbox launcher do not have it
+    if [ -f "$TEMP_DIR/oxidepm-sandbox" ]; then
+        command "$@" -- "$TEMP_DIR/oxidepm-sandbox" "$INSTALL_DIR/"
+    fi
 
     install_adapters
 }
@@ -267,6 +250,11 @@ verify() {
 }
 
 main() {
+    if [ "$(uname -s)" != Linux ]; then
+        printf '%s\n' 'OxidePM supports Linux only (x86_64 and aarch64).' >&2
+        exit 1
+    fi
+
     echo ""
     echo "  ╔═══════════════════════════════════╗"
     echo "  ║       OxidePM Installer           ║"
